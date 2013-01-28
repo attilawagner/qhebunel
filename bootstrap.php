@@ -185,7 +185,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 				if (!is_null($catData)) {
 					list($catURI, $titleElement) = $catData;
 					$legalURI = "${catURI}-c${catId}/";
-					if (in_array($section, $sections['category'])) {
+					if (array_key_exists($section, $sections['category'])) {
 						$legalURI .= $section;
 						$forumPage = $sections['category'][$section][0];
 						if (count($sections['category'][$section]) >= 3) {
