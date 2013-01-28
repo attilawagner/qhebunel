@@ -1,0 +1,192 @@
+@CHARSET "UTF-8";
+
+/*
+Category list
+*/
+#qheb_catlist {
+	border: 2px solid #BFC3C6;
+}
+#qheb_catlist tbody tr:last-child td {
+	border: 0 none;
+	height: 10px;
+}
+#qheb_catlist th {
+	background-color: #504d6c;
+	color: #fff;
+	text-transform: none;
+}
+#qheb_catlist .qheb_cat1_title {
+	font-family: "Titillium Maps", Arial, "Helvetica Neue", Helvetica, sans-serif;
+	font-size: 16pt;
+	font-weight: normal;
+}
+#qheb_catlist .qheb_cat1_desc {
+	font-size: 14px;
+	font-weight: normal;
+}
+#qheb_catlist .thread_count {
+	white-space: nowrap;
+	display: block;
+}
+#qheb_catlist .post_count {
+	white-space: nowrap;
+	display: block;
+}
+
+/*
+Thread list
+*/
+.qheb_threadlist .name {
+	white-space: nowrap;
+	display: block;
+}
+.qheb_threadlist .date {
+	white-space: nowrap;
+	display: block;
+}
+
+/*
+New thread
+*/
+input.error, textarea.error, select.error {
+	background-color: #ffdddd !important;
+}
+#newThreadForm textarea {
+	height: 250px;
+	width: 100%;
+}
+
+/*
+Thread
+*/
+.qheb_thread {
+	padding: 0;
+}
+.qheb_thread .thread_pagination {
+	display: inline-block;
+	float: right;
+}
+.qheb_thread .thread_actions {
+	margin: 12px 0;
+}
+.qheb_post {
+	position: relative;
+	list-style: none;
+	border: 1px solid;
+	margin: 0 0 6px;
+	padding: 0;
+}
+.qheb_post:after {
+	content: '.'; 
+	display: block; 
+	clear: both; 
+	visibility: hidden; 
+	height: 0; 
+	line-height: 0;
+}
+.qheb_post .user_info {
+	width: 160px;
+	float: left;
+	border-right: 1px solid;
+	overflow: hidden;
+}
+.qheb_post .user_name {
+	text-align: center;
+}
+.qheb_post .user_avatar {
+	text-align: center;
+}
+.qheb_post .post_holder {
+	width: 621px;
+	float: left;
+	border-left: 1px solid;
+	margin-left: -1px;
+	padding: 3px;
+}
+.qheb_post .post_message {
+}
+.qheb_post .post_message .spoiler {
+	border: 2px dashed #aaa;
+	padding: 3px;
+}
+.qheb_post .post_message .spoiler.spoiler-closed div {
+	display:none;
+}
+.qheb_post .user_signature {
+	max-height: 100px;
+	margin-top: 10px;
+	padding-top: 2px;
+	border-top: 1px solid #bfc3c6;
+	overflow: hidden;
+}
+.qheb_post .post_meta {
+	font-size: 9pt;
+	text-align: right;
+}
+.qheb_post .post_actions {
+	margin-top: 7px;
+	border-top: 1px solid;
+	padding: 2px 5px;
+	text-align: right;
+	font-size: 11pt;
+}
+.qheb_post .post_attachments {
+	margin-top: 7px;
+}
+.post_attachments ul {
+	list-style: none;
+	margin: 0;
+	padding: 0 0 0 17px;
+}
+#replyForm textarea {
+	height: 250px;
+	width: 100%;
+}
+#replyForm span.attachmentlist {
+	float: left;
+	margin-top: 10px;
+}
+#replyForm div.attachmentlist {
+	float: left;
+	margin-left: 20px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+#replyForm div.attachments:after {
+	content: '.'; 
+	display: block; 
+	clear: both; 
+	visibility: hidden; 
+	height: 0; 
+	line-height: 0;
+}
+#replyForm input[type=submit] {
+}
+
+/*
+Profile - user settings
+*/
+.profile_settings th {
+	width: 240px;
+	font-family: "Bitter",Georgia,Palatino,"Palatino Linotype",Times,"Times New Roman",serif;
+    font-size: 12px;
+    font-weight: bold;
+    vertical-align: top;
+}
+.profile_settings label {
+	width: 100%;
+}
+.profile_settings textarea {
+	height: 200px;
+	width: 546px;
+	resize: vertical;
+}
+.profile_settings .user_signature {
+	max-height: 100px;
+	overflow: hidden;
+}
+.profile_settings .icon {
+	font-size: 17px;
+	line-height: 29px;
+}

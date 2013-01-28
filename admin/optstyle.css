@@ -1,0 +1,109 @@
+.qhebunelicon {
+	background: url(icon.png) no-repeat bottom left;
+	margin-bottom: 8px;
+}
+
+/* Categories */
+.qheb_catlist {
+}
+.qheb_catlist .qheb_catname {
+	width: 20%;
+}
+.qheb_catlist .qheb_catdesc {
+	width: 30%;
+}
+.qheb_catlist .qheb_catpos {
+	width: 8%;
+}
+.qheb_catlist input[type="checkbox"] {
+	margin-right: 5px;
+}
+.qheb_catlist a {
+	margin-right: 5px;
+}
+#poststuff.qheb_metabox {
+	width: 400px;
+}
+#poststuff.qheb_metabox th{
+	text-align:left;
+}
+#poststuff.qheb_metabox input[type="text"], #poststuff.qheb_metabox select {
+	width: 100%;
+}
+#poststuff.qheb_metabox .editform {
+	width: 100%;
+}
+.qheb_catlist_subitem:before {
+	content:"– ";
+}
+.qheb_catlist_subitempos {
+	padding-left: 26px !important;
+}
+.qheb_catlist_subitemposup, .qheb_catlist_subitemposdown {
+	width: 13px;
+	display: inline-block;
+}
+.qheb_catlist_subitemposup {
+	margin-left: 30px;
+}
+.qheb_catdelcb {
+	margin-left: 30px;
+}
+#qheb_catpermsform {
+	width: 440px;
+}
+#qheb_catpermsform table {
+	width: 100%;
+}
+.qheb_cpgroup {
+	width: 200px;
+}
+#qheb_catpermsform input {
+	width: 100%;
+}
+.qheb_cpnone, .qheb_cpread, .qheb_cpwrite, .qheb_cpstart {
+	text-align: center !important;
+}
+#qheb_catpermsform .prominent, .qheb_catlist .prominent {
+	font-weight: bold;
+}
+
+/* user list */
+.qheb_catlist .qheb_username {
+	width: 20%;
+}
+.qheb_catlist .qheb_usergroups {
+	width: 60%;
+}
+#qheb_ulist_group {
+	display: none;
+}
+#qheb_ulist_group .qheb_prom {
+	font-weight: bold;
+}
+.qhebsubsubsub {
+	clear: left;
+	margin-top: 4px;
+}
+
+/* badges */
+.qheb_bgroup_hidden {
+	font-style: italic;
+}
+h3 .add-new-h2 {
+	font-weight: normal;
+}
+.qheb_catlist .qheb_bicon {
+	width: 160px;
+}
+.qheb_catlist .qheb_bclaim, .qheb_catlist .qheb_bshow {
+	width: 70px;
+}
+
+/* generic options */
+.qheb_form_table td {
+	vertical-align: top;
+}
+
+
+

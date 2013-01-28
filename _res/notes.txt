@@ -1,0 +1,18 @@
+wp-cron?
+
+http://www.webmaster-source.com/2010/01/08/using-the-wordpress-uploader-in-your-plugin-or-theme/
+
+
+Dir struct
+/wp-content/
+	plugins/
+		qhebunel/ - plugin fájlok
+	forum/
+		avatars/
+			[user partition]/
+				[user id].[ext]
+		attachments/
+			[user partition]/
+				[user id]/
+					[post id]/
+						eredetinev.pdf
