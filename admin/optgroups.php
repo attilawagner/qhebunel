@@ -73,7 +73,15 @@ if (isset($_POST['qheb_group_del']) && check_admin_referer('qheb_groupdel', 'qhe
 
 
 //Load groups
-$groups = $wpdb->get_results('select `qheb_user_groups`.`gid`, `qheb_user_groups`.`name`, `qheb_user_groups`.`prominent`, count(`qheb_user_group_links`.`uid`) as membercount from `qheb_user_groups` left join `qheb_user_group_links` on (`qheb_user_group_links`.`gid`=`qheb_user_groups`.`gid`) group by `qheb_user_groups`.`gid` order by `qheb_user_groups`.`name` asc;', ARRAY_A);
+$groups = $wpdb->get_results('
+	select `g`.`gid`, IF(`g`.`gid`<11, `g`.`gid`, 11) as `builtinorder`, `g`.`name`, `g`.`prominent`, count(`l`.`uid`) as `membercount`
+	from `qheb_user_groups` as `g`
+	  left join `qheb_user_group_links` as `l`
+	    on (`l`.`gid`=`g`.`gid`)
+	group by `g`.`gid`
+	order by `builtinorder` asc, `g`.`name` asc;',
+	ARRAY_A
+);
 ?>
 <div class="wrap">
 	<div class="icon32 qhebunelicon"></div>

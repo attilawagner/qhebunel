@@ -195,8 +195,16 @@ if (isset($_GET['setperm'])) {
 	if (isset($cat_perms_catname_[0])) {
 		$cat_perms_catname = $cat_perms_catname_[0][0];
 		$cat_perms = $wpdb->get_results(
-			$wpdb->prepare(
-				'select `g`.`name` as `gname`, `g`.`prominent`, `g`.`gid`, `p`.`access` from `qheb_user_groups` as `g` left join (select `gid`, `access` from `qheb_category_permissions` where `catid`=%d) as `p` on (`g`.`gid` = `p`.`gid`) order by `g`.`name` asc;',
+			$wpdb->prepare('
+				select `g`.`name` as `gname`, `g`.`prominent`, `g`.`gid`, `p`.`access`, IF(`g`.`gid`<11, `g`.`gid`, 11) as `builtinorder`
+				from `qheb_user_groups` as `g`
+				  left join (
+				    select `gid`, `access`
+				    from `qheb_category_permissions`
+				    where `catid`=%d
+				  ) as `p`
+				    on (`g`.`gid`=`p`.`gid`)
+				order by `builtinorder` asc, `g`.`name` asc;',
 				$cat_perms_catid
 			),
 			ARRAY_A
@@ -445,10 +453,10 @@ function qheb_cat_parent_select($forcat = -1, $selected = -1) {
 					} else {
 						foreach ($cat_perms as $catp) {
 							echo('<tr><td'.($catp['prominent'] ? ' class="prominent"' : '').'>'.$catp['gname'].'</td>');
-							echo('<td><input type="radio" name="qheb_catperm['.$catp['gid'].']" value="0"'.($catp['access'] == 0 ? ' checked="checked"' : '').' /></td>');
-							echo('<td><input type="radio" name="qheb_catperm['.$catp['gid'].']" value="1"'.($catp['access'] == 1 ? ' checked="checked"' : '').' /></td>');
-							echo('<td><input type="radio" name="qheb_catperm['.$catp['gid'].']" value="2"'.($catp['access'] == 2 ? ' checked="checked"' : '').' /></td>');
-							echo('<td><input type="radio" name="qheb_catperm['.$catp['gid'].']" value="3"'.($catp['access'] == 3 ? ' checked="checked"' : '').' /></td>');
+							echo('<td><input type="radio" id="qheb_catperm_'.$catp['gid'].'_0" name="qheb_catperm['.$catp['gid'].']" value="0"'.($catp['access'] == 0 ? ' checked="checked"' : '').' /></td>');
+							echo('<td><input type="radio" id="qheb_catperm_'.$catp['gid'].'_1" name="qheb_catperm['.$catp['gid'].']" value="1"'.($catp['access'] == 1 ? ' checked="checked"' : '').' /></td>');
+							echo('<td><input type="radio" id="qheb_catperm_'.$catp['gid'].'_2" name="qheb_catperm['.$catp['gid'].']" value="2"'.($catp['access'] == 2 ? ' checked="checked"' : '').' /></td>');
+							echo('<td><input type="radio" id="qheb_catperm_'.$catp['gid'].'_3" name="qheb_catperm['.$catp['gid'].']" value="3"'.($catp['access'] == 3 ? ' checked="checked"' : '').' /></td>');
 							echo('</tr>');
 						}
 					}

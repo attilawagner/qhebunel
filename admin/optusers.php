@@ -6,8 +6,8 @@ if(!current_user_can('manage_options')) {
 //Process user list actions
 if (isset($_POST['qheb_ulist_modif']) && check_admin_referer('qheb_usermodif', 'qhebnonce') && isset($_POST['qheb_ulist_user'])) {
 	$action = $_POST['qheb_ulist_action'];
-	$uids = $_POST['qheb_ulist_user'];
-	$gid = (int)$_POST['qheb_ulist_group'];
+	$uids = @$_POST['qheb_ulist_user'];
+	$gid = (int)@$_POST['qheb_ulist_group'];
 	
 	if (count($uids) > 0) {
 		switch ($action) {
@@ -123,11 +123,36 @@ if (isset($_REQUEST['showgroup'])) {
 		$sgq = ' and `gl`.`gid`='.$showgroup;
 	}
 }
-$users = $wpdb->get_results('select `u`.`ID` as `uid`, `u`.`display_name`, `u`.`user_login`, `e`.`rank`, group_concat(`g`.`name`)  as `glist` from `qheb_user_ext` as `e` right join `qheb_wp_users` as `u` on (`e`.`uid`=`u`.`ID`) left join `qheb_user_group_links` as `gl` on (`u`.`ID`=`gl`.`uid`) left join `qheb_user_groups` as `g` on (`gl`.`gid`=`g`.`gid`) where (`gl`.`gid`>10 or `gl`.`gid` is null or `gl`.`gid`=3)'.$sgq.' group by `u`.`ID` order by `u`.`display_name` asc;', ARRAY_A);
+$users = $wpdb->get_results('
+	select `u`.`ID` as `uid`, `u`.`display_name`, `u`.`user_login`, `e`.`rank`, group_concat(`g`.`name`) as `glist`
+	from `qheb_user_ext` as `e`
+	  right join `qheb_wp_users` as `u`
+	    on (`e`.`uid`=`u`.`ID`)
+	  left join `qheb_user_group_links` as `gl`
+	    on (`u`.`ID`=`gl`.`uid`)
+	  left join `qheb_user_groups` as `g`
+	    on (`gl`.`gid`=`g`.`gid`)
+	where (`gl`.`gid`>10 or `gl`.`gid` is null or `gl`.`gid`=3)'.$sgq.'
+	group by `u`.`ID` order by `u`.`display_name` asc;',
+	ARRAY_A
+);
 
 //Load groups
-//$groups = $wpdb->get_results('select `g`.`gid`, `g`.`name`, `g`.`prominent`, count(`gl`.`uid`) as `ucount` from `qheb_user_groups` as `g` left join `qheb_user_group_links` as `gl` on (`g`.`gid`=`gl`.`gid`) group by `g`.`gid` order by `prominent` desc, `name` asc;', ARRAY_A);
-$groups = $wpdb->get_results('(select `g`.`gid`, `g`.`name`, `g`.`prominent`, count(`gl`.`uid`) as `ucount` from `qheb_user_groups` as `g` left join `qheb_user_group_links` as `gl` on (`g`.`gid`=`gl`.`gid`) group by `g`.`gid` order by `prominent` desc, `name` asc) union (select 0, "All", 1, count(`ID`) from `qheb_wp_users`);', ARRAY_A);
+$groups = $wpdb->get_results('
+	select * from
+	((
+	  select `g`.`gid`, `g`.`name`, `g`.`prominent`, count(`gl`.`uid`) as `ucount`
+	  from `qheb_user_groups` as `g`
+	    left join `qheb_user_group_links` as `gl`
+	      on (`g`.`gid`=`gl`.`gid`)
+	  group by `g`.`gid`
+	) union (
+	  select 0, "All", 1, count(*)
+	  from `qheb_wp_users`
+	)) as `gg`
+	order by `prominent` desc, `name` asc;',
+	ARRAY_A
+);
 
 //Displays a select with the user groups
 function qheb_ulist_group_select() {
@@ -168,22 +193,19 @@ function qheb_ulist_top_groups() {
 				<tr>
 					<th scope="col" class="qheb_username"><?php _e('Display name (Username)'); ?></th>
 					<th scope="col" class="qheb_usergroups"><?php _e('Groups'); ?></th>
-					<th scope="col" class="qheb_catact"><?php _e('Actions'); ?></th>
 				</tr>
 			</thead>
 			<tfoot>
 				<tr>
 					<th scope="col"><?php _e('Display name (Username)'); ?></th>
 					<th scope="col"><?php _e('Groups'); ?></th>
-					<th scope="col"><?php _e('Actions'); ?></th>
 				</tr>
 			</tfoot>
 			<tbody>
 				<?php
 				foreach ($users as $user) {
 					echo('<tr><td><label><input type="checkbox" name="qheb_ulist_user[]" value="'.$user['uid'].'" />'.$user['display_name'].($user['display_name'] != $user['user_login'] ? ' ('.$user['user_login'].')' : '').'</label></td>');
-					echo('<td>'.$user['glist'].'</td>');
-					echo('<td><a href="'.admin_url('admin.php?page=qhebunel/admin/optusers.php&amp;editid='.$user['uid']).'">'.__('Edit').'</a></td></tr>');
+					echo('<td>'.$user['glist'].'</td></tr>');
 				}
 				?>
 			</tbody>
