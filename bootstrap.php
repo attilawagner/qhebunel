@@ -47,9 +47,9 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 	 * Sections may have parameters (/delete-thread/[thread-id]),
 	 * or could be single special pages (/profile, /error)
 	 */
-	$pos = strpos($_SERVER['REQUEST_URI'], '/forum/') + 7;//strpos gives back the start, we need the end
-	$forumURI = substr($_SERVER['REQUEST_URI'], $pos);
-	
+	$forumRootURI = site_url('forum/', 'relative');
+	$forumRootLen = strlen($forumRootURI);
+	$forumURI = substr($_SERVER['REQUEST_URI'], $forumRootLen);
 	/*
 	 * The section names are the keys in the array.
 	 * For each section, an array defines the file name that should be included,
@@ -83,8 +83,15 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 	
 	if (empty($forumURI)) {
 		/*
-		 * Display the category list as the root page by default
+		 * Display the category list as the root page by default,
+		 * and redirect /forum to /forum/
 		 */
+		if (substr($_SERVER['REQUEST_URI'],-1) != '/') {
+			$absoluteUrl = site_url('forum/');
+			wp_redirect($absoluteUrl, 301);//Moved permanently
+			die();
+		}
+		
 		$forumPage = 'catlist';
 		
 	} else {
@@ -217,7 +224,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 		global $titleElement;
 		$site_name = get_bloginfo('name' , 'display');
 		$elements = array(
-			'Forum',
+			__('Forum', 'qhebunel'),
 			$site_name
 		);
 		if (!empty($titleElement)) {

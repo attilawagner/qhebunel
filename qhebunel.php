@@ -16,7 +16,9 @@ class Qhebunel {
 	 */
 	public static function init() {
 		//Forum pages only
-		if (($pos = strpos($_SERVER['REQUEST_URI'], '/forum/')) !== false) {
+		$forumRoot = site_url('forum', 'relative');
+		$forumRootLen = strlen($forumRoot);
+		if (strncmp($forumRoot, $_SERVER['REQUEST_URI'], $forumRootLen) === 0) {
 			//Localization
 			//load_plugin_textdomain('qhebunel', 'locales');
 			self::removeWpMagicQuotes();
