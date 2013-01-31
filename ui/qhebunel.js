@@ -42,7 +42,7 @@ function qheb_inputSetError(field) {
  * Loads SCEditor for the given textarea.
  */
 function initSCE(selector, options) {
-	toolbar = "bold,italic,underline,strike,subscript,superscript|left,center,right,justify|" +
+	var toolbar = "bold,italic,underline,strike,subscript,superscript|left,center,right,justify|" +
 		"size,color,removeformat|cut,copy,paste,pastetext|bulletlist,orderedlist|" +
 		"table|code,quote,spoiler|horizontalrule,image,email,link,unlink|emoticon,youtube,date,time|" +
 		"print,source";
@@ -125,7 +125,7 @@ function initSCE(selector, options) {
 				}
 			}
 		);
-	jQuery(selector).sceditorBBCodePlugin(
+	return jQuery(selector).sceditorBBCodePlugin(
 		jQuery.extend(
 			{toolbar:toolbar,emoticonsRoot:qhebunelConfig.SCEditor.emoticonsRoot,emoticons:qhebunelConfig.SCEditor.emoticons},
 			options
@@ -134,8 +134,15 @@ function initSCE(selector, options) {
 }
 
 function initReplyForm() {
-	w = jQuery('#replyForm textarea').width;
-	initSCE('#replyForm textarea', {resizeMinWidth:w, resizeMaxWidth:w, resizeMinHeight:150});
+	var w = jQuery('#replyForm textarea').width;
+	var editor = initSCE('#replyForm textarea', {resizeMinWidth:w, resizeMaxWidth:w, resizeMinHeight:150});
+	
+	jQuery('#replyForm').submit(function(){
+		if (editor.sceditor('instance').val() == "") {
+			return false;
+		}
+	});
+	
 }
 function initNewThreadForm() {
 	w = jQuery('#newThreadForm textarea').width;

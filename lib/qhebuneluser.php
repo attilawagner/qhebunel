@@ -13,7 +13,19 @@ class QhebunelUser {
 	public static function isAdmin() {
 		$udata = self::getData();
 		if (isset($udata['rank'])) {
-			return $udata['rank'];
+			return $udata['rank'] >= 3;
+		}
+		return false;
+	}
+	
+	/**
+	 * Checks whether the currently logged in user is an moderator in Qhebunel.
+	 * @return boolean True if the currently logged in user has moderator privileges.
+	 */
+	public static function isModerator() {
+		$udata = self::getData();
+		if (isset($udata['rank'])) {
+			return $udata['rank'] >= 2;
 		}
 		return false;
 	}
@@ -28,14 +40,14 @@ class QhebunelUser {
 		if (!isset($QHEB_UDATA)) {
 			$QHEB_UDATA[] = array();
 			if ($current_user->ID > 0) {
-				$udata = $wpdb->get_results(
+				$udata = $wpdb->get_row(
 					$wpdb->prepare(
 						"select * from `qheb_user_ext` where `uid`=%d;",
 						$current_user->ID
 					),
-					ARRAY_N
+					ARRAY_A
 				);
-				$QHEB_UDATA[] = $udata[0];
+				$QHEB_UDATA = $udata;
 			}
 		}
 		return $QHEB_UDATA;

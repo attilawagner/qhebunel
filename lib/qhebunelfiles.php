@@ -154,6 +154,7 @@ class QhebunelFiles {
 	 */
 	public static function saveAttachmentArray($files, $postId, $userId = null) {
 		$ret = array();
+		$savedAttachments = 0;
 		foreach ($files['name'] as $id => $name) {
 			//Build $fileArr as if it would be a single uploaded file
 			$fileArr = array(
@@ -164,14 +165,39 @@ class QhebunelFiles {
 				'size' => $files['size'][$id]
 			);
 			
-			$ret[] = self::saveAttachment($fileArr, $postId, $userId);
+			$saveResult = self::saveAttachment($fileArr, $postId, $userId);
+			$ret[] = $saveResult;
+			if ($saveResult != false) {
+				if (++$savedAttachments == QHEBUNEL_ATTACHMENT_LIMIT_PER_POST) {
+					//If the maximum amount of attached files is reached, terminate the procession
+					break;
+				}
+			}
 		}
-	} 
+		return $ret;
+	}
+	
+	/**
+	 * Checks the type of an uploaded file.
+	 * Currently only the file extension is checked. Extensionless files are allowed.
+	 * @param array $fileArr A single item in $_FILES, containing the data for the attachment.
+	 * @return boolean True if the attachment can be saved.
+	 */
+	private static function checkAttachmentType($fileArr) {
+		$filePath = $fileArr['name'];
+		if (preg_match('/\.([^.]+)$/s', $filePath, $regs)) {
+			$fileExt = $regs[1];
+		} else {
+			//Extensionless file
+			return true;
+		}
+		return (strpos(','.QHEBUNEL_ATTACHMENT_ALLOWED_TYPES.',', ','.$fileExt.',') !== false);
+	}
 	
 	/**
 	 * Saves a single file uploaded as an attachment
 	 * into the users's directory.
-	 * @param array $fileArr A single item in $_FILES, containing the data for the avatar.
+	 * @param array $fileArr A single item in $_FILES, containing the data for the attachment.
 	 * @param integer $postId Post ID this attachment belongs to.
 	 * @param integer $userId Optional. If not provided, the current user's id is used.
 	 * @return mixed The ID of the attachment on success, or false upon failure.
@@ -204,10 +230,16 @@ class QhebunelFiles {
 		
 		$safeName = self::getSafeName($fileArr['name']);
 		
-		//TODO Size check
+		//Size check - mods can upload larger files
 		$size = filesize($fileArr['tmp_name']);
+		if ($size > QHEBUNEL_ATTACHMENT_MAX_SIZE && !QhebunelUser::isModerator()) {
+			return false;
+		}
 		
-		//TODO Type check
+		//Type check - admins can upload without restrictions
+		if (!self::checkAttachmentType($fileArr) && !QhebunelUser::isAdmin()) {
+			return false;
+		}
 		
 		//Save into the DB
 		$wpdb->flush();
