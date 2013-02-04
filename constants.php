@@ -26,4 +26,5 @@ define('QHEBUNEL_POSTS_PER_PAGE', 10);
 define('QHEBUNEL_ATTACHMENT_MAX_SIZE', 5242880); //5M
 define('QHEBUNEL_ATTACHMENT_LIMIT_PER_POST', 5);
 define('QHEBUNEL_ATTACHMENT_ALLOWED_TYPES', 'jpg,jpeg,jps,gif,png,bmp,psd,tga,tiff,tif,rar,zip,txt,doc,docx,xls,xlsx,ppt,pptx');
+define('QHEBUNEL_BADGE_FORMATS', 'jpg,jpeg,gif,png');
 ?>

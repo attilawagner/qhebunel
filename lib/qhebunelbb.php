@@ -3,8 +3,7 @@
  * Qhebunel
  * BBcode and emoticon parser
  * 
- * Based on the BBCode plugin by Viper007Bond
- * and on the shortcode API of WordPress.
+ * Tag rendering is based on the BBCode plugin by Viper007Bond.
  */
 class QhebunelBB {
 	

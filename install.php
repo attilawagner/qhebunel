@@ -56,14 +56,14 @@ create table `qheb_user_group_links` (
 /* Badges */
 create table `qheb_badges` (
 	`bid` int(10) unsigned auto_increment,					/* Badge ID */
+	`bgid` int(10) unsigned not null,						/* Badge group ID */
 	`name` varchar(50) not null,							/* Display name */
 	`description` varchar(1000),							/* Longer description (eg: what can it be awarded for) */
-	`icon` varchar(255) not null,							/* Icon file name */
-	`display` tinyint(1) not null default 0,				/* Display icon next to every post by the user */
-	`claimable` tinyint(1) not null default 0,				/* Can users claim the badge for themselves (1), or only a mod can award it (0) */
-	`bgid` int(10) unsigned not null,						/* Badge group ID */
+	`largeimage` varchar(255),								/* Icon file name - displayed on profile page */
+	`smallimage` varchar(255),								/* Icon file name - displayed next to posts */
 	primary key (`bid`),
-	unique index `name` (`name`)
+	unique index `name` (`name`),
+	index `group` (`bgid`)
 	) character set utf8 collate utf8_unicode_ci engine MyISAM;
 
 /* User and Badge linking */
@@ -71,6 +71,7 @@ create table `qheb_user_badge_links` (
 	`bid` int(10) unsigned not null,						/* Badge ID */
 	`uid` bigint(20) unsigned not null,						/* UserID */
 	`startdate` datetime not null,							/* When was the badge given to the user */
+	`show` tinyint(1) unsigned not null default 0,			/* Show the badge next to posts - 0:no, 1:yes, 2:forced */
 	unique index `ids` (`bid`, `uid`),
 	index `uid` (`uid`)
 	) character set utf8 collate utf8_unicode_ci engine MyISAM;
@@ -78,8 +79,8 @@ create table `qheb_user_badge_links` (
 /* Badge groups */
 create table `qheb_badge_groups` (
 	`bgid` int(10) unsigned auto_increment,					/* Badge group ID */
-	`name` varchar(50) not null,							/* UserID */
-	`climit` int(10) unsigned,								/* Claim limit - how many badges can the user claim from this group */
+	`name` varchar(50) not null,							/* Group name */
+	`climit` int(10) unsigned,								/* Claim limit - how many badges can the user claim from this group (if 0, only mods can award these badges) */
 	`hidden` tinyint(1) unsigned not null default 1,		/* If the group is hidden, users won't be able to browse it's content. */
 	unique index `name` (`name`),
 	primary key (`bgid`)
@@ -175,10 +176,19 @@ EOS_INSTALL;
 /*
  * htaccess files
  */
-global $avatarsHtaccess, $attachmentsHtaccess;
+global $avatarsHtaccess, $attachmentsHtaccess, $badgesHtacces;
 $siteHost = parse_url(get_site_url(), PHP_URL_HOST);
 
 $avatarsHtaccess = <<<EOS_HTACCESS
+Options -Indexes
+Options +FollowSymLinks
+RewriteEngine on
+#RewriteCond expr "! %{HTTP_REFERER} -strmatch '*://%{HTTP_HOST}/*'"
+RewriteCond %{HTTP_REFERER} !^http(s?)://([^/]*)${siteHost}
+RewriteRule . - [F]
+EOS_HTACCESS;
+
+$badgesHtacces = <<<EOS_HTACCESS
 Options -Indexes
 Options +FollowSymLinks
 RewriteEngine on
@@ -206,7 +216,7 @@ $installSql = preg_replace('/\s+/', ' ', $installSql);
  * to initialize the forum.
  */
 function qhebunelInstall() {
-	global $wpdb, $installSql, $avatarsHtaccess, $attachmentsHtaccess;
+	global $wpdb, $installSql, $avatarsHtaccess, $attachmentsHtaccess, $badgesHtacces;
 	/*
 	 * Run install script command by command
 	 */
@@ -268,9 +278,10 @@ function qhebunelInstall() {
 	 * Create dir struct for user data
 	 */
 	$dirs = array(
-		'forumDir' =>		 WP_CONTENT_DIR.'/forum',
-		'avatarDir' =>		 WP_CONTENT_DIR.'/forum/avatars',
-		'attachmentDir' =>	 WP_CONTENT_DIR.'/forum/attachments'
+		'forumDir' =>		WP_CONTENT_DIR.'/forum',
+		'avatarDir' =>		WP_CONTENT_DIR.'/forum/avatars',
+		'attachmentDir' =>	WP_CONTENT_DIR.'/forum/attachments',
+		'badgeDir' =>		WP_CONTENT_DIR.'/forum/badges'
 	);
 	$stat = @stat(WP_CONTENT_DIR);
 	$mode = $stat['mode'] & 0000666;
@@ -286,10 +297,13 @@ function qhebunelInstall() {
 	 */
 	$avatarsHtPath = WP_CONTENT_DIR.'/forum/avatars/.htaccess';
 	$attachmentsHtPath = WP_CONTENT_DIR.'/forum/attachments/.htaccess';
+	$badgesHtPath = WP_CONTENT_DIR.'/forum/badges/.htaccess';
 	file_put_contents($avatarsHtPath, $avatarsHtaccess);
 	@chmod($avatarsHtPath, $mode);
 	file_put_contents($attachmentsHtPath, $attachmentsHtaccess);
 	@chmod($attachmentsHtPath, $mode);
+	file_put_contents($badgesHtPath, $badgesHtacces);
+	@chmod($badgesHtPath, $mode);
 }
 
 /**

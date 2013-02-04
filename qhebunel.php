@@ -161,9 +161,10 @@ define('QHEBUNEL_URL', plugin_dir_url(__FILE__));
 require_once 'lib/qhebuneluser.php';
 require_once 'lib/qhebuneldate.php';
 require_once 'lib/qhebunelbb.php';
-require_once 'lib/qhebunelui.php';;
+require_once 'lib/qhebunelui.php';
 require_once 'lib/qhebunelemoticons.php';
 require_once 'lib/qhebunelfiles.php';
+require_once 'lib/qhebunelbadges.php';
 
 //Register hooks
 add_action('init', array('Qhebunel','init'), 99);

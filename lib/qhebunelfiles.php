@@ -179,19 +179,27 @@ class QhebunelFiles {
 	
 	/**
 	 * Checks the type of an uploaded file.
-	 * Currently only the file extension is checked. Extensionless files are allowed.
+	 * Currently only the file extension is checked.
+	 * 
 	 * @param array $fileArr A single item in $_FILES, containing the data for the attachment.
-	 * @return boolean True if the attachment can be saved.
+	 * @param string $allowedExtensions Comma separated list of allowed extensions.
+	 * @param boolean $allowExtensionless Set to true if you want to allow extensionless files.
+	 * @return mixed The file extension as string if the file is allowed, or false if it's not.
 	 */
-	private static function checkAttachmentType($fileArr) {
+	private static function checkType($fileArr, $allowedExtensions, $allowExtensionless) {
 		$filePath = $fileArr['name'];
 		if (preg_match('/\.([^.]+)$/s', $filePath, $regs)) {
 			$fileExt = $regs[1];
 		} else {
 			//Extensionless file
-			return true;
+			return $allowExtensionless;
 		}
-		return (strpos(','.QHEBUNEL_ATTACHMENT_ALLOWED_TYPES.',', ','.$fileExt.',') !== false);
+		if (strpos(','.$allowedExtensions.',', ','.$fileExt.',') === false) {
+			//Not allowed
+			return false;
+		}
+		//Allowed, return the extension
+		return $fileExt;
 	}
 	
 	/**
@@ -237,7 +245,7 @@ class QhebunelFiles {
 		}
 		
 		//Type check - admins can upload without restrictions
-		if (!self::checkAttachmentType($fileArr) && !QhebunelUser::isAdmin()) {
+		if (self::checkType($fileArr, QHEBUNEL_ATTACHMENT_ALLOWED_TYPES, true) === false && !QhebunelUser::isAdmin()) {
 			return false;
 		}
 		
@@ -331,6 +339,75 @@ class QhebunelFiles {
 		$saneExt = substr($saneExt, 0, 15);
 		$saneName = substr($saneName, 0, $maxLen-strlen($ext)-1);
 		return $saneName.'.'.$saneExt;
+	}
+	
+	/**
+	 * Checks and saves the images uploaded for a badge.
+	 * On success, an associative array will be returned in the following form:
+	 * array(
+	 *   'large' => 'badges/00/0012_large.ext',
+	 *   'small' => 'badges/00/0012_small.ext'
+	 * )
+	 * @param integer $badgeId Badge ID.
+	 * @param array $largeImage A single item in $_FILES.
+	 * @param array $smallImage A single item in $_FILES.
+	 * @return mixed An array holding the paths to the large and small images on success,
+	 * or false if the files could not be saved.
+	 */
+	public static function saveBadgeImages($badgeId, $largeImage, $smallImage) {
+		//Check uploaded files
+		if ($largeImage['error'] != 0 || !@is_uploaded_file($largeImage['tmp_name'])) {
+			return false;
+		}
+		$hasSmallImage =  ($smallImage['error'] == 0 && @is_uploaded_file($smallImage['tmp_name']));
+		
+		//Check file types and build paths
+		$largeExt = self::checkType($largeImage, QHEBUNEL_BADGE_FORMATS, false);
+		if ($largeExt === false) {
+			return false;
+		}
+		$largePathSegment = self::getBadgeImagePath($badgeId, $largeExt, true);
+		$largePath = WP_CONTENT_DIR.'/'.$largePathSegment;
+		
+		if ($hasSmallImage) {
+			$smallExt = self::checkType($smallImage, QHEBUNEL_BADGE_FORMATS, false);
+			if ($smallExt === false) {
+				$hasSmallImage = false;
+			} else {
+				$smallPathSegment = self::getBadgeImagePath($badgeId, $smallExt, false);
+				$smallPath = WP_CONTENT_DIR.'/'.$smallPathSegment;
+			}
+		}
+		
+		if (!@move_uploaded_file($largeImage['tmp_name'], $largePath)) {
+			return false;
+		}
+		if ($hasSmallImage && !@move_uploaded_file($smallImage['tmp_name'], $smallPath)) {
+			$hasSmallImage = false;
+		}
+		return array(
+			'large' => $largePathSegment,
+			'small' => ($hasSmallImage ? $smallPathSegment : '')
+		);
+	}
+	
+	/**
+	 * Return the path to the image.
+	 * Badge images are clusterized into directories holding 100 badges each.
+	 * For example: $badgeId=12, $large=true:
+	 * forum/badges/00/0012_large.ext
+	 * @param integer $badgeId Badge ID.
+	 * @param string $fileExt File extension.
+	 * @param boolean $large True for the large image, false for the small icon.
+	 * @return string Path relative to WP_CONTENT_DIR or WP_CONTENT_URL.
+	 */
+	private static function getBadgeImagePath($badgeId, $fileExt, $large) {
+		$badgeNum = sprintf('%04u', $badgeId);
+		$variant = ($large ? 'large' : 'small');
+		$dir = 'forum/badges/'.substr($badgeNum, 0, 2);
+		$path = $dir.'/'.$badgeNum.'_'.$variant.'.'.$fileExt;
+		self::createDirStruct($dir);
+		return $path;
 	}
 	
 	/**

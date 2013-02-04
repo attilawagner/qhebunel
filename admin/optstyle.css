@@ -27,7 +27,7 @@
 #poststuff.qheb_metabox th{
 	text-align:left;
 }
-#poststuff.qheb_metabox input[type="text"], #poststuff.qheb_metabox select {
+#poststuff.qheb_metabox input[type="text"], #poststuff.qheb_metabox select, #poststuff.qheb_metabox input[type="file"] {
 	width: 100%;
 }
 #poststuff.qheb_metabox .editform {
