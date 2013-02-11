@@ -6,7 +6,7 @@ if(!current_user_can('manage_options')) {
 /*
  * SQL install script
  */
-global $installSql;
+global $wpdb, $installSql;
 $installSql = <<<EOS_INSTALL
 /* User data extension table */
 create table `qheb_user_ext` (
@@ -171,7 +171,9 @@ insert into `qheb_user_ext` (`uid`) select `ID` from `qheb_wp_users`;
 
 EOS_INSTALL;
 
-
+//Actualizing WP_users table local prefix
+$wp_users_local = $wpdb->prefix . 'users';
+$installSql = str_replace('`wp_users`', '`'.$wp_users_local.'`', $installSql);
 
 /*
  * htaccess files
@@ -287,9 +289,8 @@ function qhebunelInstall() {
 	$mode = $stat['mode'] & 0000666;
 	foreach ($dirs as $dir) {
 		if (!is_dir($dir)) {
-			mkdir($dir);
+			mkdir($dir, 0775) or die('Couldn\'t create the directory: ('.$dir.') mode:'. $mode.') ');
 		}
-		@chmod($dir, $mode);
 	}
 	
 	/*
