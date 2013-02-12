@@ -61,6 +61,14 @@ if (isset($_POST['qheb_badgeg_del']) && check_admin_referer('qheb_badgegdel', 'q
 		$id = (int)$id;
 		if ($id > 0) {
 			$idList .= $id . ',';
+			
+			//Deleting group badges		
+			$bgids_to_del = $wpdb->get_results("SELECT bid FROM qheb_badges WHERE bgid = ".$id.";", ARRAY_A);
+			foreach ($bgids_to_del as $bgids){
+				foreach ($bgids as $bgid){
+					QhebunelBadges::deleteBadge($bgid);
+				}
+			}
 		}
 	}
 	if (strlen($idList) > 1) {
