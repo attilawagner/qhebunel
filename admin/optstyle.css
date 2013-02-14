@@ -85,6 +85,9 @@
 	clear: left;
 	margin-top: 4px;
 }
+tr.banned {
+	opacity: 0.5;
+}
 
 /* badges */
 .qheb_bgroup_hidden {
