@@ -5,33 +5,33 @@
  */
 if (!defined('QHEBUNEL_REQUEST') || QHEBUNEL_REQUEST !== true) die;
 
-$replyMessage = $_POST['reply_message'];
-$replyThreadId = (int)$_POST['reply_thread'];
+$reply_message = $_POST['reply_message'];
+$reply_thread_id = (int)$_POST['reply_thread'];
 
 //Clean whitespace from both ends of the message
-$replyMessage = preg_replace('/^[\p{Z}\s]+|[\p{Z}\s]+$/u', '', $replyMessage);
+$reply_message = preg_replace('/^[\p{Z}\s]+|[\p{Z}\s]+$/u', '', $reply_message);
 
-if (empty($replyMessage) || $replyThreadId <= 0) {
-	Qhebunel::redirectToErrorPage();	
+if (empty($reply_message) || $reply_thread_id <= 0) {
+	Qhebunel::redirect_to_error_page();	
 }
 
 //Get category id
-$replyCatId = $wpdb->get_var(
+$reply_cat_id = $wpdb->get_var(
 	$wpdb->prepare(
 		'select `catid` from `qheb_threads` where `tid`=%d limit 1;',
-		$replyThreadId
+		$reply_thread_id
 	),
 	0,
 	0
 );
-if (empty($replyCatId) || $replyCatId <= 0) {
-	Qhebunel::redirectToErrorPage();
+if (empty($reply_cat_id) || $reply_cat_id <= 0) {
+	Qhebunel::redirect_to_error_page();
 }
 
 //Check permissions
-$permission = QhebunelUser::getPermissionsForCategory($replyCatId);
+$permission = QhebunelUser::get_permissions_for_category($reply_cat_id);
 if ($permission < QHEBUNEL_PERMISSION_WRITE) {
-	Qhebunel::redirectToErrorPage();
+	Qhebunel::redirect_to_error_page();
 }
 
 //Insert into the database
@@ -40,23 +40,23 @@ $wpdb->flush();
 $wpdb->query(
 	$wpdb->prepare(
 		'insert into `qheb_posts` (`tid`, `uid`, `text`, `postdate`) values (%d, %d, %s, %s);',
-		$replyThreadId,
+		$reply_thread_id,
 		$current_user->ID,
-		$replyMessage,
+		$reply_message,
 		current_time('mysql')
 	)
 );
 
-$postId = $wpdb->insert_id;
-if ($postId == 0) {
-	Qhebunel::redirectToErrorPage();
+$post_id = $wpdb->insert_id;
+if ($post_id == 0) {
+	Qhebunel::redirect_to_error_page();
 }
 
 $wpdb->query(
 	$wpdb->prepare(
 		'update `qheb_threads` set `postcount`=`postcount`+1, `lastpostid`=%d where `tid`=%d limit 1;',
-		$postId,
-		$replyThreadId
+		$post_id,
+		$reply_thread_id
 	)
 );
 
@@ -71,11 +71,11 @@ $wpdb->query(
  * Process attachments
 * Anonymous users are forbidden to post attachments.
 */
-if (QhebunelUser::hasPersmissionToUpload()) {
-	QhebunelFiles::saveAttachmentArray($_FILES['attachments'], $postId);
+if (QhebunelUser::has_persmission_to_upload()) {
+	QhebunelFiles::save_attachment_array($_FILES['attachments'], $post_id);
 }
 
 //Redirect to post
-$absoluteUrl = QhebunelUI::getUrlForPost($postId);
-wp_redirect($absoluteUrl);//Temporal redirect
+$absolute_url = QhebunelUI::get_url_for_post($post_id);
+wp_redirect($absolute_url);//Temporal redirect
 ?>

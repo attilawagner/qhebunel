@@ -12,19 +12,19 @@ class QhebunelBB {
 	 * Each tag repesented by an associative array of the following structure:
 	 * <ul>
 	 * <li>
-	 * <b>parseChildren</b><br/>
+	 * <b>parse_children</b><br/>
 	 * Parses BBCode tags nested inside this tag.
 	 * </li>
 	 * <li>
-	 * <b>allowSelfnest</b><br/>
+	 * <b>allow_selfnest</b><br/>
 	 * Will parse the same tag in the content (eg. quote).
 	 * </li>
 	 * <li>
-	 * <b>allowedChildren</b><br/>
+	 * <b>allowed_children</b><br/>
 	 * If defiend, the parser will only look for tags listed in this array.
 	 * </li>
 	 * <li>
-	 * <b>allowedParent</b><br/>
+	 * <b>allowed_parent</b><br/>
 	 * The parser will only look for this tag inside the specified parent tag.
 	 * If null, no checks will be run.
 	 * </li>
@@ -70,17 +70,17 @@ class QhebunelBB {
 	 * @return string HTML code.
 	 */
 	public static function parse($text) {
-		$tokens = self::tokenizeText($text);
+		$tokens = self::tokenize_text($text);
 		if (empty($tokens)) {
 			return '';
 		}
-		$tokens = self::validateTokens($tokens);
+		$tokens = self::validate_tokens($tokens);
 		
 		$stack = array();
 		foreach ($tokens as $token) {
 			if (is_string($token)) {
 				//Add string tokens to output stack
-				self::addTextToken($stack, self::removeLineBreaks($token));
+				self::add_text_token($stack, self::remove_line_breaks($token));
 			} else {
 				
 				if ($token['closing']) {
@@ -92,15 +92,15 @@ class QhebunelBB {
 					 */
 					if (is_string(end($stack))) {
 						$content = array_pop($stack);
-						$openingTag = array_pop($stack);
+						$opening_tag = array_pop($stack);
 					} else {
 						$content = null;
-						$openingTag = array_pop($stack);
+						$opening_tag = array_pop($stack);
 					}
 					
-					$methodName = 'parseTag_'.$token['name'];
-					$convertedTag = call_user_func(array('QhebunelBB', $methodName), $openingTag['attr'], $content);
-					self::addTextToken($stack, $convertedTag);
+					$method_name = 'parseTag_'.$token['name'];
+					$converted_tag = call_user_func(array('QhebunelBB', $method_name), $opening_tag['attr'], $content);
+					self::add_text_token($stack, $converted_tag);
 					
 				} else {
 					//Opening tag -> add it to the stack
@@ -120,7 +120,7 @@ class QhebunelBB {
 	 * @param array $stack Stack used in the parse() method
 	 * @param string $text Text token to add
 	 */
-	private static function addTextToken(&$stack, $text) {
+	private static function add_text_token(&$stack, $text) {
 		if (empty($text)) {
 			//If the text token is empty, do nothing
 			return;
@@ -141,7 +141,7 @@ class QhebunelBB {
 	 * @param string $text Text to clean up.
 	 * @return string The text without unnecessary line breaks.
 	 */
-	private static function removeLineBreaks($text) {
+	private static function remove_line_breaks($text) {
 		if (preg_match('%^(?:<br ?/?>)?(.*?)(?:<br ?/?>)?$%s', $text, $regs)) {
 			return $regs[1];
 		} else {
@@ -157,22 +157,22 @@ class QhebunelBB {
 	 * @param array $tokens Tokens created from the input text.
 	 * @return array Corrected token list.
 	 */
-	private static function validateTokens($tokens) {
+	private static function validate_tokens($tokens) {
 		$stack = array();
 		$parents = array();
 		
 		foreach ($tokens as $token) {
 			if (is_string($token)) {
 				//Add string tokens to output stack
-				self::addTextToken($stack, $token);
+				self::add_text_token($stack, $token);
 			} else {
 				
-				if (self::isValidTagToken($parents, $token)) {
+				if (self::is_valid_tag_token($parents, $token)) {
 					if ($token['closing']) {
-						$parentsMaxIndex = count($parents) - 1;
+						$parents_max_index = count($parents) - 1;
 						
 						//Find opening tag by walking backwards in the parent list, and close any unclosed child tags
-						for ($i=$parentsMaxIndex; $i >=0; $i--) {
+						for ($i=$parents_max_index; $i >=0; $i--) {
 							if ($parents[$i] == $token['name']) {
 								//The opening tag
 								break;
@@ -202,7 +202,7 @@ class QhebunelBB {
 				} else {
 						
 					//Treat invalid tokens as texts
-					self::addTextToken($stack, $token['text']);
+					self::add_text_token($stack, $token['text']);
 				}
 			}
 		}
@@ -219,7 +219,7 @@ class QhebunelBB {
 	 * @param array $token The token to validate.
 	 * @return boolean True, if the token is valid and can be processed.
 	 */
-	private static function isValidTagToken($parents, $token) {
+	private static function is_valid_tag_token($parents, $token) {
 		if ($token['closing']) {
 			//A closing tag is valid if there's an opening tag
 			foreach ($parents as $parent) {
@@ -232,8 +232,8 @@ class QhebunelBB {
 		} else {
 			
 			//An opening tag is valid if it's allowed inside its parents
-			$legalTags = self::buildTagList($parents);
-			return in_array($token['name'], $legalTags);
+			$legal_tags = self::build_tag_list($parents);
+			return in_array($token['name'], $legal_tags);
 		}
 		
 	}
@@ -256,13 +256,13 @@ class QhebunelBB {
 	 * @param string $text Text to parse.
 	 * @return array Array of tokens.
 	 */
-	private static function tokenizeText($text) {
+	private static function tokenize_text($text) {
 		if (empty($text)) {
 			return '';
 		}
 		
 		$tokens = array();
-		$pattern = self::getRegex(array_keys(self::$tags));
+		$pattern = self::get_regex(array_keys(self::$tags));
 		$offset = 0;
 		while (preg_match("/$pattern/s", $text, $regs, PREG_OFFSET_CAPTURE, $offset)) {
 			//Add text token and modify offset for the next iteration
@@ -275,7 +275,7 @@ class QhebunelBB {
 			} else {
 				
 				//Parse tag attributes and add tag to output
-				$attributes = self::parseAttributes($regs[4][0]);
+				$attributes = self::parse_attributes($regs[4][0]);
 				$tokens[] = array(
 					'text' => $regs[0][0],
 					'name' => $regs[3][0],
@@ -286,8 +286,8 @@ class QhebunelBB {
 		}
 		
 		//Add text after the last tag to the output
-		$lastTextToken = substr($text, $offset);
-		if ($lastTextToken) {
+		$last_text_token = substr($text, $offset);
+		if ($last_text_token) {
 			$tokens[] = substr($text, $offset);
 		}
 		
@@ -298,38 +298,38 @@ class QhebunelBB {
 	 * Builds a list of tags that should be parsed inside the current tag hierarchy.
 	 * @return mixed Returns the parsable tags for the current context as an array.
 	 */
-	private static function buildTagList($parents) {
-		$tagList = array();
+	private static function build_tag_list($parents) {
+		$tag_list = array();
 		
 		//Get immediate parent
 		if (!empty($parents)) {
-			$lastParent = end($parents);
-			$hasParent = true;
+			$last_parent = end($parents);
+			$has_parent = true;
 		} else {
-			$hasParent = false;
+			$has_parent = false;
 		}
 		
 		//Get tags that are allowed by the parent hierarchy #1: loop through tag definitions
 		foreach (self::$tags as $tag => $params) {
-			//Check allowedParent
-			if ($params[3] == null || !$hasParent || $params[3] == $lastParent) {
+			//Check allowed_parent
+			if ($params[3] == null || !$has_parent || $params[3] == $last_parent) {
 				//Self nesting
-				if ($params[1] || !$hasParent || !in_array($tag, $parents)) {
-					$tagList[] = $tag;
+				if ($params[1] || !$has_parent || !in_array($tag, $parents)) {
+					$tag_list[] = $tag;
 				}
 			}
 		}
 		
 		//Get tags that are allowed by the parent hierarchy #2: parent exclusions
 		foreach ($parents as $parent) {
-			//If allowedChildren is defined, use only the intersection of the currently allowed tags
+			//If allowed_children is defined, use only the intersection of the currently allowed tags
 			//and the tags allowed by this parent tag.
 			if (is_array(self::$tags[$parent][2])) {
-				$tagList = array_intersect($tagList, self::$tags[$parent][2]);
+				$tag_list = array_intersect($tag_list, self::$tags[$parent][2]);
 			}
 		}
 		
-		return $tagList;
+		return $tag_list;
 	}
 
 	/**
@@ -340,7 +340,7 @@ class QhebunelBB {
 	 * @param string $text
 	 * @return array List of attributes and their value.
 	 */
-	private static function parseAttributes($text) {
+	private static function parse_attributes($text) {
 		$atts = array();
 		$start = 0;
 		
@@ -351,7 +351,7 @@ class QhebunelBB {
 		}
 		
 		//Build the pattern for matching named parameters
-		$attributePattern = 
+		$attribute_pattern = 
 		  '([a-zA-Z]+)'						//1: Parameter name
 		. '='								//=
 		. '(\'|")?'							//2: single or double quote
@@ -363,8 +363,8 @@ class QhebunelBB {
 		.    ')';							//   END IF
 		
 		//Iterate over other parameters
-		preg_match_all('/([a-zA-Z]+)=(\'|")?(?(2)([^\'"]+)\2|([^ ]+))/', $text, $paramRegs, PREG_SET_ORDER, $start);
-		foreach ($paramRegs as $param) {
+		preg_match_all('/([a-zA-Z]+)=(\'|")?(?(2)([^\'"]+)\2|([^ ]+))/', $text, $param_regs, PREG_SET_ORDER, $start);
+		foreach ($param_regs as $param) {
 			$atts[$param[1]] = (isset($param[3]) ? $param[3] : $param[4]);
 		}
 		
@@ -376,10 +376,10 @@ class QhebunelBB {
 	 * @param array $tags An array of tag names (strings).
 	 * @return string Regex pattern.
 	 */
-	private static function getRegex($tags) {
+	private static function get_regex($tags) {
 		$tagregexp = join('|', $tags);
 		
-		// WARNING! Numbered groups are used in tokenizeText function.
+		// WARNING! Numbered groups are used in tokenize_text function.
 		return
 		  '(\[)?'							//1: Opening escaping bracket - [[tag]]
 		. '\['								//Opening bracket
@@ -436,7 +436,7 @@ class QhebunelBB {
 	}
 	
 	private static function parseTag_color($atts=array(), $content=null) {
-		static $namedColors = array(
+		static $named_colors = array(
 			"black" => "#000000",
 			"blue" => "#0000FF",
 			"brown" => "#A52A2A",
@@ -464,8 +464,8 @@ class QhebunelBB {
 		
 		if (null === $content) return '';
 		
-		if (array_key_exists($atts[0], $namedColors)) {
-			$color = $namedColors[$atts[0]];
+		if (array_key_exists($atts[0], $named_colors)) {
+			$color = $named_colors[$atts[0]];
 		} elseif (preg_match("/(#[a-fA-F0-9]{3,6})/", $atts[0], $matches)) {
 			$color = $matches[1];
 		} else {
@@ -567,7 +567,7 @@ class QhebunelBB {
 			$name = $atts[0];
 			//Make the name a link pointing to the permalink of the post
 			if (!empty($atts['post'])) {
-				$name = '<a href="'.QhebunelUI::getUrlForPost($atts['post'], true).'">'.$name.'</a>';
+				$name = '<a href="'.QhebunelUI::get_url_for_post($atts['post'], true).'">'.$name.'</a>';
 			}
 			$title = '<div class="qheb_quote_info">'.sprintf(__('%s wrote:', 'qhebunel'), $name).'</div>';
 		}
@@ -602,9 +602,9 @@ class QhebunelBB {
 			upper-alpha	A, B, C
 		*/
 		if (strpos($content,"[*]") !== FALSE) {
-			$listItems = explode("[*]", $content);
+			$list_items = explode("[*]", $content);
 		} else {
-			$listItems = explode("*", $content);
+			$list_items = explode("*", $content);
 		}
 		if (empty($atts)) { /* unordered list */
 			$start = '<ul>';
@@ -614,7 +614,7 @@ class QhebunelBB {
 			$trailer = '</ol>';
 		}
 		$listtext = '';
-		foreach($listItems as $item) {
+		foreach($list_items as $item) {
 			$t = preg_replace('/[ \t\n\r\t\0\x0B]/', "", $item);
 			if ($t && $t != "<br/>" && $t != "<br>") {
 				$listtext .= '<li>'.$item.'</li>';

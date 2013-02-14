@@ -6,8 +6,8 @@ if(!current_user_can('manage_options')) {
 /*
  * SQL install script
  */
-global $installSql;
-$installSql = <<<EOS_INSTALL
+global $install_sql;
+$install_sql = <<<EOS_INSTALL
 /* User data extension table */
 create table `qheb_user_ext` (
 	`uid` bigint(20) unsigned,								/* UserID */
@@ -169,28 +169,28 @@ EOS_INSTALL;
 /*
  * htaccess files
  */
-global $avatarsHtaccess, $attachmentsHtaccess, $badgesHtacces;
-$siteHost = parse_url(get_site_url(), PHP_URL_HOST);
+global $avatars_htaccess, $attachments_htaccess, $badges_htacces;
+$site_host = parse_url(get_site_url(), PHP_URL_HOST);
 
-$avatarsHtaccess = <<<EOS_HTACCESS
+$avatars_htaccess = <<<EOS_HTACCESS
 Options -Indexes
 Options +FollowSymLinks
 RewriteEngine on
 #RewriteCond expr "! %{HTTP_REFERER} -strmatch '*://%{HTTP_HOST}/*'"
-RewriteCond %{HTTP_REFERER} !^http(s?)://([^/]*)${siteHost}
+RewriteCond %{HTTP_REFERER} !^http(s?)://([^/]*)${site_host}
 RewriteRule . - [F]
 EOS_HTACCESS;
 
-$badgesHtacces = <<<EOS_HTACCESS
+$badges_htacces = <<<EOS_HTACCESS
 Options -Indexes
 Options +FollowSymLinks
 RewriteEngine on
 #RewriteCond expr "! %{HTTP_REFERER} -strmatch '*://%{HTTP_HOST}/*'"
-RewriteCond %{HTTP_REFERER} !^http(s?)://([^/]*)${siteHost}
+RewriteCond %{HTTP_REFERER} !^http(s?)://([^/]*)${site_host}
 RewriteRule . - [F]
 EOS_HTACCESS;
 
-$attachmentsHtaccess = <<<EOS_HTACCESS
+$attachments_htaccess = <<<EOS_HTACCESS
 deny from all
 EOS_HTACCESS;
 
@@ -199,27 +199,27 @@ EOS_HTACCESS;
  * Remove comments from the script
  * and replace whitespaces with a single space character
  */
-$installSql = preg_replace('%/\*.*\*/%', '', $installSql);
-$installSql = preg_replace('/^--.*$/m', '', $installSql);
-$installSql = preg_replace('/\s+/', ' ', $installSql);
+$install_sql = preg_replace('%/\*.*\*/%', '', $install_sql);
+$install_sql = preg_replace('/^--.*$/m', '', $install_sql);
+$install_sql = preg_replace('/\s+/', ' ', $install_sql);
 
 
 /**
  * Runs the install script and additional commands
  * to initialize the forum.
  */
-function qhebunelInstall() {
-	global $wpdb, $installSql, $avatarsHtaccess, $attachmentsHtaccess, $badgesHtacces;
+function qhebunel_install() {
+	global $wpdb, $install_sql, $avatars_htaccess, $attachments_htaccess, $badges_htacces;
 	
 	//Actualize WP_users table local prefix
 	$wp_users_local = $wpdb->prefix . 'users';
-	$installSql = str_replace('`wp_users`', '`'.$wp_users_local.'`', $installSql);
+	$install_sql = str_replace('`wp_users`', '`'.$wp_users_local.'`', $install_sql);
 	
 	/*
 	 * Run install script command by command
 	 */
-	$sqlCommands = explode(';', $installSql);
-	foreach ($sqlCommands as $command) {
+	$sql_commands = explode(';', $install_sql);
+	foreach ($sql_commands as $command) {
 		$command = trim($command);
 		if (!empty($command)) {
 			$wpdb->query($command);
@@ -235,10 +235,10 @@ function qhebunelInstall() {
 	 * Create dir struct for user data
 	 */
 	$dirs = array(
-		'forumDir' =>		WP_CONTENT_DIR.'/forum',
-		'avatarDir' =>		WP_CONTENT_DIR.'/forum/avatars',
-		'attachmentDir' =>	WP_CONTENT_DIR.'/forum/attachments',
-		'badgeDir' =>		WP_CONTENT_DIR.'/forum/badges'
+		'forum_dir' =>		WP_CONTENT_DIR.'/forum',
+		'avatar_dir' =>		WP_CONTENT_DIR.'/forum/avatars',
+		'attachment_dir' =>	WP_CONTENT_DIR.'/forum/attachments',
+		'badge_dir' =>		WP_CONTENT_DIR.'/forum/badges'
 	);
 	$stat = @stat(WP_CONTENT_DIR);
 	$mode = $stat['mode'] & 0000775;
@@ -251,35 +251,35 @@ function qhebunelInstall() {
 	/*
 	 * Write .htaccess files
 	 */
-	$avatarsHtPath = WP_CONTENT_DIR.'/forum/avatars/.htaccess';
-	$attachmentsHtPath = WP_CONTENT_DIR.'/forum/attachments/.htaccess';
-	$badgesHtPath = WP_CONTENT_DIR.'/forum/badges/.htaccess';
-	file_put_contents($avatarsHtPath, $avatarsHtaccess);
-	@chmod($avatarsHtPath, $mode);
-	file_put_contents($attachmentsHtPath, $attachmentsHtaccess);
-	@chmod($attachmentsHtPath, $mode);
-	file_put_contents($badgesHtPath, $badgesHtacces);
-	@chmod($badgesHtPath, $mode);
+	$avatars_ht_path = WP_CONTENT_DIR.'/forum/avatars/.htaccess';
+	$attachments_ht_path = WP_CONTENT_DIR.'/forum/attachments/.htaccess';
+	$badges_ht_path = WP_CONTENT_DIR.'/forum/badges/.htaccess';
+	file_put_contents($avatars_ht_path, $avatars_htaccess);
+	@chmod($avatars_ht_path, $mode);
+	file_put_contents($attachments_ht_path, $attachments_htaccess);
+	@chmod($attachments_ht_path, $mode);
+	file_put_contents($badges_ht_path, $badges_htacces);
+	@chmod($badges_ht_path, $mode);
 }
 
 /**
  * Parses the SQL script and removes every table
  * created by it.
  */
-function qhebunelUninstall() {
-	global $wpdb, $installSql;
+function qhebunel_uninstall() {
+	global $wpdb, $install_sql;
 	$tables = array();
 	$views = array();
 	
 	//Tables
-	preg_match_all('/create table (?:if not exists )?`(.*?)`/', $installSql, $pregRes, PREG_SET_ORDER);
-	foreach ($pregRes as $res) {
+	preg_match_all('/create table (?:if not exists )?`(.*?)`/', $install_sql, $preg_res, PREG_SET_ORDER);
+	foreach ($preg_res as $res) {
 		$tables[] = $res[1];
 	}
 	
 	//Views
-	preg_match_all('/create (?:or replace )?view `(.*?)`/', $installSql, $pregRes, PREG_SET_ORDER);
-	foreach ($pregRes as $res) {
+	preg_match_all('/create (?:or replace )?view `(.*?)`/', $install_sql, $preg_res, PREG_SET_ORDER);
+	foreach ($preg_res as $res) {
 		$views[] = $res[1];
 	}
 	

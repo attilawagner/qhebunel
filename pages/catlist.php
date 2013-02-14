@@ -12,7 +12,7 @@ $cats = $wpdb->get_results(
 	right join (
 			select `catid`
 			from `qheb_category_permissions`
-			where `gid` in ('.implode(',', QhebunelUser::getGroups()).')
+			where `gid` in ('.implode(',', QhebunelUser::get_groups()).')
 			group by `catid`
 			having max(`access`)>0
 		) as `p`
@@ -45,24 +45,24 @@ foreach ($cats as $cat1) {
 		foreach ($cats as $cat2) {
 			if ($cat2['parent'] == $cat1['catid']) {
 				$threads = (int)$cat2['threadcount'];
-				$threadCount = sprintf(_n('1 Thread', '%d Threads', $threads, 'qhebunel'), $threads);
+				$thread_count = sprintf(_n('1 Thread', '%d Threads', $threads, 'qhebunel'), $threads);
 				$posts = (int)$cat2['postcount'];
-				$postCount = sprintf(_n('1 Post', '%d Posts', $posts, 'qhebunel'), $posts);
-				$lastPost = '';
-				if ($postCount > 0) {
+				$post_count = sprintf(_n('1 Post', '%d Posts', $posts, 'qhebunel'), $posts);
+				$last_post = '';
+				if ($post_count > 0) {
 					//TODO: profile link using $cat2['uid']
-					$profileLink = '#';
+					$profile_link = '#';
 					//TODO: thread link using $cat2['tid']
 					if ($cat2['uid'] > 0) {
 						//Normal user
-						$lastPost = '<span class="last_post">'.sprintf(__('Last post by <a href="%2$s">%1$s</a>', 'qhebunel'), $cat2['display_name'], $profileLink).'</span> ';
+						$last_post = '<span class="last_post">'.sprintf(__('Last post by <a href="%2$s">%1$s</a>', 'qhebunel'), $cat2['display_name'], $profile_link).'</span> ';
 					} else {
 						//Guest post
-						$lastPost = '<span class="last_post">'.__('Last post by a guest', 'qhebunel').'</span> ';
+						$last_post = '<span class="last_post">'.__('Last post by a guest', 'qhebunel').'</span> ';
 					}					
-					$lastPost .= '<span class="date" title="'.mysql2date('j F, Y @ G:i', $cat2['postdate']).'">'.QhebunelDate::getListDate($cat2['postdate']).'</span>';
+					$last_post .= '<span class="date" title="'.mysql2date('j F, Y @ G:i', $cat2['postdate']).'">'.QhebunelDate::get_list_date($cat2['postdate']).'</span>';
 				}
-				echo('<tr><td><div class="qheb_cat2_title"><a href="'.QhebunelUI::getUrlForCategory($cat2['catid']).'">'.QhebunelUI::formatTitle($cat2['name']).'</a></div><div class="qheb_cat2_desc">'.wptexturize($cat2['description']).'</div></td><td><span class="thread_count">'.$threadCount.'</span> <span class="post_count">'.$postCount.'</span></td><td></td><td>'.$lastPost.'</td></tr>');
+				echo('<tr><td><div class="qheb_cat2_title"><a href="'.QhebunelUI::get_url_for_category($cat2['catid']).'">'.QhebunelUI::format_title($cat2['name']).'</a></div><div class="qheb_cat2_desc">'.wptexturize($cat2['description']).'</div></td><td><span class="thread_count">'.$thread_count.'</span> <span class="post_count">'.$post_count.'</span></td><td></td><td>'.$last_post.'</td></tr>');
 			}
 		}
 		echo('<tr><td colspan="4"></td></tbody>');

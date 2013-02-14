@@ -35,7 +35,7 @@ class QhebunelEmoticons {
 	 * @param string $mode Can be set to 'flat' or 'grouped'.
 	 * @return array Contains the codes and image file names.
 	 */
-	public static function getList($mode = 'flat') {
+	public static function get_list($mode = 'flat') {
 		static $emoticons = array(
 			'common' => array(
 				':)' =>			'smile.png',
@@ -91,14 +91,14 @@ class QhebunelEmoticons {
 		);
 	
 		if ($mode == 'flat') {
-			static $flatArray = array();
-			if (empty($flatArray)) {
+			static $flat_array = array();
+			if (empty($flat_array)) {
 				//Merge groups into one array
 				foreach ($emoticons as $group) {
-					$flatArray = array_merge($flatArray, $group);
+					$flat_array = array_merge($flat_array, $group);
 				}
 			}
-			return $flatArray;
+			return $flat_array;
 		} else {
 			return $emoticons;
 		}
@@ -109,17 +109,17 @@ class QhebunelEmoticons {
 	 * @param string $text Text to process.
 	 * @return string Text containing images instead of emoticon codes.
 	 */
-	public static function replaceInText($text) {
+	public static function replace_in_text($text) {
 		//Get flat list of emoticons
-		$emoticons = self::getList('flat');
+		$emoticons = self::get_list('flat');
 	
 		//Build regex expression and cache it
-		static $emoticonRegex;
-		static $emoticonRoot;
-		if (empty($emoticonRegex)) {
-			$escapedEmoticons = preg_replace('/([\\\\:|*(){}[\]])/', '\\\\\1', array_keys($emoticons));//escape regex characters
-			$emoticonRegex = '/(' . implode('|', $escapedEmoticons) . ')/e';
-			$emoticonRoot = QHEBUNEL_URL.'ui/emoticons/';
+		static $emoticon_regex;
+		static $emoticon_root;
+		if (empty($emoticon_regex)) {
+			$escaped_emoticons = preg_replace('/([\\\\:|*(){}[\]])/', '\\\\\1', array_keys($emoticons));//escape regex characters
+			$emoticon_regex = '/(' . implode('|', $escaped_emoticons) . ')/e';
+			$emoticon_root = QHEBUNEL_URL.'ui/emoticons/';
 		}
 	
 		//Split text into HTML tags and text fragments
@@ -132,7 +132,7 @@ class QhebunelEmoticons {
 	
 			} else {
 				//Replace emoticons with img tags
-				$ret .= preg_replace($emoticonRegex, '"<img src=\"".$emoticonRoot.$emoticons[stripslashes("\1")]."\" alt=\"".stripslashes("\1")."\" title=\"".stripslashes("\1")."\"/>"', $fragment);
+				$ret .= preg_replace($emoticon_regex, '"<img src=\"".$emoticon_root.$emoticons[stripslashes("\1")]."\" alt=\"".stripslashes("\1")."\" title=\"".stripslashes("\1")."\"/>"', $fragment);
 			}
 		}
 		return $ret;

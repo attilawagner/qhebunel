@@ -5,39 +5,39 @@
  */
 if (!defined('QHEBUNEL_REQUEST') || QHEBUNEL_REQUEST !== true) die;
 
-$topicTitle = $_POST['topic_title'];
-$topicCatId = $_POST['topic_category'];
-$topicBody = $_POST['topic_message'];
+$topic_title = $_POST['topic_title'];
+$topic_cat_id = $_POST['topic_category'];
+$topic_body = $_POST['topic_message'];
 
-if (empty($topicBody) || empty($topicTitle) || empty($topicCatId)) {
-	Qhebunel::redirectToErrorPage();
+if (empty($topic_body) || empty($topic_title) || empty($topic_cat_id)) {
+	Qhebunel::redirect_to_error_page();
 }
 
 //Check permissions
-$permission = QhebunelUser::getPermissionsForCategory($topicCatId);
+$permission = QhebunelUser::get_permissions_for_category($topic_cat_id);
 if ($permission < QHEBUNEL_PERMISSION_START) {
-	Qhebunel::redirectToErrorPage();
+	Qhebunel::redirect_to_error_page();
 }
 
 //TODO check for topic with the same name (in JS too)
 //Save thread to db
 global $current_user;
-$threadUri = Qhebunel::getUriComponentForTitle($topicTitle);
+$thread_uri = Qhebunel::get_uri_component_for_title($topic_title);
 $wpdb->flush();
 $wpdb->query(
 	$wpdb->prepare(
 		'insert into `qheb_threads` (`title`, `catid`, `startdate`, `starter`, `uri`) values (%s, %d, %s, %d, %s);',
-		$topicTitle,
-		$topicCatId,
+		$topic_title,
+		$topic_cat_id,
 		current_time('mysql'),
 		$current_user->ID,
-		$threadUri
+		$thread_uri
 	)
 );
-$threadId = $wpdb->insert_id;
-if ($threadId == 0) {
+$thread_id = $wpdb->insert_id;
+if ($thread_id == 0) {
 	//failed to save
-	Qhebunel::redirectToErrorPage();
+	Qhebunel::redirect_to_error_page();
 }
 
 //Save opening post into db
@@ -45,30 +45,30 @@ $wpdb->flush();
 $wpdb->query(
 	$wpdb->prepare(
 		'insert into `qheb_posts` (`tid`, `uid`, `text`, `postdate`) values (%d, %d, %s, %s);',
-		$threadId,
+		$thread_id,
 		$current_user->ID,
-		$topicBody,
+		$topic_body,
 		current_time('mysql')
 	)
 );
-$postId = $wpdb->insert_id;
-if ($postId == 0) {
+$post_id = $wpdb->insert_id;
+if ($post_id == 0) {
 	//Remove thread if op post cannot be saved
 	$wpdb->query(
 		$wpdb->prepare(
 			'delete from `qheb_threads` where `tid`=%d limit 1;',
-			$threadId
+			$thread_id
 		)
 	);
-	Qhebunel::redirectToErrorPage();
+	Qhebunel::redirect_to_error_page();
 }
 
 //Set last post id for the thread
 $wpdb->query(
 	$wpdb->prepare(
 		'update `qheb_threads` set `lastpostid`=%d where `tid`=%d limit 1;',
-		$postId,
-		$threadId
+		$post_id,
+		$thread_id
 	)
 );
 
@@ -84,11 +84,11 @@ $wpdb->query(
  * Process attachments
  * Anonymous users are forbidden to post attachments.
  */
-if (QhebunelUser::hasPersmissionToUpload()) {
-	QhebunelFiles::saveAttachmentArray($_FILES['attachments'], $postId);
+if (QhebunelUser::has_persmission_to_upload()) {
+	QhebunelFiles::save_attachment_array($_FILES['attachments'], $post_id);
 }
 
 //Redirect to topic
-$absoluteUrl = QhebunelUI::getUrlForThread($threadId);
-wp_redirect($absoluteUrl);//Temporal redirect
+$absolute_url = QhebunelUI::get_url_for_thread($thread_id);
+wp_redirect($absolute_url);//Temporal redirect
 ?>

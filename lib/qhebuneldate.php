@@ -13,25 +13,25 @@ class QhebunelDate {
 	 * @param string $datetime MySQL datetime field
 	 * @return string Formatted string.
 	 */
-	public static function getListDate($datetime) {
+	public static function get_list_date($datetime) {
 		//TODO: make it into an option
-		$useRelativeTimeFor24H = true; //Option from the general settings admin page
+		$use_relative_time_for24_h = true; //Option from the general settings admin page
 		$time = mysql2date('U', $datetime);
 		$diff = abs($time - time());
-		if ($diff < 60*60*24 && $useRelativeTimeFor24H) {
-			return self::getHumanTimeDiff($time);
+		if ($diff < 60*60*24 && $use_relative_time_for24_h) {
+			return self::get_human_time_diff($time);
 		} else {
 			//TODO: make it into an option
-			$useShortDateForCurrentYear = false; //Option from the general settings admin page
+			$use_short_date_for_current_year = false; //Option from the general settings admin page
 			
-			$useShortFormat = true; //flag for choosing the format string
-			if ($useShortDateForCurrentYear) {
+			$use_short_format = true; //flag for choosing the format string
+			if ($use_short_date_for_current_year) {
 				$year = substr($datetime, 0, 4);
-				$thisYear = date('Y');
-				$useShortFormat = ($thisYear == $year);
+				$this_year = date('Y');
+				$use_short_format = ($this_year == $year);
 			}
 			
-			if ($useShortFormat) {
+			if ($use_short_format) {
 				/*translators: this date format is used when the date belongs to the current year */
 				//TODO: option
 				return mysql2date('j F', $datetime);
@@ -54,7 +54,7 @@ class QhebunelDate {
 	 * @param integer $to
 	 * @return string
 	 */
-	public static function getHumanTimeDiff($from, $to = '') {
+	public static function get_human_time_diff($from, $to = '') {
 		if (empty($to)) {
 			$to = time();
 		}
@@ -86,10 +86,10 @@ class QhebunelDate {
 	 * Formats the given MySQL date string into
 	 * human readable time difference relative to the actual time.
 	 * @param string $datetime
-	 * @return string Result of getHumanTimeDiff()
+	 * @return string Result of get_human_time_diff()
 	 */
-	public static function getRelativeDate($datetime) {
-		return self::getHumanTimeDiff(mysql2date('U', $datetime));
+	public static function get_relative_date($datetime) {
+		return self::get_human_time_diff(mysql2date('U', $datetime));
 	}
 	
 	/**
@@ -98,7 +98,7 @@ class QhebunelDate {
 	 * @param string $datetime
 	 * @return string Formatted string.
 	 */
-	public static function getPostDate($datetime) {
+	public static function get_post_date($datetime) {
 		return mysql2date('j F, Y @ G:i', $datetime);
 	}
 	
@@ -108,7 +108,7 @@ class QhebunelDate {
 	 * @param string $datetime MySQL datetime field
 	 * @return string Formatted string.
 	 */
-	public static function getDatetimeAttribute($datetime) {
+	public static function get_datetime_attribute($datetime) {
 		return mysql2date('Y-m-d\TH:i', $datetime, false);
 	}
 }

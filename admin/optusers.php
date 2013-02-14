@@ -7,7 +7,7 @@ if(!current_user_can('manage_options')) {
 if (isset($_POST['qheb_ulist_modif']) && check_admin_referer('qheb_usermodif', 'qhebnonce') && isset($_POST['qheb_ulist_user'])) {
 	$action = $_POST['qheb_ulist_action'];
 	$uids = @$_POST['qheb_ulist_user'];
-	$gid = (int)@$_POST['qheb_ulist_group'];
+	$gid = (int)@$_POST['qheb-ulist-group'];
 	
 	if (count($uids) > 0) {
 		switch ($action) {
@@ -141,10 +141,10 @@ $groups = $wpdb->get_results('
 //Displays a select with the user groups
 function qheb_ulist_group_select() {
 	global $groups;
-	echo('<select name="qheb_ulist_group" id="qheb_ulist_group">');
+	echo('<select name="qheb-ulist-group" id="qheb-ulist-group">');
 	foreach ($groups as $group) {
 		if ($group['gid'] > 10) {
-			echo('<option value="'.$group['gid'].'"'.($group['prominent'] ? ' class="qheb_prom"' : '').'>'.$group['name'].'</option>');
+			echo('<option value="'.$group['gid'].'"'.($group['prominent'] ? ' class="qheb-prom"' : '').'>'.$group['name'].'</option>');
 		}
 	}
 	echo('</select>');
@@ -175,8 +175,8 @@ function qheb_ulist_top_groups() {
 		<table class="widefat fixed qheb_catlist">
 			<thead>
 				<tr>
-					<th scope="col" class="qheb_username"><?php _e('Display name (Username)'); ?></th>
-					<th scope="col" class="qheb_usergroups"><?php _e('Groups'); ?></th>
+					<th scope="col" class="qheb-username"><?php _e('Display name (Username)'); ?></th>
+					<th scope="col" class="qheb-usergroups"><?php _e('Groups'); ?></th>
 				</tr>
 			</thead>
 			<tfoot>
@@ -197,7 +197,7 @@ function qheb_ulist_top_groups() {
 		</table>
 		<div class="tablenav bottom">
 			<div class="alignleft actions">
-				<select name="qheb_ulist_action" id="qheb_ulist_action" onchange="qheb_ulist_actchange();">
+				<select name="qheb_ulist_action" id="qheb_ulist_action" onchange="qhebUlistActchange();">
 					<option value="none" selected="selected"><?php _e('Bulk Actions'); ?></option>
 					<option value="addgroup"><?php _e('Add to group'); ?></option>
 					<option value="removegroup"><?php _e('Remove from group'); ?></option>

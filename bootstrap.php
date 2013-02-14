@@ -32,8 +32,8 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 		require_once($handler);
 	} else {
 		//Redirec to to main page if action is unsupported
-		$absoluteUrl = get_url('forum/');
-		wp_redirect($absoluteUrl, 301);//Moved permanently
+		$absolute_url = get_url('forum/');
+		wp_redirect($absolute_url, 301);//Moved permanently
 	}
 	die();
 } else {
@@ -47,9 +47,9 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 	 * Sections may have parameters (/delete-thread/[thread-id]),
 	 * or could be single special pages (/profile, /error)
 	 */
-	$forumRootURI = site_url('forum/', 'relative');
-	$forumRootLen = strlen($forumRootURI);
-	$forumURI = substr($_SERVER['REQUEST_URI'], $forumRootLen);
+	$forum_root_uri = site_url('forum/', 'relative');
+	$forum_root_len = strlen($forum_root_uri);
+	$forum_uri = substr($_SERVER['REQUEST_URI'], $forum_root_len);
 	/*
 	 * The section names are the keys in the array.
 	 * For each section, an array defines the file name that should be included,
@@ -78,31 +78,31 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 		)
 	);
 	
-	global $catId, $threadId, $pageId, $sectionParams, $titleElement;
-	$catId = $threadId = $pageId = 0;
-	$forumPage = $section = $sectionParams = '';
+	global $cat_id, $thread_id, $page_id, $section_params, $title_element;
+	$cat_id = $thread_id = $page_id = 0;
+	$forum_page = $section = $section_params = '';
 	
-	if (empty($forumURI)) {
+	if (empty($forum_uri)) {
 		/*
 		 * Display the category list as the root page by default,
 		 * and redirect /forum to /forum/
 		 */
 		if (substr($_SERVER['REQUEST_URI'],-1) != '/') {
-			$absoluteUrl = site_url('forum/');
-			wp_redirect($absoluteUrl, 301);//Moved permanently
+			$absolute_url = site_url('forum/');
+			wp_redirect($absolute_url, 301);//Moved permanently
 			die();
 		}
 		
-		$forumPage = 'catlist';
+		$forum_page = 'catlist';
 		
 	} else {
 		/*
 		 * Try matching the global sections first
 		 */
 		$pattern = implode('|', array_keys($sections['global']));
-		if (preg_match("%^(${pattern})(?:/(.*))?$%", $forumURI, $regs)) {
+		if (preg_match("%^(${pattern})(?:/(.*))?$%", $forum_uri, $regs)) {
 			$section = $regs[1];
-			$sectionParams = (isset($regs[2]) ? $regs[2] : '');
+			$section_params = (isset($regs[2]) ? $regs[2] : '');
 			
 			if ($sections['global'][$section][1] == true) {
 				
@@ -114,9 +114,9 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 			} else {
 				
 				//Special page
-				$forumPage = $sections['global'][$section][0];
+				$forum_page = $sections['global'][$section][0];
 				if (count($sections['global'][$section]) >= 3) {
-					$titleElement = $sections['global'][$section][2];
+					$title_element = $sections['global'][$section][2];
 				}
 			}
 		}
@@ -126,31 +126,31 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 		 * The requested URL does not belong to a global special page,
 		 * so figure out what forum content should be displayed
 		 */
-		if (empty($forumPage)) {
+		if (empty($forum_page)) {
 			
 			/*
 			 * Check for post permalink, and redirect instantly
 			 */
-			if (preg_match('%(?<=^post-)(\d+)(?=/|$)%', $forumURI, $regs)) {
-				$postId = $regs[0];
-				$absoluteUrl = QhebunelUI::getUrlForPost($postId);
-				wp_redirect($absoluteUrl, 302);//Temporary redirect, so the permalink does not get messed up in caches
+			if (preg_match('%(?<=^post-)(\d+)(?=/|$)%', $forum_uri, $regs)) {
+				$post_id = $regs[0];
+				$absolute_url = QhebunelUI::get_url_for_post($post_id);
+				wp_redirect($absolute_url, 302);//Temporary redirect, so the permalink does not get messed up in caches
 				die();
 			}
 			
 			/*
 			 * Get content IDs
 			 */
-			if (preg_match('%(?<=-c|^c)(\d+)(?=/|$)%', $forumURI, $regs)) {
-				$catId = $regs[0];
+			if (preg_match('%(?<=-c|^c)(\d+)(?=/|$)%', $forum_uri, $regs)) {
+				$cat_id = $regs[0];
 			}
-			if (preg_match('%(?<=-t|^t)(\d+)(?=/|$)%', $forumURI, $regs)) {
-				$threadId = $regs[0];
+			if (preg_match('%(?<=-t|^t)(\d+)(?=/|$)%', $forum_uri, $regs)) {
+				$thread_id = $regs[0];
 			}
-			if (preg_match('%(?<=/p)(\d+)(?=/|$)%', $forumURI, $regs)) {
-				$pageId = $regs[0];
+			if (preg_match('%(?<=/p)(\d+)(?=/|$)%', $forum_uri, $regs)) {
+				$page_id = $regs[0];
 			}
-			if (preg_match('%(?<=/|^)[^/]+$%', $forumURI, $regs)) {
+			if (preg_match('%(?<=/|^)[^/]+$%', $forum_uri, $regs)) {
 				$section = $regs[0];
 			}
 			
@@ -166,52 +166,52 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 			 *   A post permalink
 			 *     post-987
 			 */
-			$legalURI = '';
-			if ($threadId > 0) {
+			$legal_uri = '';
+			if ($thread_id > 0) {
 				//Topic
-				$threadData = $wpdb->get_row(
+				$thread_data = $wpdb->get_row(
 					"select `c`.`catid`, `c`.`uri` as `caturi`, `t`.`uri` as `threaduri`, `t`.`title`
 					from `qheb_threads` as `t`
 					  left join `qheb_categories` as `c`
 					    on (`t`.`catid`=`c`.`catid`)
-					where `t`.`tid`=$threadId limit 1;",
+					where `t`.`tid`=$thread_id limit 1;",
 					ARRAY_N
 				);
-				if (!is_null($threadData)) {
+				if (!is_null($thread_data)) {
 					//If it's null, it means that the thread does not exist, so redirect to the index page.
-					list($threadCatId, $threadCatURI, $threadThreadURI, $titleElement) = $threadData;
-					$legalURI = "${threadCatURI}-c${threadCatId}/${threadThreadURI}-t${threadId}/".($pageId >= 2 ? 'p'.$pageId : '');
-					$forumPage = 'thread'; //page file to insert
+					list($thread_cat_id, $thread_cat_uri, $thread_thread_uri, $title_element) = $thread_data;
+					$legal_uri = "${thread_cat_uri}-c${thread_cat_id}/${thread_thread_uri}-t${thread_id}/".($page_id >= 2 ? 'p'.$page_id : '');
+					$forum_page = 'thread'; //page file to insert
 				}
 				
-			} elseif ($catId > 0) {
+			} elseif ($cat_id > 0) {
 				//Category
-				$catData = $wpdb->get_row(
-					"select `uri`, `name` as `asd` from `qheb_categories` where `catid`=$catId limit 1;",
+				$cat_data = $wpdb->get_row(
+					"select `uri`, `name` as `asd` from `qheb_categories` where `catid`=$cat_id limit 1;",
 					ARRAY_N
 				);
-				if (!is_null($catData)) {
-					list($catURI, $titleElement) = $catData;
-					$legalURI = "${catURI}-c${catId}/";
+				if (!is_null($cat_data)) {
+					list($cat_uri, $title_element) = $cat_data;
+					$legal_uri = "${cat_uri}-c${cat_id}/";
 					if (array_key_exists($section, $sections['category'])) {
-						$legalURI .= $section;
-						$forumPage = $sections['category'][$section][0];
+						$legal_uri .= $section;
+						$forum_page = $sections['category'][$section][0];
 						if (count($sections['category'][$section]) >= 3) {
-							$titleElement = $sections['category'][$section][2];
+							$title_element = $sections['category'][$section][2];
 						}
 					} else {
-						$forumPage = 'threadlist'; //page file to insert
+						$forum_page = 'threadlist'; //page file to insert
 					}
 				}
 			}
 		
 			//Compare and redirect if needed
-			if ($forumURI != $legalURI) {
-				preg_match('/^(.*?)(?:\?|$)/', $forumURI, $regs);
-				$paramlessForumURI = $regs[1];
-				if ($paramlessForumURI != $legalURI) { //Allow parameters
-					$absoluteUrl = site_url('forum/'.$legalURI);
-					wp_redirect($absoluteUrl, 301);//Moved permanently
+			if ($forum_uri != $legal_uri) {
+				preg_match('/^(.*?)(?:\?|$)/', $forum_uri, $regs);
+				$paramless_forum_uri = $regs[1];
+				if ($paramless_forum_uri != $legal_uri) { //Allow parameters
+					$absolute_url = site_url('forum/'.$legal_uri);
+					wp_redirect($absolute_url, 301);//Moved permanently
 					die();
 				}
 			}
@@ -226,14 +226,14 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 	 */
 	//TODO
 	function qhebunel_title($title, $sep, $seplocation) {
-		global $titleElement;
+		global $title_element;
 		$site_name = get_bloginfo('name' , 'display');
 		$elements = array(
 			__('Forum', 'qhebunel'),
 			$site_name
 		);
-		if (!empty($titleElement)) {
-			array_unshift($elements, $titleElement);
+		if (!empty($title_element)) {
+			array_unshift($elements, $title_element);
 		}
 		if ($seplocation != 'right') {
 			$elements = array_reverse($elements);
@@ -249,7 +249,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 	 */
 	get_header();
 	echo('<section class="site-content" id="primary"><div role="main" id="content">'."\n");
-	include('pages/'.$forumPage.'.php');
+	include('pages/'.$forum_page.'.php');
 	echo('</div></section>'."\n");
 	get_sidebar();
 	get_footer();

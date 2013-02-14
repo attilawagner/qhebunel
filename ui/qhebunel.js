@@ -144,10 +144,10 @@ function initSCE(selector, options) {
 }
 
 function initReplyForm() {
-	var w = jQuery('#replyForm textarea').width;
-	var editor = initSCE('#replyForm textarea', {resizeMinWidth:w, resizeMaxWidth:w, resizeMinHeight:150});
+	var w = jQuery('#reply-form textarea').width;
+	var editor = initSCE('#reply-form textarea', {resizeMinWidth:w, resizeMaxWidth:w, resizeMinHeight:150});
 	
-	jQuery('#replyForm').submit(function(){
+	jQuery('#reply-form').submit(function(){
 		if (editor.sceditor('instance').val() == "") {
 			return false;
 		}
@@ -350,7 +350,7 @@ function onQuoteLinkClick() {
 				jQuery.get(
 					qhebunelConfig.forumRoot+"quote/"+postId,
 					function(data){
-						var editor = jQuery('#replyForm textarea').sceditor('instance');
+						var editor = jQuery('#reply-form textarea').sceditor('instance');
 						if (editor.sourceMode() == false) {
 							editor.setWysiwygEditorValue("");
 							editor.sourceMode(true);

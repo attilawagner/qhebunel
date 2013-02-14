@@ -9,40 +9,40 @@ class QhebunelBadges {
 	 * Saves or updates a badge.
 	 * No checks are run on the image size, but file types are checked.
 	 * 
-	 * @param integer $badgeId ID of the badge to update. Pass NULL to create a new badge.
-	 * @param integer $groupId Badge group ID.
+	 * @param integer $badge_id ID of the badge to update. Pass NULL to create a new badge.
+	 * @param integer $group_id Badge group ID.
 	 * @param string $name Name of the badge.
 	 * @param string $description Description of the badge.
-	 * @param array $largeImage A single item in $_FILES.
-	 * @param array $smallImage A single item in $_FILES.
+	 * @param array $large_image A single item in $_FILES.
+	 * @param array $small_image A single item in $_FILES.
 	 * @return boolean True if the badge was saved successfully.
 	 */
-	public static function saveBadge($badgeId, $groupId, $name, $description, $largeImage, $smallImage) {
+	public static function save_badge($badge_id, $group_id, $name, $description, $large_image, $small_image) {
 		global $wpdb;
 		
 		//Create row in DB to get an ID
-		if ($badgeId == null) {
+		if ($badge_id == null) {
 			$wpdb->query(
 				$wpdb->prepare(
 					'insert into `qheb_badges` (`bgid`,`name`,`description`)
 					values (%d, %s, %s);',
-					$groupId,
+					$group_id,
 					$name,
 					$description
 				)
 			);
-			if (($badgeId = $wpdb->insert_id) == 0) {
+			if (($badge_id = $wpdb->insert_id) == 0) {
 				return false;
 			}
 		}
 		
 		//Save the images
-		$savedPaths = QhebunelFiles::saveBadgeImages($badgeId, $largeImage, $smallImage);
-		if ($savedPaths === false) {
+		$saved_paths = QhebunelFiles::save_badge_images($badge_id, $large_image, $small_image);
+		if ($saved_paths === false) {
 			$wpdb->query(
 				$wpdb->prepare(
 					'delete from `qheb_badges` where `bid`=%d;',
-					$badgeId
+					$badge_id
 				)
 			);
 			return false;
@@ -52,9 +52,9 @@ class QhebunelBadges {
 		$wpdb->query(
 			$wpdb->prepare(
 				'update `qheb_badges` set `largeimage`=%s, `smallimage`=%s where `bid`=%d;',
-				$savedPaths['large'],
-				$savedPaths['small'],
-				$badgeId
+				$saved_paths['large'],
+				$saved_paths['small'],
+				$badge_id
 			)
 		);
 		return true;
@@ -63,16 +63,16 @@ class QhebunelBadges {
 	/**
 	 * Deletes a badge from the database and the filesystem.
 	 * 
-	 * @param integer $badgeId ID of the badge in the database.
+	 * @param integer $badge_id ID of the badge in the database.
 	 */
-	public static function deleteBadge($badgeId) {
+	public static function delete_badge($badge_id) {
 		global $wpdb;
 		
 		//Load badge
 		$badge = $wpdb->get_row(
 			$wpdb->prepare(
 				'select * from `qheb_badges` where `bid`=%d;',
-				$badgeId
+				$badge_id
 			),
 			ARRAY_A
 		);
@@ -84,7 +84,7 @@ class QhebunelBadges {
 		$wpdb->query(
 			$wpdb->prepare(
 				'delete from `qheb_user_badge_links` where `bid`=%d;',
-				$badgeId
+				$badge_id
 			)
 		);
 		
@@ -92,7 +92,7 @@ class QhebunelBadges {
 		$wpdb->query(
 			$wpdb->prepare(
 				'delete from `qheb_badges` where `bid`=%d;',
-				$badgeId
+				$badge_id
 			)
 		);
 		

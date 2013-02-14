@@ -13,97 +13,97 @@ class QhebunelFiles {
 	 * Handles the avatar uploading.
 	 * It moves the image file to the user's folder,
 	 * resizes if needed, and checks for the file size limit.
-	 * @param array $fileArr A single item in $_FILES, containing the data for the avatar.
-	 * @param integer $userId Optional. If not provided, the current user's id is used.
+	 * @param array $file_arr A single item in $_FILES, containing the data for the avatar.
+	 * @param integer $user_id Optional. If not provided, the current user's id is used.
 	 * @return mixed The path (relative to the avatars dir) of the processed file
 	 * on success, or false if there was an error.
 	 */
-	public static function saveAvatar($fileArr, $userId=null) {
+	public static function save_avatar($file_arr, $user_id=null) {
 		global $current_user;
 		
 		//Return if there was an error during the upload
-		if ($fileArr['error'] != 0 || !@is_uploaded_file($fileArr['tmp_name'])) {
+		if ($file_arr['error'] != 0 || !@is_uploaded_file($file_arr['tmp_name'])) {
 			return false;
 		}
 		
 		//Get user ID
-		if ($userId == null) {
-			$userId = $current_user->ID;
+		if ($user_id == null) {
+			$user_id = $current_user->ID;
 		}
 		
 		/*
 		 * Get path to the user's avatar directory
 		 * Avatars are stored inside the wp-content/forum/avatars directory,
-		 * partitioned using the getUserDirPath() function. The final path of the
-		 * avatar that belongs to $userId=456 will be:
+		 * partitioned using the get_user_dir_path() function. The final path of the
+		 * avatar that belongs to $user_id=456 will be:
 		 * wp-content/forum/avatars/04/456.jpg (extension used from the original filename)
 		 */
-		$destPath = 'forum/avatars/'.self::getUserDirPath($userId);
-		$destDir = dirname($destPath);
-		if (!self::createDirStruct($destDir)) {
+		$dest_path = 'forum/avatars/'.self::get_user_dir_path($user_id);
+		$dest_dir = dirname($dest_path);
+		if (!self::create_dir_struct($dest_dir)) {
 			return false;
 		}
 		
-		$extension = pathinfo($fileArr['name'], PATHINFO_EXTENSION);
+		$extension = pathinfo($file_arr['name'], PATHINFO_EXTENSION);
 		if (empty($extension)) {
 			$extension = 'jpg'; //Best guess...
 		}
-		$absPathExtless = WP_CONTENT_DIR.'/'.$destPath;//without file extension
-		$absPath = $absPathExtless.'.'.$extension;
-		$tempPath = $absPath.'.tmp'; //Save image temporarily to this file, so an error does not delete the current avatar.
-		@unlink($tempPath); //remove previous temp file if it remained due to an error
+		$abs_path_extless = WP_CONTENT_DIR.'/'.$dest_path;//without file extension
+		$abs_path = $abs_path_extless.'.'.$extension;
+		$temp_path = $abs_path.'.tmp'; //Save image temporarily to this file, so an error does not delete the current avatar.
+		@unlink($temp_path); //remove previous temp file if it remained due to an error
 		
-		$imgResult = image_resize($fileArr['tmp_name'], QHEBUNEL_AVATAR_MAX_WIDTH, QHEBUNEL_AVATAR_MAX_HEIGHT, false, $tempPath);
+		$img_result = image_resize($file_arr['tmp_name'], QHEBUNEL_AVATAR_MAX_WIDTH, QHEBUNEL_AVATAR_MAX_HEIGHT, false, $temp_path);
 		
 		//Check for image_resize errors
-		if (is_wp_error($imgResult)) {
-			if ($imgResult->get_error_code() == 'error_getting_dimensions') {
+		if (is_wp_error($img_result)) {
+			if ($img_result->get_error_code() == 'error_getting_dimensions') {
 				//No resize needed, so we just need to copy the uploaded file
-				@move_uploaded_file($fileArr['tmp_name'], $tempPath);
+				@move_uploaded_file($file_arr['tmp_name'], $temp_path);
 			}
 		}
 		
-		if (is_file($tempPath) && filesize($tempPath) <= QHEBUNEL_AVATAR_MAX_FILESIZE) {
+		if (is_file($temp_path) && filesize($temp_path) <= QHEBUNEL_AVATAR_MAX_FILESIZE) {
 			$stat = @stat(WP_CONTENT_DIR);
 			$mode = $stat['mode'] & 0000666;
-			@chmod($tempPath, $mode);
-			if (@rename($tempPath, $absPath)) {
+			@chmod($temp_path, $mode);
+			if (@rename($temp_path, $abs_path)) {
 				//Remove old avatar, if it had a different file extension and remove temp files too
 				$exts = array('jpg', 'jpeg', 'png', 'gif');
 				foreach ($exts as $ext) {
 					if ($ext != $extension) {
-						@unlink($absPathExtless.'.'.$ext);
+						@unlink($abs_path_extless.'.'.$ext);
 					}
-					@unlink($absPathExtless.'.'.$ext.'.tmp');
+					@unlink($abs_path_extless.'.'.$ext.'.tmp');
 				}
 				
 				//Success
-				return self::getUserDirPath($userId).'.'.$extension;
+				return self::get_user_dir_path($user_id).'.'.$extension;
 			}
 		}
 
 		//Failure
-		@unlink($tempPath);
+		@unlink($temp_path);
 		return false;
 	}
 	
 	/**
 	 * Removes the avatar image file that belongs to the given user.
 	 * Note: the database won't get modified.
-	 * @param integer $userId Optional. If not provided, the ID of the current user will be used.
+	 * @param integer $user_id Optional. If not provided, the ID of the current user will be used.
 	 */
-	public static function deleteAvatar($userId = null) {
+	public static function delete_avatar($user_id = null) {
 		global $wpdb, $current_user;
 		
 		//Get user ID
-		if ($userId == null) {
-			$userId = $current_user->ID;
+		if ($user_id == null) {
+			$user_id = $current_user->ID;
 		}
 		
 		$path = $wpdb->get_var(
 			$wpdb->prepare(
 				'select `avatar` from `qheb_user_ext` where `uid`=%d limit 1;',
-				$userId
+				$user_id
 			)
 		);
 		
@@ -120,14 +120,14 @@ class QhebunelFiles {
 	 * @return boolean True, if the target directory exists
 	 * at the end of the function, false otherwise.
 	 */
-	private static function createDirStruct($path) {
+	private static function create_dir_struct($path) {
 		//Load permissions from the wp-content directory
 		$stat = @stat(WP_CONTENT_DIR);
 		$mode = $stat['mode'] & 0000666;
 		
-		$absPath = WP_CONTENT_DIR.'/'.$path;
-		@mkdir($absPath, $mode, true);
-		return is_dir($absPath);
+		$abs_path = WP_CONTENT_DIR.'/'.$path;
+		@mkdir($abs_path, $mode, true);
+		return is_dir($abs_path);
 	}
 	
 	/**
@@ -135,29 +135,29 @@ class QhebunelFiles {
 	 * This sould be used when accessing an attachment or an avatar.
 	 * This path segment partitions the user related content to maintain 
 	 * the speed of the filesystem.
-	 * @param integer $userId
-	 * @return string Path segment, eg. '01/0123' for $userId=123
+	 * @param integer $user_id
+	 * @return string Path segment, eg. '01/0123' for $user_id=123
 	 */
-	private static function getUserDirPath($userId) {
-		$fourDigit = sprintf('%04d', $userId);
-		return substr($fourDigit, 0, 2).'/'.$fourDigit;
+	private static function get_user_dir_path($user_id) {
+		$four_digit = sprintf('%04d', $user_id);
+		return substr($four_digit, 0, 2).'/'.$four_digit;
 	}
 	
 	/**
 	 * Saves multiple files uploaded as an array (eg. input name="files[]").
-	 * Calls the saveAttachment() function for each file, and returns
+	 * Calls the save_attachment() function for each file, and returns
 	 * the results of these calls as an array.
 	 * @param array $files An array in $_FILES.
-	 * @param integer $postId Post ID this attachment belongs to.
-	 * @param integer $userId Optional. If not provided, the current user's id is used.
-	 * @return array The result of each call to saveAttachment().
+	 * @param integer $post_id Post ID this attachment belongs to.
+	 * @param integer $user_id Optional. If not provided, the current user's id is used.
+	 * @return array The result of each call to save_attachment().
 	 */
-	public static function saveAttachmentArray($files, $postId, $userId = null) {
+	public static function save_attachment_array($files, $post_id, $user_id = null) {
 		$ret = array();
-		$savedAttachments = 0;
+		$saved_attachments = 0;
 		foreach ($files['name'] as $id => $name) {
-			//Build $fileArr as if it would be a single uploaded file
-			$fileArr = array(
+			//Build $file_arr as if it would be a single uploaded file
+			$file_arr = array(
 				'name' => $name,
 				'type' => $files['type'][$id],
 				'tmp_name' => $files['tmp_name'][$id],
@@ -165,10 +165,10 @@ class QhebunelFiles {
 				'size' => $files['size'][$id]
 			);
 			
-			$saveResult = self::saveAttachment($fileArr, $postId, $userId);
-			$ret[] = $saveResult;
-			if ($saveResult != false) {
-				if (++$savedAttachments == QHEBUNEL_ATTACHMENT_LIMIT_PER_POST) {
+			$save_result = self::save_attachment($file_arr, $post_id, $user_id);
+			$ret[] = $save_result;
+			if ($save_result != false) {
+				if (++$saved_attachments == QHEBUNEL_ATTACHMENT_LIMIT_PER_POST) {
 					//If the maximum amount of attached files is reached, terminate the procession
 					break;
 				}
@@ -181,46 +181,46 @@ class QhebunelFiles {
 	 * Checks the type of an uploaded file.
 	 * Currently only the file extension is checked.
 	 * 
-	 * @param array $fileArr A single item in $_FILES, containing the data for the attachment.
-	 * @param string $allowedExtensions Comma separated list of allowed extensions.
-	 * @param boolean $allowExtensionless Set to true if you want to allow extensionless files.
+	 * @param array $file_arr A single item in $_FILES, containing the data for the attachment.
+	 * @param string $allowed_extensions Comma separated list of allowed extensions.
+	 * @param boolean $allow_extensionless Set to true if you want to allow extensionless files.
 	 * @return mixed The file extension as string if the file is allowed, or false if it's not.
 	 */
-	private static function checkType($fileArr, $allowedExtensions, $allowExtensionless) {
-		$filePath = $fileArr['name'];
-		if (preg_match('/\.([^.]+)$/s', $filePath, $regs)) {
-			$fileExt = $regs[1];
+	private static function check_type($file_arr, $allowed_extensions, $allow_extensionless) {
+		$file_path = $file_arr['name'];
+		if (preg_match('/\.([^.]+)$/s', $file_path, $regs)) {
+			$file_ext = $regs[1];
 		} else {
 			//Extensionless file
-			return $allowExtensionless;
+			return $allow_extensionless;
 		}
-		if (strpos(','.$allowedExtensions.',', ','.$fileExt.',') === false) {
+		if (strpos(','.$allowed_extensions.',', ','.$file_ext.',') === false) {
 			//Not allowed
 			return false;
 		}
 		//Allowed, return the extension
-		return $fileExt;
+		return $file_ext;
 	}
 	
 	/**
 	 * Saves a single file uploaded as an attachment
 	 * into the users's directory.
-	 * @param array $fileArr A single item in $_FILES, containing the data for the attachment.
-	 * @param integer $postId Post ID this attachment belongs to.
-	 * @param integer $userId Optional. If not provided, the current user's id is used.
+	 * @param array $file_arr A single item in $_FILES, containing the data for the attachment.
+	 * @param integer $post_id Post ID this attachment belongs to.
+	 * @param integer $user_id Optional. If not provided, the current user's id is used.
 	 * @return mixed The ID of the attachment on success, or false upon failure.
 	 */
-	public static function saveAttachment($fileArr, $postId, $userId = null) {
+	public static function save_attachment($file_arr, $post_id, $user_id = null) {
 		global $current_user, $wpdb;
 		
 		//Return if there was an error during the upload
-		if ($fileArr['error'] != 0 || !@is_uploaded_file($fileArr['tmp_name'])) {
+		if ($file_arr['error'] != 0 || !@is_uploaded_file($file_arr['tmp_name'])) {
 			return false;
 		}
 		
 		//Get user ID
-		if ($userId == null) {
-			$userId = $current_user->ID;
+		if ($user_id == null) {
+			$user_id = $current_user->ID;
 		}
 		
 		/*
@@ -229,23 +229,23 @@ class QhebunelFiles {
 		 * using a directory for every post id.
 		 * Uploaded files will retain their original names (if possible)
 		 * inside these directories. Long filenames will be truncated.
-		 * See also the saveAvatar() function for more info.
+		 * See also the save_avatar() function for more info.
 		 */
-		$destDir = self::getAttachmentDirPath($userId, $postId);
-		if (!self::createDirStruct($destDir)) {
+		$dest_dir = self::get_attachment_dir_path($user_id, $post_id);
+		if (!self::create_dir_struct($dest_dir)) {
 			return false;
 		}
 		
-		$safeName = self::getSafeName($fileArr['name']);
+		$safe_name = self::get_safe_name($file_arr['name']);
 		
 		//Size check - mods can upload larger files
-		$size = filesize($fileArr['tmp_name']);
-		if ($size > QHEBUNEL_ATTACHMENT_MAX_SIZE && !QhebunelUser::isModerator()) {
+		$size = filesize($file_arr['tmp_name']);
+		if ($size > QHEBUNEL_ATTACHMENT_MAX_SIZE && !QhebunelUser::is_moderator()) {
 			return false;
 		}
 		
 		//Type check - admins can upload without restrictions
-		if (self::checkType($fileArr, QHEBUNEL_ATTACHMENT_ALLOWED_TYPES, true) === false && !QhebunelUser::isAdmin()) {
+		if (self::check_type($file_arr, QHEBUNEL_ATTACHMENT_ALLOWED_TYPES, true) === false && !QhebunelUser::is_admin()) {
 			return false;
 		}
 		
@@ -254,27 +254,27 @@ class QhebunelFiles {
 		$wpdb->query(
 			$wpdb->prepare(
 				'insert into `qheb_attachments` (`pid`, `uid`, `name`, `safename`, `size`, `upload`) values(%d, %d, %s, %s, %d, %s);',
-				$postId,
-				$userId,
-				$fileArr['name'],
-				$safeName,
+				$post_id,
+				$user_id,
+				$file_arr['name'],
+				$safe_name,
 				$size,
 				current_time('mysql')
 			)
 		);
-		$attachmentId = $wpdb->insert_id;
-		if ($attachmentId == 0) {
+		$attachment_id = $wpdb->insert_id;
+		if ($attachment_id == 0) {
 			return false;
 		}
 		
-		$destPath = WP_CONTENT_DIR.'/'.self::getAttachmentPath($userId, $postId, $attachmentId, $safeName);
-		if (@move_uploaded_file($fileArr['tmp_name'], $destPath)) {
-			return $attachmentId;
+		$dest_path = WP_CONTENT_DIR.'/'.self::get_attachment_path($user_id, $post_id, $attachment_id, $safe_name);
+		if (@move_uploaded_file($file_arr['tmp_name'], $dest_path)) {
+			return $attachment_id;
 		} else {
 			$wpdb->query(
 				$wpdb->prepare(
 					'delete from `qheb_attachments` where `aid`=%d limit 1;',
-					$attachmentId
+					$attachment_id
 				)
 			);
 		}
@@ -283,15 +283,15 @@ class QhebunelFiles {
 	
 	/**
 	 * Returns the path to the attachment.
-	 * @param integer $userId Uploader user, NOT the currently logged in.
-	 * @param integer $postId Post where this attachment belongs to.
-	 * @param integer $attachmentId Attachment ID from the database.
-	 * @param string $safeName Attachment safe name from the database.
+	 * @param integer $user_id Uploader user, NOT the currently logged in.
+	 * @param integer $post_id Post where this attachment belongs to.
+	 * @param integer $attachment_id Attachment ID from the database.
+	 * @param string $safe_name Attachment safe name from the database.
 	 * @return string Path to the file, relative to WP_CONTENT_DIR.
 	 */
-	public static function getAttachmentPath($userId, $postId, $attachmentId, $safeName) {
-		$fileName = sprintf('%04d', $attachmentId).'-'.$safeName;
-		return self::getAttachmentDirPath($userId, $postId).$fileName;
+	public static function get_attachment_path($user_id, $post_id, $attachment_id, $safe_name) {
+		$file_name = sprintf('%04d', $attachment_id).'-'.$safe_name;
+		return self::get_attachment_dir_path($user_id, $post_id).$file_name;
 	}
 	
 	/**
@@ -299,14 +299,14 @@ class QhebunelFiles {
 	 * Example:
 	 * User ID: 423, Post ID: 2354
 	 * Path returned: forum/attachments/04/0423/2354/
-	 * @param integer $userId
-	 * @param integer $postId
+	 * @param integer $user_id
+	 * @param integer $post_id
 	 * @return string Path relative to WP_CONTENT_DIR or WP_CONTENT_URL.
 	 */
-	private static function getAttachmentDirPath($userId, $postId) {
-		$userDir = self::getUserDirPath($userId);
-		$postDir = sprintf('%04d', $postId);
-		return 'forum/attachments/'.$userDir.'/'.$postDir.'/';
+	private static function get_attachment_dir_path($user_id, $post_id) {
+		$user_dir = self::get_user_dir_path($user_id);
+		$post_dir = sprintf('%04d', $post_id);
+		return 'forum/attachments/'.$user_dir.'/'.$post_dir.'/';
 	}
 	
 	/**
@@ -315,30 +315,30 @@ class QhebunelFiles {
 	 * @param string $name Original file name.
 	 * @return string Safe file name used to store the attachment.
 	 */
-	private static function getSafeName($name) {
+	private static function get_safe_name($name) {
 		//Separate name and extension, extension starts after the last dot in the filename
 		if (preg_match('/^(.*)\.(.*+)$/', $name, $regs)) {
 			$name = $regs[1];
 			$ext = $regs[2];
 		} else {
-			$name = $saneName;
+			$name = $sane_name;
 			$ext = '';
 		}
 		
 		//Remove special chars
-		$saneName = sanitize_title_with_dashes($name, null, 'save');
-		$saneExt = sanitize_title_with_dashes($ext, null, 'save');
+		$sane_name = sanitize_title_with_dashes($name, null, 'save');
+		$sane_ext = sanitize_title_with_dashes($ext, null, 'save');
 		
 		//Truncate length if needed
-		$maxLen = 50;
-		if (strlen($saneName) + strlen($saneExt) + 1 < $maxLen) {
-			return $saneName.'.'.$saneExt;
+		$max_len = 50;
+		if (strlen($sane_name) + strlen($sane_ext) + 1 < $max_len) {
+			return $sane_name.'.'.$sane_ext;
 		}
 		
 		//Extension truncated to 15 chars
-		$saneExt = substr($saneExt, 0, 15);
-		$saneName = substr($saneName, 0, $maxLen-strlen($ext)-1);
-		return $saneName.'.'.$saneExt;
+		$sane_ext = substr($sane_ext, 0, 15);
+		$sane_name = substr($sane_name, 0, $max_len-strlen($ext)-1);
+		return $sane_name.'.'.$sane_ext;
 	}
 	
 	/**
@@ -348,65 +348,65 @@ class QhebunelFiles {
 	 *   'large' => 'badges/00/0012_large.ext',
 	 *   'small' => 'badges/00/0012_small.ext'
 	 * )
-	 * @param integer $badgeId Badge ID.
-	 * @param array $largeImage A single item in $_FILES.
-	 * @param array $smallImage A single item in $_FILES.
+	 * @param integer $badge_id Badge ID.
+	 * @param array $large_image A single item in $_FILES.
+	 * @param array $small_image A single item in $_FILES.
 	 * @return mixed An array holding the paths to the large and small images on success,
 	 * or false if the files could not be saved.
 	 */
-	public static function saveBadgeImages($badgeId, $largeImage, $smallImage) {
+	public static function save_badge_images($badge_id, $large_image, $small_image) {
 		//Check uploaded files
-		if ($largeImage['error'] != 0 || !@is_uploaded_file($largeImage['tmp_name'])) {
+		if ($large_image['error'] != 0 || !@is_uploaded_file($large_image['tmp_name'])) {
 			return false;
 		}
-		$hasSmallImage =  ($smallImage['error'] == 0 && @is_uploaded_file($smallImage['tmp_name']));
+		$has_small_image =  ($small_image['error'] == 0 && @is_uploaded_file($small_image['tmp_name']));
 		
 		//Check file types and build paths
-		$largeExt = self::checkType($largeImage, QHEBUNEL_BADGE_FORMATS, false);
-		if ($largeExt === false) {
+		$large_ext = self::check_type($large_image, QHEBUNEL_BADGE_FORMATS, false);
+		if ($large_ext === false) {
 			return false;
 		}
-		$largePathSegment = self::getBadgeImagePath($badgeId, $largeExt, true);
-		$largePath = WP_CONTENT_DIR.'/'.$largePathSegment;
+		$large_path_segment = self::get_badge_image_path($badge_id, $large_ext, true);
+		$large_path = WP_CONTENT_DIR.'/'.$large_path_segment;
 		
-		if ($hasSmallImage) {
-			$smallExt = self::checkType($smallImage, QHEBUNEL_BADGE_FORMATS, false);
-			if ($smallExt === false) {
-				$hasSmallImage = false;
+		if ($has_small_image) {
+			$small_ext = self::check_type($small_image, QHEBUNEL_BADGE_FORMATS, false);
+			if ($small_ext === false) {
+				$has_small_image = false;
 			} else {
-				$smallPathSegment = self::getBadgeImagePath($badgeId, $smallExt, false);
-				$smallPath = WP_CONTENT_DIR.'/'.$smallPathSegment;
+				$small_path_segment = self::get_badge_image_path($badge_id, $small_ext, false);
+				$small_path = WP_CONTENT_DIR.'/'.$small_path_segment;
 			}
 		}
 		
-		if (!@move_uploaded_file($largeImage['tmp_name'], $largePath)) {
+		if (!@move_uploaded_file($large_image['tmp_name'], $large_path)) {
 			return false;
 		}
-		if ($hasSmallImage && !@move_uploaded_file($smallImage['tmp_name'], $smallPath)) {
-			$hasSmallImage = false;
+		if ($has_small_image && !@move_uploaded_file($small_image['tmp_name'], $small_path)) {
+			$has_small_image = false;
 		}
 		return array(
-			'large' => $largePathSegment,
-			'small' => ($hasSmallImage ? $smallPathSegment : '')
+			'large' => $large_path_segment,
+			'small' => ($has_small_image ? $small_path_segment : '')
 		);
 	}
 	
 	/**
 	 * Return the path to the image.
 	 * Badge images are clusterized into directories holding 100 badges each.
-	 * For example: $badgeId=12, $large=true:
+	 * For example: $badge_id=12, $large=true:
 	 * forum/badges/00/0012_large.ext
-	 * @param integer $badgeId Badge ID.
-	 * @param string $fileExt File extension.
+	 * @param integer $badge_id Badge ID.
+	 * @param string $file_ext File extension.
 	 * @param boolean $large True for the large image, false for the small icon.
 	 * @return string Path relative to WP_CONTENT_DIR or WP_CONTENT_URL.
 	 */
-	private static function getBadgeImagePath($badgeId, $fileExt, $large) {
-		$badgeNum = sprintf('%04u', $badgeId);
+	private static function get_badge_image_path($badge_id, $file_ext, $large) {
+		$badge_num = sprintf('%04u', $badge_id);
 		$variant = ($large ? 'large' : 'small');
-		$dir = 'forum/badges/'.substr($badgeNum, 0, 2);
-		$path = $dir.'/'.$badgeNum.'_'.$variant.'.'.$fileExt;
-		self::createDirStruct($dir);
+		$dir = 'forum/badges/'.substr($badge_num, 0, 2);
+		$path = $dir.'/'.$badge_num.'_'.$variant.'.'.$file_ext;
+		self::create_dir_struct($dir);
 		return $path;
 	}
 	
@@ -417,11 +417,11 @@ class QhebunelFiles {
 	 * @param string $path File path, should be absolute.
 	 * @param string $name Original file name. The browser will suggest this name in the Save As dialog.
 	 */
-	public static function streamFile($path, $name) {
+	public static function stream_file($path, $name) {
 		if (function_exists('http_send_file')) {
-			self::streamFileWithHttpSendFile($path, $name);
+			self::stream_file_with_http_send_file($path, $name);
 		} else {
-			self::streamFileWithScript($path, $name);
+			self::stream_file_with_script($path, $name);
 		}
 	}
 	
@@ -431,15 +431,15 @@ class QhebunelFiles {
 	 * @param string $path File path, should be absolute.
 	 * @param string $name Original file name. The browser will suggest this name in the Save As dialog.
 	 */
-	private static function streamFileWithHttpSendFile($path, $name) {
+	private static function stream_file_with_http_send_file($path, $name) {
 		//TODO: option
-		$throttleSleep = 0.1;
-		$throttleBuffer = 4096;
+		$throttle_sleep = 0.1;
+		$throttle_buffer = 4096;
 		
-		$fileType = wp_check_filetype($path);
+		$file_type = wp_check_filetype($path);
 		http_send_content_disposition($name);
-		http_send_content_type($fileType['type']);
-		http_throttle($throttleSleep, $throttleBuffer);
+		http_send_content_type($file_type['type']);
+		http_throttle($throttle_sleep, $throttle_buffer);
 		http_send_file($path);
 	}
 	
@@ -449,14 +449,14 @@ class QhebunelFiles {
 	 * @param string $path File path, should be absolute.
 	 * @param string $name Original file name. The browser will suggest this name in the Save As dialog.
 	 */
-	private static function streamFileWithScript($path, $name) {
-		$multipartBoundary = "QHEBUNEL_MULTIPART_ATTACHMENT";
+	private static function stream_file_with_script($path, $name) {
+		$multipart_boundary = "QHEBUNEL_MULTIPART_ATTACHMENT";
 		
 		//TODO: option
-		$throttleSleep = 0.1;
-		$throttleBuffer = 4096;
+		$throttle_sleep = 0.1;
+		$throttle_buffer = 4096;
 		
-		$fileSize = filesize($path);
+		$file_size = filesize($path);
 		
 		/*
 		 * Get range parameter
@@ -467,24 +467,24 @@ class QhebunelFiles {
 			if (!preg_match('^bytes=\d*-\d*(,\d*-\d*)*$', $_SERVER['HTTP_RANGE'])) {
 				//Invalid request header
 				header('HTTP/1.1 416 Requested Range Not Satisfiable');
-				header('Content-Range: bytes */' . $fileSize); // Required in 416.
+				header('Content-Range: bytes */' . $file_size); // Required in 416.
 				die();
 			}
 			
 			//Parse intervals
-			$rangeIntervals = explode(',', substr($_SERVER['HTTP_RANGE'], 6));
-			foreach ($rangeIntervals as $range) {
+			$range_intervals = explode(',', substr($_SERVER['HTTP_RANGE'], 6));
+			foreach ($range_intervals as $range) {
 				list($start, $end) = explode('-', $range);
 				if (empty($start)) {
 					$start = 0;
 				}
-				if (empty($end) || $end > $fileSize - 1) {
-					$end = $fileSize - 1;
+				if (empty($end) || $end > $file_size - 1) {
+					$end = $file_size - 1;
 				}
 			
 				if ($start > $end) {
 					header('HTTP/1.1 416 Requested Range Not Satisfiable');
-					header('Content-Range: bytes */' . $fileSize); // Required in 416.
+					header('Content-Range: bytes */' . $file_size); // Required in 416.
 					die();
 				}
 				
@@ -495,12 +495,12 @@ class QhebunelFiles {
 		/*
 		 * Send headers
 		 */
-		$fileType = wp_check_filetype($path);
+		$file_type = wp_check_filetype($path);
 		
 		header('Cache-Control: max-age=30' );
-		header('Content-Type: '.$fileType['type']);
+		header('Content-Type: '.$file_type['type']);
 		header("Content-Disposition: attachment; filename=\"{$name}\"");
-		header('Content-Length: '.$fileSize);
+		header('Content-Length: '.$file_size);
 		header('Pragma: public');
 		header('Accept-Ranges: bytes');
 		
@@ -512,11 +512,11 @@ class QhebunelFiles {
 				//Single range
 				$start = $ranges[0][0];
 				$end = $ranges[0][1];
-				header("Content-Range: bytes ${start}-${end}/${fileSize}");
+				header("Content-Range: bytes ${start}-${end}/${file_size}");
 				
 			} else {
 				//Multiple ranges
-				header('Content-Type: multipart/byteranges; boundary='.$multipartBoundary);
+				header('Content-Type: multipart/byteranges; boundary='.$multipart_boundary);
 				
 			}
 		}
@@ -527,11 +527,11 @@ class QhebunelFiles {
 		$file = @fopen($path, 'rb');
 		if (empty($ranges)) {
 			//Send the whole file
-			self::streamFileSegment($file, 0, $fileSize-1, $throttleSleep, $throttleBuffer);
+			self::stream_file_segment($file, 0, $file_size-1, $throttle_sleep, $throttle_buffer);
 			
 		} elseif (count($ranges) == 1) {
 			//There's only one range, send it
-			self::streamFileSegment($file, $ranges[0][0], $ranges[0][1], $throttleSleep, $throttleBuffer);
+			self::stream_file_segment($file, $ranges[0][0], $ranges[0][1], $throttle_sleep, $throttle_buffer);
 			
 		} else {
 			//Multiple ranges, send as multipart
@@ -539,16 +539,16 @@ class QhebunelFiles {
 				list($start, $end) = $range;
 				//Part header
 				echo("\n");
-				echo('--'.$multipartBoundary."\n");
-				echo('Content-Type: '.$fileType['type']);
-				echo("Content-Range: bytes ${start}-${end}/${fileSize}");
+				echo('--'.$multipart_boundary."\n");
+				echo('Content-Type: '.$file_type['type']);
+				echo("Content-Range: bytes ${start}-${end}/${file_size}");
 				
 				//Send segment
-				self::streamFileSegment($file, $start, $end, $throttleSleep, $throttleBuffer);
+				self::stream_file_segment($file, $start, $end, $throttle_sleep, $throttle_buffer);
 				
 				//Close part
 				echo("\n");
-				echo('--'.$multipartBoundary."--\n");
+				echo('--'.$multipart_boundary."--\n");
 			}
 			
 		}
@@ -561,17 +561,17 @@ class QhebunelFiles {
 	 * @param resource $file File handler.
 	 * @param integer $start First byte to send (start of interval, inclusive).
 	 * @param integer $end Last byte to send (end of interval, inclusive).
-	 * @param integer $throttleSleep Sleep time in seconds, as used in http_throttle().
-	 * @param integer $throttleBuffer Buffer size in bytes, as used in http_throttle().
+	 * @param integer $throttle_sleep Sleep time in seconds, as used in http_throttle().
+	 * @param integer $throttle_buffer Buffer size in bytes, as used in http_throttle().
 	 */
-	private static function streamFileSegment($file, $start, $end, $throttleSleep, $throttleBuffer) {
+	private static function stream_file_segment($file, $start, $end, $throttle_sleep, $throttle_buffer) {
 		@fseek($file, $start);
 		$remaining = $end - $start;
 		while (!connection_aborted() && $remaining > 0) {
-			$readSize = min($throttleBuffer, $remaining);
-			echo @fread($file, $readSize);
-			$remaining -= $readSize;
-			sleep($throttleSleep);
+			$read_size = min($throttle_buffer, $remaining);
+			echo @fread($file, $read_size);
+			$remaining -= $read_size;
+			sleep($throttle_sleep);
 		}
 	}
 }

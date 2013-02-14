@@ -10,7 +10,7 @@ if (!defined('QHEBUNEL_REQUEST') || QHEBUNEL_REQUEST !== true) die;
  * Check permissions
  */
 global $permission;
-$permission = QhebunelUser::getPermissionsForCategory($catId);
+$permission = QhebunelUser::get_permissions_for_category($cat_id);
 
 /**
  * Renders the buttons for various actions
@@ -19,31 +19,31 @@ $permission = QhebunelUser::getPermissionsForCategory($catId);
  * @param array $thread The db row for the current thread.
  * @param integer $pagenum 0 based id of the page.
  */
-function renderActionBar($thread, $pagenum) {
-	global $permission, $threadId;
+function render_action_bar($thread, $pagenum) {
+	global $permission, $thread_id;
 	echo('<div class="thread_actions">');
 	if ($permission >= QHEBUNEL_PERMISSION_WRITE) {
 		echo('<a href="#send-reply">'.__('Reply', 'qhebunel').'</a>');
 	}
 	
-	$postPerPage = QHEBUNEL_POSTS_PER_PAGE;
-	if ($thread['postcount'] > $postPerPage) {
+	$post_per_page = QHEBUNEL_POSTS_PER_PAGE;
+	if ($thread['postcount'] > $post_per_page) {
 		echo('<nav class="thread_pagination">');
 		
-		$pageLinks = array();
+		$page_links = array();
 		
 		//First page
-		$pageLinks[] = '<a href="'.QhebunelUI::getUrlForThread($threadId).'">1</a>';
+		$page_links[] = '<a href="'.QhebunelUI::get_url_for_thread($thread_id).'">1</a>';
 		
-		$pageTotal = ceil($thread['postcount'] / $postPerPage);
-		for ($i=1; $i<$pageTotal; $i++) {
-			$pageLinks[] = '<a href="'.QhebunelUI::getUrlForThread($threadId, $i).'">'.($i+1).'</a>';
+		$page_total = ceil($thread['postcount'] / $post_per_page);
+		for ($i=1; $i<$page_total; $i++) {
+			$page_links[] = '<a href="'.QhebunelUI::get_url_for_thread($thread_id, $i).'">'.($i+1).'</a>';
 		}
 		
-		$pageLinks = implode(' ', $pageLinks);
+		$page_links = implode(' ', $page_links);
 		
 		//translators: The is the placeholder for the links to the pages in the thread.
-		printf(__('Jump to page: %s'), $pageLinks);
+		printf(__('Jump to page: %s'), $page_links);
 		echo('</nav>');
 	}
 	
@@ -53,31 +53,31 @@ function renderActionBar($thread, $pagenum) {
 /**
  * Renders the thread with the title, action bars and posts.
  */
-function renderThread() {
-	global $wpdb, $threadId,$threadId,$pageId;
+function render_thread() {
+	global $wpdb, $thread_id,$thread_id,$page_id;
 	
 	//Load thread info
 	$thread = $wpdb->get_results(
 		$wpdb->prepare(
 			'select * from `qheb_threads` where `tid`=%d limit 1;',
-			$threadId
+			$thread_id
 		),
 		ARRAY_A
 	);
 	$thread = $thread[0];
 	
 	/*
-	 * The $pageId parameter is 0 for the first page, and acts as a one based counter starting from the second page.
-	 * (This means that the pageIds for the first few pages are: 0,2,3,4.)
+	 * The $page_id parameter is 0 for the first page, and acts as a one based counter starting from the second page.
+	 * (This means that the page_ids for the first few pages are: 0,2,3,4.)
 	 * To use it, we must convert it to 0 based.
 	 */
-	$pageNum = $pageId;
-	if ($pageNum > 0) {
-		$pageNum--;
+	$page_num = $page_id;
+	if ($page_num > 0) {
+		$page_num--;
 	}
 	
-	$postPerPage = QHEBUNEL_POSTS_PER_PAGE;
-	$postOffset = $pageNum * $postPerPage;
+	$post_per_page = QHEBUNEL_POSTS_PER_PAGE;
+	$post_offset = $page_num * $post_per_page;
 	
 	$posts = $wpdb->get_results(
 		$wpdb->prepare(
@@ -93,9 +93,9 @@ function renderThread() {
 			where `tid`=%d
 			order by `tid` asc
 			limit %d,%d;',
-			$threadId,
-			$postOffset,
-			$postPerPage
+			$thread_id,
+			$post_offset,
+			$post_per_page
 		),
 		ARRAY_A
 	);
@@ -103,18 +103,18 @@ function renderThread() {
 	echo('<div class="qheb_thread">');
 	
 	//Use h2 tag only on the first page
-	$titleTag = ($pageId == 0 ? 'h2' : 'div');
-	echo('<'.$titleTag.' class="thread_title">'.QhebunelUI::formatTitle($thread['title']).'</'.$titleTag.'>');
+	$title_tag = ($page_id == 0 ? 'h2' : 'div');
+	echo('<'.$title_tag.' class="thread_title">'.QhebunelUI::format_title($thread['title']).'</'.$title_tag.'>');
 	
-	renderActionBar($thread, $pageNum);
+	render_action_bar($thread, $page_num);
 	
 	foreach ($posts as $post) {
-		renderSinglePost($post);
+		render_single_post($post);
 	}
 	
-	renderActionBar($thread, $pageNum);
+	render_action_bar($thread, $page_num);
 	
-	renderReplyForm();
+	render_reply_form();
 	
 	echo('</div>');
 }
@@ -122,7 +122,7 @@ function renderThread() {
 /**
  * Renders a single post into the main container div.
  */
-function renderSinglePost($post) {
+function render_single_post($post) {
 	global $wpdb;
 	
 	/*
@@ -151,12 +151,12 @@ function renderSinglePost($post) {
 	
 	//Post meta
 	echo('<header class="post_meta">');
-	echo('<time class="post_date" datetime="'.QhebunelDate::getDatetimeAttribute($post['postdate']).'" title="'.QhebunelDate::getRelativeDate($post['postdate']).'">'.QhebunelDate::getPostDate($post['postdate']).'</time>');
+	echo('<time class="post_date" datetime="'.QhebunelDate::get_datetime_attribute($post['postdate']).'" title="'.QhebunelDate::get_relative_date($post['postdate']).'">'.QhebunelDate::get_post_date($post['postdate']).'</time>');
 	echo('</header>');
 	
 	//Post content
 	echo('<div class="post_message">');
-	echo(QhebunelUI::formatPost($post['text']));
+	echo(QhebunelUI::format_post($post['text']));
 	echo('</div>');
 	
 	//Attachments
@@ -181,11 +181,11 @@ function renderSinglePost($post) {
 	
 	//Signature
 	echo('<div class="user_signature">');
-	echo(QhebunelUI::formatPost($post['signature']));
+	echo(QhebunelUI::format_post($post['signature']));
 	echo('</div>');
 	
 	//Post action buttons
-	renderPostActions($post);
+	render_post_actions($post);
 	
 	echo('</div>');
 	
@@ -193,35 +193,35 @@ function renderSinglePost($post) {
 	echo('</article>');
 }
 
-function renderPostActions($post) {
-	global $permission, $threadId, $pageId;
+function render_post_actions($post) {
+	global $permission, $thread_id, $page_id;
 	
 	echo('<footer class="post_actions">');
 	if ($permission >= QHEBUNEL_PERMISSION_WRITE) {
-		$quoteUrl = QhebunelUI::getUrlForThread($threadId, $pageId).'?quote='.$post['pid'].'#send-reply';
+		$quote_url = QhebunelUI::get_url_for_thread($thread_id, $page_id).'?quote='.$post['pid'].'#send-reply';
 		echo('<a class="post_action reply_link" href="#send-reply">'.__('Reply', 'qhebunel').'</a> ');
-		echo('<a class="post_action quote_link" href="'.$quoteUrl.'">'.__('Quote', 'qhebunel').'</a> ');
+		echo('<a class="post_action quote_link" href="'.$quote_url.'">'.__('Quote', 'qhebunel').'</a> ');
 	}
 	echo('</footer>');
 }
 
-function renderReplyForm() {
-	global $threadId;
+function render_reply_form() {
+	global $thread_id;
 	
 	//Get quoted post
 	if (isset($_GET['quote'])) {
-		$defaultText = htmlentities2(QhebunelUI::getQuoteForPost($_GET['quote']));
+		$default_text = htmlentities2(QhebunelUI::get_quote_for_post($_GET['quote']));
 	} else {
-		$defaultText = '';
+		$default_text = '';
 	}
 	
 	echo('<div id="send-reply">');
-	echo('<form id="replyForm" action="'.site_url('forum/').'" method="post" enctype="multipart/form-data">');
+	echo('<form id="reply-form" action="'.site_url('forum/').'" method="post" enctype="multipart/form-data">');
 	echo('<input type="hidden" name="action" value="reply" />');
 	echo('<input type="hidden" name="MAX_FILE_SIZE" value="' . QHEBUNEL_ATTACHMENT_MAX_SIZE . '" />');
-	echo('<input type="hidden" name="reply_thread" value="'.$threadId.'" />');
-	echo('<textarea name="reply_message">'.$defaultText.'</textarea>');
-	if (QhebunelUser::hasPersmissionToUpload()) {
+	echo('<input type="hidden" name="reply_thread" value="'.$thread_id.'" />');
+	echo('<textarea name="reply_message">'.$default_text.'</textarea>');
+	if (QhebunelUser::has_persmission_to_upload()) {
 		echo('<div class="attachments"><span class="attachmentlist">'.__('Attachments','qhebunel').'</span><div class="attachmentlist"><div class="file"><input type="file" name="attachments[]" class="attachment" /><input type="button" value="Remove" class="remove" /></div></div></div>');
 	}
 	echo('<input type="submit" name="new_thread" value="'.__('Post reply','qhebunel').'" />');
@@ -229,7 +229,7 @@ function renderReplyForm() {
 	echo('</div>');
 }
 
-function renderNoPermissionPage() {
+function render_no_permission_page() {
 	echo('<div class="qheb_error_message">'.__('You do not have sufficient permissions to view this thread.', 'qhebunel').'</div>');
 }
 
@@ -237,8 +237,8 @@ function renderNoPermissionPage() {
  * Render Page
  */
 if ($permission == QHEBUNEL_PERMISSION_NONE) {
-	renderNoPermissionPage();
+	render_no_permission_page();
 } else {
-	renderThread();
+	render_thread();
 }
 ?>

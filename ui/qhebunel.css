@@ -138,22 +138,22 @@ Thread
 	margin: 0;
 	padding: 0 0 0 17px;
 }
-#replyForm textarea {
+#reply-form textarea {
 	height: 250px;
 	width: 100%;
 }
-#replyForm span.attachmentlist {
+#reply-form span.attachmentlist {
 	float: left;
 	margin-top: 10px;
 }
-#replyForm div.attachmentlist {
+#reply-form div.attachmentlist {
 	float: left;
 	margin-left: 20px;
 	margin-top: 10px;
 	margin-bottom: 10px;
 }
 
-#replyForm div.attachments:after {
+#reply-form div.attachments:after {
 	content: '.'; 
 	display: block; 
 	clear: both; 
@@ -161,7 +161,7 @@ Thread
 	height: 0; 
 	line-height: 0;
 }
-#replyForm input[type=submit] {
+#reply-form input[type=submit] {
 }
 #send-reply {
 	border: 1px solid #000;

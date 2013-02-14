@@ -5,19 +5,19 @@
 /**
  * Moves the category up in the list
  */
-function qheb_catlist_up(id) {
-	jQuery('#qheb_catlist_catid').val(id);
-	jQuery('#qheb_catlist_direction').val('up');
-	jQuery('#qheb_catorderform').submit();
+function qhebCatlistUp(id) {
+	jQuery('#qheb-catlist-catid').val(id);
+	jQuery('#qheb-catlist-direction').val('up');
+	jQuery('#qheb-catorderform').submit();
 }
 
 /**
  * Moves the category down in the list
  */
-function qheb_catlist_down(id) {
-	jQuery('#qheb_catlist_catid').val(id);
-	jQuery('#qheb_catlist_direction').val('down');
-	jQuery('#qheb_catorderform').submit();
+function qhebCatlistDown(id) {
+	jQuery('#qheb-catlist-catid').val(id);
+	jQuery('#qheb-catlist-direction').val('down');
+	jQuery('#qheb-catorderform').submit();
 }
 
 /**
@@ -25,54 +25,54 @@ function qheb_catlist_down(id) {
  * Every permission below Everyone is set to the rights of Everyone.
  * Every permissions for custom groups are set to the rights of Registered users, if it was lower.
  */
-function qheb_catperms_update() {
-	var everyonePerm = jQuery("input[id^=qheb_catperm_1_]:checked").val();
-	var registeredPerm = jQuery("input[id^=qheb_catperm_2_]:checked").val();
+function qhebCatpermsUpdate() {
+	var everyonePerm = jQuery("input[id^=qheb-catperm-1-]:checked").val();
+	var registeredPerm = jQuery("input[id^=qheb-catperm-2-]:checked").val();
 	
 	for(var i=0; i<4; i++) {
-		jQuery('#qheb_catperm_2_'+i).prop('disabled', i<everyonePerm);
+		jQuery('#qheb-catperm-2-'+i).prop('disabled', i<everyonePerm);
 	}
 	if (registeredPerm < everyonePerm) {
-		jQuery('#qheb_catperm_2_'+everyonePerm).attr('checked','checked');
+		jQuery('#qheb-catperm-2-'+everyonePerm).attr('checked','checked');
 		registeredPerm = everyonePerm;
 	}
 	
-	jQuery("input[id^=qheb_catperm_]:checked").each(function(){
+	jQuery("input[id^=qheb-catperm-]:checked").each(function(){
 		var rb = jQuery(this); 
 		var id = rb.attr('id');
-		var regs = id.match(/_(\d+)_(\d+)/);
+		var regs = id.match(/-(\d+)-(\d+)/);
 		if (regs[1] > 2) {
 			for(var i=0; i<4; i++) {
-				jQuery('#qheb_catperm_'+regs[1]+'_'+i).prop('disabled', i<registeredPerm);
+				jQuery('#qheb-catperm-'+regs[1]+'-'+i).prop('disabled', i<registeredPerm);
 			}
 			if (regs[2] < registeredPerm) {
-				jQuery('#qheb_catperm_'+regs[1]+'_'+registeredPerm).attr('checked','checked');
+				jQuery('#qheb-catperm-'+regs[1]+'-'+registeredPerm).attr('checked','checked');
 			}
 		}
 	});
 }
 
-function qheb_catperms_init() {
-	qheb_catperms_update();
-	jQuery("input[id^=qheb_catperm_]").change(qheb_catperms_update);
+function qhebCatpermsInit() {
+	qhebCatpermsUpdate();
+	jQuery("input[id^=qheb-catperm-]").change(qhebCatpermsUpdate);
 }
 
 /*
  * User list
  */
-function qheb_ulist_actchange() {
+function qhebUlistActchange() {
 	act = jQuery('#qheb_ulist_action').val();
 	if (act == 'addgroup' || act == 'removegroup') {
-		jQuery('#qheb_ulist_group').show();
+		jQuery('#qheb-ulist-group').show();
 	} else {
-		jQuery('#qheb_ulist_group').hide();
+		jQuery('#qheb-ulist-group').hide();
 	}
 }
 
 /*
  * Badges
  */
-function qheb_badges_init() {
+function qhebBadgesInit() {
 	jQuery('#upload_image_button').click(function() {
 		formfield = jQuery('#upload_image').attr('name');
 		tb_show('', 'media-upload.php?type=image&amp;TB_iframe=true');
@@ -88,7 +88,7 @@ function qheb_badges_init() {
 
 
 jQuery(document).ready(function() {
-	qheb_badges_init();
-	qheb_catperms_init();
+	qhebBadgesInit();
+	qhebCatpermsInit();
 });
 

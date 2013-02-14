@@ -16,13 +16,13 @@ if ($current_user->ID == 0) {
 }
 
 //Load data to display
-$userName = $current_user->data->user_login;
-$firstName = get_user_meta($current_user->ID, 'first_name', true);
-$lastName = get_user_meta($current_user->ID, 'last_name', true);
-$nickName = $current_user->data->display_name;
+$user_name = $current_user->data->user_login;
+$first_name = get_user_meta($current_user->ID, 'first_name', true);
+$last_name = get_user_meta($current_user->ID, 'last_name', true);
+$nick_name = $current_user->data->display_name;
 $email = $current_user->data->user_email;
 
-$extData = $wpdb->get_row(
+$ext_data = $wpdb->get_row(
 	$wpdb->prepare(
 		'select * from `qheb_user_ext` where `uid`=%d',
 		$current_user->ID
@@ -31,7 +31,7 @@ $extData = $wpdb->get_row(
 );
 
 ?>
-<form method="post" action="<?=site_url('forum/')?>" enctype="multipart/form-data" onsubmit="return validateProfileForm();" id="profileForm">
+<form method="post" action="<?=site_url('forum/')?>" enctype="multipart/form-data" onsubmit="return validate_profile_form();" id="profile_form">
 	<input type="hidden" name="action" value="profile" />
 	<input type="hidden" name="MAX_FILE_SIZE" value="<?=QHEBUNEL_AVATAR_MAX_FILESIZE?>" />
 	<h2><?php _e('Basic information', 'qhebunel'); ?></h2>
@@ -46,15 +46,15 @@ $extData = $wpdb->get_row(
 			</tr>
 			<tr>
 				<th><label for="firstname"><?php _e('First name', 'qhebunel'); ?></label></th>
-				<td><input name="firstname" id="firstname" type="text" value="<?=$firstName?>" /></td>
+				<td><input name="firstname" id="firstname" type="text" value="<?=$first_name?>" /></td>
 			</tr>
 			<tr>
 				<th><label for="lastname"><?php _e('Last name', 'qhebunel'); ?></label></th>
-				<td><input name="lastname" id="lastname" type="text" value="<?=$lastName?>" /></td>
+				<td><input name="lastname" id="lastname" type="text" value="<?=$last_name?>" /></td>
 			</tr>
 			<tr title="<?php _e('This is the name visible next to your comments and forum posts.', 'qhebunel'); ?>">
 				<th><label for="nickname"><?php _e('Nickname', 'qhebunel'); ?></label></th>
-				<td><input name="nickname" id="nickname" type="text" required="required" value="<?=$nickName?>" /></td>
+				<td><input name="nickname" id="nickname" type="text" required="required" value="<?=$nick_name?>" /></td>
 			</tr>
 			<tr title="<?php _e('Your email address is used to send you notifications you request and it\'s used in case you forgot your password.', 'qhebunel'); ?>">
 				<th><label for="email"><?php _e('Email', 'qhebunel'); ?></label></th>
@@ -82,8 +82,8 @@ $extData = $wpdb->get_row(
 				<th><?php _e('Current avatar', 'qhebunel'); ?></th>
 				<td>
 					<?php
-						if (!empty($extData['avatar'])) {
-							echo('<img src="'.WP_CONTENT_URL.'/forum/avatars/'.$extData['avatar'].'" alt="" />');
+						if (!empty($ext_data['avatar'])) {
+							echo('<img src="'.WP_CONTENT_URL.'/forum/avatars/'.$ext_data['avatar'].'" alt="" />');
 							echo('<br/><input name="delete_avatar" type="submit" value="'.__('Delete avatar', 'qhebunel').'" />');
 						} else {
 							_e('You don\'t have an avatar.', 'qhebunel');
@@ -101,8 +101,8 @@ $extData = $wpdb->get_row(
 				<th><?php _e('Current signature', 'qhebunel'); ?></th>
 				<td>
 					<?php
-						if (!empty($extData['signature'])) {
-							echo('<div class="user_signature">'.QhebunelUI::formatPost($extData['signature']).'</div>');
+						if (!empty($ext_data['signature'])) {
+							echo('<div class="user_signature">'.QhebunelUI::format_post($ext_data['signature']).'</div>');
 						} else {
 							_e('You don\'t have a signature.', 'qhebunel');
 						}
@@ -112,7 +112,7 @@ $extData = $wpdb->get_row(
 			<tr>
 				<th><?php _e('Edit signature', 'qhebunel'); ?></th>
 				<td>
-					<textarea name="signature"><?=(empty($extData['signature']) ? '' : $extData['signature'])?></textarea>
+					<textarea name="signature"><?=(empty($ext_data['signature']) ? '' : $ext_data['signature'])?></textarea>
 				</td>
 			</tr>
 		</tbody>

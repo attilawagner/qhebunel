@@ -7,7 +7,7 @@ if (!defined('QHEBUNEL_REQUEST') || QHEBUNEL_REQUEST !== true) die;
 
 //Only logged in users can modify their profile
 if ($current_user->ID <= 0) {
-	Qhebunel::redirectToErrorPage();
+	Qhebunel::redirect_to_error_page();
 }
 
 /**
@@ -16,45 +16,45 @@ if ($current_user->ID <= 0) {
 function qheb_user_profile_update() {
 	global $wpdb, $current_user;
 	
-	$firstName = $_POST['firstname'];
-	$lastName = $_POST['lastname'];
-	$nickName = $_POST['nickname'];
+	$first_name = $_POST['firstname'];
+	$last_name = $_POST['lastname'];
+	$nick_name = $_POST['nickname'];
 	$email = $_POST['email'];
 	$pass1 = $_POST['pass1'];
 	$pass2 = $_POST['pass2'];
 	$signature = $_POST['signature'];
 	
 	//Clean whitespace from both ends of the text fields
-	$textFields = array('firstName', 'lastName', 'nickName', 'email', 'signature');
-	foreach ($textFields as $fieldName) {
-		$$fieldName = preg_replace('/^[\p{Z}\s]+|[\p{Z}\s]+$/u', '', $$fieldName);
+	$text_fields = array('first_name', 'last_name', 'nick_name', 'email', 'signature');
+	foreach ($text_fields as $field_name) {
+		$$field_name = preg_replace('/^[\p{Z}\s]+|[\p{Z}\s]+$/u', '', $$field_name);
 	}
 	
 	//TODO: checks, JS checks
-	$errorInPass = (!empty($pass1) || !empty($pass2)) && $pass1 != $pass2;
-	if (empty($nickName) || $errorInPass|| empty($email)) {
-		Qhebunel::redirectToErrorPage();	
+	$error_in_pass = (!empty($pass1) || !empty($pass2)) && $pass1 != $pass2;
+	if (empty($nick_name) || $error_in_pass|| empty($email)) {
+		Qhebunel::redirect_to_error_page();	
 	}
 	
 	//Update user table
-	$userUpdateData = array(
+	$user_update_data = array(
 		'ID' =>				$current_user->ID,
 		'user_email' =>		$email,
-		'display_name' =>	$nickName
+		'display_name' =>	$nick_name
 	);
 	if (!empty($pass1)) {
-		$userUpdateData['user_pass'] = $pass1;
+		$user_update_data['user_pass'] = $pass1;
 	}
-	wp_update_user($userUpdateData);
+	wp_update_user($user_update_data);
 	
 	//Update user meta
-	update_user_meta($current_user->ID, 'first_name', $firstName);
-	update_user_meta($current_user->ID, 'last_name', $lastName);
-	update_user_meta($current_user->ID, 'nickname', $nickName);
+	update_user_meta($current_user->ID, 'first_name', $first_name);
+	update_user_meta($current_user->ID, 'last_name', $last_name);
+	update_user_meta($current_user->ID, 'nickname', $nick_name);
 	
 	//TODO: avatar
 	if (!empty($_FILES['avatar'])) {
-		if (($avatar = QhebunelFiles::saveAvatar($_FILES['avatar'])) !== false) {
+		if (($avatar = QhebunelFiles::save_avatar($_FILES['avatar'])) !== false) {
 			//The path is returned, save it into the DB
 			$wpdb->query(
 				$wpdb->prepare(
@@ -85,7 +85,7 @@ function qheb_user_profile_delete_avatar() {
 	global $wpdb, $current_user;
 	
 	//Delete file
-	QhebunelFiles::deleteAvatar();
+	QhebunelFiles::delete_avatar();
 	
 	//Remove from DB
 	$wpdb->query(
@@ -106,7 +106,7 @@ if (isset($_POST['update'])) {
 
 //Redirect to profile page
 //TODO: common function
-$relativeUrl .= 'profile';
-$absoluteUrl = get_site_url(null, 'forum/'.$relativeUrl);
-wp_redirect($absoluteUrl);//Temporal redirect
+$relative_url .= 'profile';
+$absolute_url = get_site_url(null, 'forum/'.$relative_url);
+wp_redirect($absolute_url);//Temporal redirect
 ?>

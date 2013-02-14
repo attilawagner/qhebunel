@@ -10,7 +10,7 @@ class QhebunelUser {
 	 * Checks whether the currently logged in user is an admin in Qhebunel.
 	 * @return boolean True if the currently logged in user has admin privileges.
 	 */
-	public static function isAdmin() {
+	public static function is_admin() {
 		return current_user_can('edit_users');
 	}
 	
@@ -18,8 +18,8 @@ class QhebunelUser {
 	 * Checks whether the currently logged in user is an moderator in Qhebunel.
 	 * @return boolean True if the currently logged in user has moderator privileges.
 	 */
-	public static function isModerator() {
-		$ugroups = self::getGroups();
+	public static function is_moderator() {
+		$ugroups = self::get_groups();
 		if (in_array(3, $ugroups)) { //Check for the built in Moderators group
 			return true;
 		}
@@ -31,7 +31,7 @@ class QhebunelUser {
 	 * global variable $QHEB_UDATA as an associative array.
 	 * @return array $QHEB_UDATA, empty array if the user is not logged in.
 	 */
-	public static function getData() {
+	public static function get_data() {
 		global $QHEB_UDATA, $current_user, $wpdb;
 		if (!isset($QHEB_UDATA)) {
 			$QHEB_UDATA[] = array();
@@ -54,7 +54,7 @@ class QhebunelUser {
 	 * and stores it in the global $QHEB_UGROUPS variable.
 	 * @return array $QHEB_UGROUPS
 	 */
-	public static function getGroups() {
+	public static function get_groups() {
 		global $QHEB_UGROUPS, $wpdb, $current_user;
 		if (!isset($QHEB_UGROUPS)) {
 			$QHEB_UGROUPS = array();
@@ -80,12 +80,12 @@ class QhebunelUser {
 	 * Adds the default extended data to the specified user.
 	 * Should be called upon a registration.
 	 */
-	public static function addDefaultData($userId) {
+	public static function add_default_data($user_id) {
 		global $wpdb;
 		$wpdb->query(
 			$wpdb->prepare(
 				'insert into `qheb_user_ext` (`uid`) values (%d)',
-				$userId
+				$user_id
 			)
 		);
 	}
@@ -94,17 +94,17 @@ class QhebunelUser {
 	/**
 	 * Returns the permission level of the current user
 	 * for the specified category.
-	 * @param integer $catId Category ID
+	 * @param integer $cat_id Category ID
 	 * @return integer Permission level
 	 */
-	public static function getPermissionsForCategory($catId) {
+	public static function get_permissions_for_category($cat_id) {
 		global $wpdb;
-		if (self::isAdmin()) {
+		if (self::is_admin()) {
 			return QHEBUNEL_PERMISSION_START;
 		} else {
-			$groups = self::getGroups();
+			$groups = self::get_groups();
 			$permission = $wpdb->get_var(
-				'select ifnull(max(`access`),0) from `qheb_category_permissions` where `catid`='.(int)$catId.' and `gid` in ('.implode(',', $groups).');',
+				'select ifnull(max(`access`),0) from `qheb_category_permissions` where `catid`='.(int)$cat_id.' and `gid` in ('.implode(',', $groups).');',
 				0,
 				0
 			);
@@ -117,16 +117,16 @@ class QhebunelUser {
 	 * Should be called when handling the download request.
 	 * The user has permission to download, if he can read the topics of the category
 	 * the file was posted in.
-	 * @param integer $attachmentId Attachment ID
+	 * @param integer $attachment_id Attachment ID
 	 * @return boolean True if the user has permission required
 	 * for downloading the file.
 	 */
-	public static function hasPermissionForAttachment($attachmentId) {
+	public static function has_permission_for_attachment($attachment_id) {
 		global $wpdb;
-		if (self::isAdmin()) {
+		if (self::is_admin()) {
 			return true;
 		} else {
-			$catId = $wpdb->get_var(
+			$cat_id = $wpdb->get_var(
 				$wpdb->prepare(
 					'select `t`.`catid`
 					from `qheb_attachments` as `a`
@@ -135,14 +135,14 @@ class QhebunelUser {
 					left join `qheb_threads` as `t`
 						on (`t`.`tid`=`p`.`tid`)
 					where `a`.`aid`=%d limit 1;',
-					$attachmentId
+					$attachment_id
 				),
 			 	0,
 				0
 			);
 			
-			if ($catId > 0) {
-				return self::getPermissionsForCategory($catId) >= QHEBUNEL_PERMISSION_READ;
+			if ($cat_id > 0) {
+				return self::get_permissions_for_category($cat_id) >= QHEBUNEL_PERMISSION_READ;
 			}
 		}
 		return false;
@@ -153,7 +153,7 @@ class QhebunelUser {
 	 * Only logged in users can upload.
 	 * @return boolean True if upload is allowed for the user.
 	 */
-	public static function hasPersmissionToUpload() {
+	public static function has_persmission_to_upload() {
 		global $current_user;
 		return ($current_user->ID > 0);
 	}

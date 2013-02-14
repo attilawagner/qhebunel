@@ -16,12 +16,12 @@ class Qhebunel {
 	 */
 	public static function init() {
 		//Forum pages only
-		$forumRoot = site_url('forum', 'relative');
-		$forumRootLen = strlen($forumRoot);
-		if (strncmp($forumRoot, $_SERVER['REQUEST_URI'], $forumRootLen) === 0) {
+		$forum_root = site_url('forum', 'relative');
+		$forum_root_len = strlen($forum_root);
+		if (strncmp($forum_root, $_SERVER['REQUEST_URI'], $forum_root_len) === 0) {
 			//Localization
 			//load_plugin_textdomain('qhebunel', 'locales');
-			self::removeWpMagicQuotes();
+			self::remove_wp_magic_quotes();
 			
 			//SCEditor
 			wp_register_style('sceditor', plugins_url('qhebunel/ui/sceditor/minified/jquery.sceditor.default.min.css'));
@@ -54,7 +54,7 @@ class Qhebunel {
 			wp_enqueue_script('qhebunel-admin');
 			
 			if (strpos($_SERVER['REQUEST_URI'], 'wp-admin/admin.php?page=qhebunel') !== false) {
-				self::removeWpMagicQuotes();
+				self::remove_wp_magic_quotes();
 			}
 		}
 	}
@@ -74,7 +74,7 @@ class Qhebunel {
 	/**
 	 * Registers the admin menus.
 	 */
-	public static function registerAdminMenus() {
+	public static function register_admin_menus() {
 		add_menu_page('Qhebunel', 'Qhebunel', 'manage_options', 'qhebunel/admin/optindex.php');
 		add_submenu_page('qhebunel/admin/optindex.php', __('General settings &lsaquo; Qhebunel', 'qhebunel'), __('General settings', 'qhebunel'), 'manage_options', 'qhebunel/admin/optindex.php');
 		add_submenu_page('qhebunel/admin/optindex.php', __('Categories &lsaquo; Qhebunel', 'qhebunel'), __('Categories', 'qhebunel'), 'manage_options', 'qhebunel/admin/optcats.php');
@@ -86,23 +86,23 @@ class Qhebunel {
 	/**
 	 * Activation
 	 */
-	public static function pluginActivation() {
+	public static function plugin_activation() {
 		require_once plugin_dir_path(__FILE__).'/install.php';
-		qhebunelInstall();
+		qhebunel_install();
 	}
 	
 	/**
 	 * Deactivation
 	 */
-	public static function pluginDeactivation() {
+	public static function plugin_deactivation() {
 		require_once plugin_dir_path(__FILE__).'/install.php';
-		qhebunelUninstall();
+		qhebunel_uninstall();
 	}
 	
 	/**
 	 * Helper function to undo WP's magic quoting.
 	 */
-	private static function removeWpMagicQuotes() {
+	private static function remove_wp_magic_quotes() {
 		//$_GET     = stripslashes_deep($_GET);
 		$_POST    = stripslashes_deep($_POST);
 		//$_COOKIE  = stripslashes_deep($_COOKIE);
@@ -116,7 +116,7 @@ class Qhebunel {
 	 * @param string $title Title for a category or topic
 	 * @return string The URL safe title.
 	 */
-	public static function getUriComponentForTitle($title) {
+	public static function get_uri_component_for_title($title) {
 		//Get first 6 words
 		$title = preg_split('/\s+/', $title, 7);
 		$title = implode(' ', array_slice($title, 0, 6));
@@ -126,19 +126,19 @@ class Qhebunel {
 	/**
 	 * Calls wp_redirect() to show the user the error page.
 	 */
-	public static function redirectToErrorPage() {
-		$absoluteUrl = site_url('forum/error');
-		wp_redirect($absoluteUrl);//Temporal redirect
+	public static function redirect_to_error_page() {
+		$absolute_url = site_url('forum/error');
+		wp_redirect($absolute_url);//Temporal redirect
 		die();
 	}
 	
 	/**
 	 * Echoes code into the &lt;head&gt; tag.
 	 */
-	public static function buildHeadFragment() {
-		$emoticons = QhebunelEmoticons::getList('grouped');
+	public static function build_head_fragment() {
+		$emoticons = QhebunelEmoticons::get_list('grouped');
 		
-		$jsConfig = array(
+		$js_config = array(
 			'forumRoot' => site_url('forum/'),
 			'SCEditor' => array(
 				'emoticonsRoot' => QHEBUNEL_URL.'ui/emoticons/',
@@ -149,7 +149,7 @@ class Qhebunel {
 				)
 			)
 		);
-		echo '<script type="text/javascript">var qhebunelConfig='.json_encode($jsConfig).';</script>';
+		echo '<script type="text/javascript">var qhebunelConfig='.json_encode($js_config).';</script>';
 	}
 }
 
@@ -168,16 +168,16 @@ require_once 'lib/qhebunelbadges.php';
 
 //Register hooks
 add_action('init', array('Qhebunel','init'), 99);
-add_action('admin_menu', array('Qhebunel','registerAdminMenus'));
-add_action('wp_head', array('Qhebunel','buildHeadFragment'));
-register_activation_hook(__FILE__, array('Qhebunel', 'pluginActivation'));
-register_deactivation_hook(__FILE__, array('Qhebunel', 'pluginDeactivation'));
-add_action('user_register', array('QhebunelUser', 'addDefaultData'));
+add_action('admin_menu', array('Qhebunel','register_admin_menus'));
+add_action('wp_head', array('Qhebunel','build_head_fragment'));
+register_activation_hook(__FILE__, array('Qhebunel', 'plugin_activation'));
+register_deactivation_hook(__FILE__, array('Qhebunel', 'plugin_deactivation'));
+add_action('user_register', array('QhebunelUser', 'add_default_data'));
 
 //Register hooks to add emoticon parsing globally
-add_filter('the_content', array('QhebunelEmoticons', 'replaceInText'), 5);
-add_filter('the_excrept', array('QhebunelEmoticons', 'replaceInText'));
-add_filter('comment_text', array('QhebunelEmoticons', 'replaceInText'));
+add_filter('the_content', array('QhebunelEmoticons', 'replace_in_text'), 5);
+add_filter('the_excrept', array('QhebunelEmoticons', 'replace_in_text'));
+add_filter('comment_text', array('QhebunelEmoticons', 'replace_in_text'));
 
 add_action('activated_plugin','save_error');
 function save_error(){

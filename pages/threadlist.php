@@ -10,18 +10,18 @@ if (!defined('QHEBUNEL_REQUEST') || QHEBUNEL_REQUEST !== true) die;
  * Load user permissions for this category
  */
 global $permission;
-$permission = QhebunelUser::getPermissionsForCategory($catId);
+$permission = QhebunelUser::get_permissions_for_category($cat_id);
 
 /**
  * Renders the buttons for various actions
  * (eg. starting a new thread) according to
  * the permissions of the user.
  */
-function renderActionBar() {
-	global $permission, $catId;
+function render_action_bar() {
+	global $permission, $cat_id;
 	echo('<div class="qheb_actionbar">');
 	if ($permission >= QHEBUNEL_PERMISSION_START) {
-		echo('<a href="'.QhebunelUI::getUrlForCategory($catId).'new-thread" />'.__('Start thread','qhebunel').'</a>');
+		echo('<a href="'.QhebunelUI::get_url_for_category($cat_id).'new-thread" />'.__('Start thread','qhebunel').'</a>');
 	}
 	echo('</div>');
 }
@@ -30,8 +30,8 @@ function renderActionBar() {
  * Renders the table containing the list of threads
  * and statistics.
  */
-function renderThreadList() {
-	global $wpdb, $catId;
+function render_thread_list() {
+	global $wpdb, $cat_id;
 	echo('<table class="qheb_threadlist"><thead><tr><th>'.__('Thread topic','qhebunel').'</th><th>'.__('Posts','qhebunel').'</th><th>'.__('Last post','qhebunel').'</th><th>'.__('Starter','qhebunel').'</th></tr></thead><tbody>');
 	$threads = $wpdb->get_results(
 		$wpdb->prepare(
@@ -42,7 +42,7 @@ function renderThreadList() {
 			left join `qheb_wp_users` as `ul` on (`ul`.`id`=`p`.`uid`)
 			where `t`.`catid`=%d
 			order by `lastpostid` desc;',
-			$catId
+			$cat_id
 		),
 		ARRAY_A
 	);
@@ -50,12 +50,12 @@ function renderThreadList() {
 		echo('<tr><td colspan="4">'.__('There are no threads in this category.','qhebunel').'</td></tr>');
 	} else {
 		foreach ($threads as $thread) {
-			$lastPostUser = ($thread['lastuid'] > 0 ? $thread['lastname'] : 'A guest');
-			$startUser = ($thread['starter'] > 0 ? $thread['startname'] : 'A guest');
-			$lastpost = '<span class="name">'.$lastPostUser.'</span> <span class="date" title="'.mysql2date('j F, Y @ G:i', $thread['lastdate']).'">'.QhebunelDate::getListDate($thread['lastdate']).'</span>';
-			$starter = '<span class="name">'.$startUser.'</span> <span class="date" title="'.mysql2date('j F, Y @ G:i', $thread['startdate']).'">'.QhebunelDate::getListDate($thread['startdate']).'</span>';
-			$threadLink = QhebunelUI::getUrlForThread($thread['tid']);
-			echo('<tr><td><a href="'.$threadLink.'">'.QhebunelUI::formatTitle($thread['title']).'</a></td><td>'.$thread['postcount'].'</td><td>'.$lastpost.'</td><td>'.$starter.'</td></tr>');
+			$last_post_user = ($thread['lastuid'] > 0 ? $thread['lastname'] : 'A guest');
+			$start_user = ($thread['starter'] > 0 ? $thread['startname'] : 'A guest');
+			$lastpost = '<span class="name">'.$last_post_user.'</span> <span class="date" title="'.mysql2date('j F, Y @ G:i', $thread['lastdate']).'">'.QhebunelDate::get_list_date($thread['lastdate']).'</span>';
+			$starter = '<span class="name">'.$start_user.'</span> <span class="date" title="'.mysql2date('j F, Y @ G:i', $thread['startdate']).'">'.QhebunelDate::get_list_date($thread['startdate']).'</span>';
+			$thread_link = QhebunelUI::get_url_for_thread($thread['tid']);
+			echo('<tr><td><a href="'.$thread_link.'">'.QhebunelUI::format_title($thread['title']).'</a></td><td>'.$thread['postcount'].'</td><td>'.$lastpost.'</td><td>'.$starter.'</td></tr>');
 		}
 	}
 	echo('</tbody></table>');
@@ -65,7 +65,7 @@ function renderThreadList() {
 /**
  * Displays an error message.
  */
-function renderNoPermissionPage() {
+function render_no_permission_page() {
 	echo('<div class="qheb_error_message">'.__('You do not have sufficient permissions to view this category.', 'qhebunel').'</div>');
 }
 
@@ -73,10 +73,10 @@ function renderNoPermissionPage() {
  * Render Page
  */
 if ($permission == QHEBUNEL_PERMISSION_NONE) {
-	renderNoPermissionPage();
+	render_no_permission_page();
 } else {
-	renderActionBar();
-	renderThreadList();
-	renderActionBar();
+	render_action_bar();
+	render_thread_list();
+	render_action_bar();
 }
 ?>

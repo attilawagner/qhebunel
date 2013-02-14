@@ -91,15 +91,15 @@ $groups = $wpdb->get_results('
 		<table class="widefat fixed qheb_catlist">
 			<thead>
 				<tr>
-					<th scope="col" class="qheb_catname"><?php _e('Group name'); ?></th>
-					<th scope="col" class="qheb_catdesc"><?php _e('Members'); ?></th>
+					<th scope="col" class="qheb-catname"><?php _e('Group name'); ?></th>
+					<th scope="col" class="qheb-catdesc"><?php _e('Members'); ?></th>
 					<th scope="col" class="qheb_catact"><?php _e('Actions'); ?></th>
 				</tr>
 			</thead>
 			<tfoot>
 				<tr>
-					<th scope="col" class="qheb_catname"><?php _e('Group name'); ?></th>
-					<th scope="col" class="qheb_catdesc"><?php _e('Members'); ?></th>
+					<th scope="col" class="qheb-catname"><?php _e('Group name'); ?></th>
+					<th scope="col" class="qheb-catdesc"><?php _e('Members'); ?></th>
 					<th scope="col" class="qheb_catstart"><?php _e('Actions'); ?></th>
 				</tr>
 			</tfoot>
@@ -111,7 +111,7 @@ $groups = $wpdb->get_results('
 					foreach ($groups as $group) {
 						echo('<tr><td'.($group['prominent'] ? ' class="prominent"' : '').'>'.$group['name'].'</td><td>'.$group['membercount'].'</td>');
 						if ($group['gid'] > 10) {
-							echo('<td><a href="'.admin_url('admin.php?page=qhebunel/admin/optgroups.php&amp;editid='.$group['gid']).'">'.__('Edit').'</a> <label><input type="checkbox" class="qheb_catdelcb" name="qheb_group_del_id[]" value="'.$group['gid'].'" />'.__('Delete').'</label></td></tr>');
+							echo('<td><a href="'.admin_url('admin.php?page=qhebunel/admin/optgroups.php&amp;editid='.$group['gid']).'">'.__('Edit').'</a> <label><input type="checkbox" class="qheb-catdelcb" name="qheb_group_del_id[]" value="'.$group['gid'].'" />'.__('Delete').'</label></td></tr>');
 						} else {
 							//Built in special groups
 							echo('<td>'.__('You cannot edit or delete this group.').'</td></tr>');
@@ -133,7 +133,7 @@ $groups = $wpdb->get_results('
 		<form id="qheb_editgroupform" name="qheb_editgroupform" action="<?=admin_url('admin.php?page=qhebunel/admin/optgroups.php');?>" method="post">
 			<?php wp_nonce_field('qheb_edit_group','qhebnonce'); ?>
 			<input type="hidden" name="qheb_group_id" value="<?=$qheb_edit_group['gid'];?>" />
-			<div id="poststuff" class="metabox-holder qheb_metabox">
+			<div id="poststuff" class="metabox-holder qheb-metabox">
 				<div class="stuffbox">
 					<h3><span><?php _e('Edit group'); ?></span></h3>
 					<div class="inside">
@@ -166,7 +166,7 @@ $groups = $wpdb->get_results('
 	<h3 class="title"><?php _e('Create new'); ?></h3>
 	<form id="qheb_addcatform" name="qheb_addcatform" action="<?=admin_url('admin.php?page=qhebunel/admin/optgroups.php');?>" method="post">
 		<?php wp_nonce_field('qheb_add_group','qhebnonce'); ?>
-		<div id="poststuff" class="metabox-holder qheb_metabox">
+		<div id="poststuff" class="metabox-holder qheb-metabox">
 			<div class="stuffbox">
 				<h3><span><?php _e('Create new group'); ?></span></h3>
 				<div class="inside">

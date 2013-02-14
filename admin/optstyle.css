@@ -4,81 +4,81 @@
 }
 
 /* Categories */
-.qheb_catlist {
+.qheb-catlist {
 }
-.qheb_catlist .qheb_catname {
+.qheb-catlist .qheb-catname {
 	width: 20%;
 }
-.qheb_catlist .qheb_catdesc {
+.qheb-catlist .qheb-catdesc {
 	width: 30%;
 }
-.qheb_catlist .qheb_catpos {
+.qheb-catlist .qheb-catpos {
 	width: 8%;
 }
-.qheb_catlist input[type="checkbox"] {
+.qheb-catlist input[type="checkbox"] {
 	margin-right: 5px;
 }
-.qheb_catlist a {
+.qheb-catlist a {
 	margin-right: 5px;
 }
-#poststuff.qheb_metabox {
+#poststuff.qheb-metabox {
 	width: 400px;
 }
-#poststuff.qheb_metabox th{
+#poststuff.qheb-metabox th{
 	text-align:left;
 }
-#poststuff.qheb_metabox input[type="text"], #poststuff.qheb_metabox select, #poststuff.qheb_metabox input[type="file"] {
+#poststuff.qheb-metabox input[type="text"], #poststuff.qheb-metabox select, #poststuff.qheb-metabox input[type="file"] {
 	width: 100%;
 }
-#poststuff.qheb_metabox .editform {
+#poststuff.qheb-metabox .editform {
 	width: 100%;
 }
-.qheb_catlist_subitem:before {
+.qheb-catlist-subitem:before {
 	content:"– ";
 }
-.qheb_catlist_subitempos {
+.qheb-catlist-subitempos {
 	padding-left: 26px !important;
 }
-.qheb_catlist_subitemposup, .qheb_catlist_subitemposdown {
+.qheb-catlist-subitempos-up, .qheb-catlist-subitempos-down {
 	width: 13px;
 	display: inline-block;
 }
-.qheb_catlist_subitemposup {
+.qheb-catlist-subitempos-up {
 	margin-left: 30px;
 }
-.qheb_catdelcb {
+.qheb-catdelcb {
 	margin-left: 30px;
 }
-#qheb_catpermsform {
+#qheb-catpermsform {
 	width: 440px;
 }
-#qheb_catpermsform table {
+#qheb-catpermsform table {
 	width: 100%;
 }
-.qheb_cpgroup {
+.qheb-cpgroup {
 	width: 200px;
 }
-#qheb_catpermsform input {
+#qheb-catpermsform input {
 	width: 100%;
 }
-.qheb_cpnone, .qheb_cpread, .qheb_cpwrite, .qheb_cpstart {
+.qheb-cpnone, .qheb-cpread, .qheb-cpwrite, .qheb-cpstart {
 	text-align: center !important;
 }
-#qheb_catpermsform .prominent, .qheb_catlist .prominent {
+#qheb-catpermsform .prominent, .qheb-catlist .prominent {
 	font-weight: bold;
 }
 
 /* user list */
-.qheb_catlist .qheb_username {
+.qheb-catlist .qheb-username {
 	width: 20%;
 }
-.qheb_catlist .qheb_usergroups {
+.qheb-catlist .qheb-usergroups {
 	width: 80%;
 }
-#qheb_ulist_group {
+#qheb-ulist-group {
 	display: none;
 }
-#qheb_ulist_group .qheb_prom {
+#qheb-ulist-group .qheb-prom {
 	font-weight: bold;
 }
 .qhebsubsubsub {
@@ -90,23 +90,20 @@ tr.banned {
 }
 
 /* badges */
-.qheb_bgroup_hidden {
+.qheb-bgroup-hidden {
 	font-style: italic;
 }
 h3 .add-new-h2 {
 	font-weight: normal;
 }
-.qheb_catlist .qheb_bicon {
+.qheb-catlist .qheb-bicon-large {
 	width: 160px;
 }
-.qheb_catlist .qheb_bclaim, .qheb_catlist .qheb_bshow {
-	width: 70px;
+.qheb-catlist .qheb-bicon-small {
+	width: 160px;
 }
 
 /* generic options */
-.qheb_form_table td {
+.qheb-form-table td {
 	vertical-align: top;
 }
-
-
-
