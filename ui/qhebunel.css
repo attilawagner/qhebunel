@@ -163,6 +163,11 @@ Thread
 }
 #replyForm input[type=submit] {
 }
+#send-reply {
+	border: 1px solid #000;
+	padding: 5px 15px;
+	margin: 10px 0;
+}
 
 /*
 Profile - user settings

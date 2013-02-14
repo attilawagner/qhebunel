@@ -189,5 +189,32 @@ class QhebunelUI {
 			)
 		);
 	}
+	
+	/**
+	 * Loads the post from the database and
+	 * creates a BBCode quote from it.
+	 * 
+	 * @param integer $postId Post ID.
+	 * @return string Post as a quote. Empty string if the post does not exists.
+	 */
+	public static function getQuoteForPost($postId) {
+		global $wpdb;
+		$postData = $wpdb->get_row(
+			$wpdb->prepare(
+				'select `p`.`text`, `u`.`display_name` as `name`
+				from `qheb_posts` as `p`
+				  left join `qheb_wp_users` as `u`
+				    on (`u`.`ID`=`p`.`uid`)
+				where `pid`=%d;',
+				$postId
+			),
+			ARRAY_A
+		);
+		if (empty($postData)) {
+			return '';
+		}
+		
+		return '[quote="'.$postData['name'].'" post="'.$postId.'"]'.$postData['text'].'[/quote]';
+	}
 }
 ?>

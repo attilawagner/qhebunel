@@ -112,15 +112,25 @@ function initSCE(selector, options) {
 					element = jQuery(element);
 					cite = element.children('cite');
 					post = cite.attr('post');
-					user = cite.text().match(/^(.*):\s*$/)[1];
+					user = cite.text().match(/^(.*):\s*$/);
+					if (typeof user !== "undefined" && user != null && user.length > 0){
+						user = user[1];
+					} else {
+						user = '';
+					}
 					content = content.substr(cite.text().length);
 					console.log('[quote="'+user+'" post='+post+']'+content+'[/quote]');
 					return '[quote="'+user+'" post='+post+']'+content+'[/quote]';
 				},
 				html: function(token, attrs, content) {
+					var name='', post='';
 					if(typeof attrs.defaultattr !== "undefined") {
-						content = '<cite post="'+attrs.post+'">' + attrs.defaultattr + ': </cite>' + content;
+						name = attrs.defaultattr + ': ';
 					}
+					if (typeof attrs.post !== "undefined") {
+						post = attrs.post;
+					}
+					content = '<cite post="' + post + '">' + name + '</cite>' + content;
 					return '<blockquote>' + content + '</blockquote>';
 				}
 			}
@@ -271,6 +281,98 @@ function initPostPermalinks() {
 		});
 	})(jQuery);
 }
+
+/**
+ * Adds an onclick event to the quote and reply links.
+ */
+function initPostReplyLinks() {
+	(function($){
+		$('a.reply_link').each(function(){
+			var a = $(this);
+			a.click(onReplyLinkClick);
+		});
+		$('a.quote_link').each(function(){
+			var a = $(this);
+			a.click(onQuoteLinkClick);
+		});
+	})(jQuery);
+}
+
+function onReplyLinkClick() {
+	var a = jQuery(this);
+	var post = a.parent().parent().parent();
+	if (post.next().attr('id') != 'send-reply') {
+		var oldContainer = jQuery('#send-reply');
+		var container = jQuery('<div style="opacity:0;display:none;"></div>').insertAfter(post);
+		oldContainer.animate({
+				"height": "toggle",
+				"opacity": "0"
+			},
+			"fast",
+			"linear",
+			function() {
+				container.append(oldContainer.contents().detach());
+				oldContainer.remove();
+				container.attr('id','send-reply');
+				container.animate({
+						"height": "toggle",
+						"opacity": "1"
+					},
+					"fast",
+					"linear"
+				);
+			}
+		);
+	}
+	return false;
+}
+
+function onQuoteLinkClick() {
+	var container = jQuery('#send-reply');
+	var a = jQuery(this);
+	var post = a.parent().parent().parent();
+	if (post.next().attr('id') != 'send-reply') {
+		var oldContainer = jQuery('#send-reply');
+		var container = jQuery('<div style="opacity:0;display:none;"></div>').insertAfter(post);
+		oldContainer.animate({
+				"height": "toggle",
+				"opacity": "0"
+			},
+			"fast",
+			"linear",
+			function() {
+				container.append(oldContainer.contents().detach());
+				oldContainer.remove();
+				container.attr('id','send-reply');
+				
+				//Load quote content
+				var postId = post.attr('id').match(/\d+/);
+				jQuery.get(
+					qhebunelConfig.forumRoot+"quote/"+postId,
+					function(data){
+						var editor = jQuery('#replyForm textarea').sceditor('instance');
+						if (editor.sourceMode() == false) {
+							editor.setWysiwygEditorValue("");
+							editor.sourceMode(true);
+						}
+						editor.setSourceEditorValue(data);
+						editor.sourceMode(false);
+					}
+				);
+				
+				container.animate({
+						"height": "toggle",
+						"opacity": "1"
+					},
+					"fast",
+					"linear"
+				);
+			}
+		);
+	}
+	return false;
+}
+
 /*
  * Page initialization
  */
@@ -280,4 +382,5 @@ jQuery(document).ready(function() {
 	initNewThreadForm();
 	initSpoilers();
 	initPostPermalinks();
+	initPostReplyLinks();
 });

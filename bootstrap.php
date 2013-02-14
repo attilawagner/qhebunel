@@ -67,7 +67,8 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 			'profile' =>		array('profile', false, __('Profile settings', 'qhebunel')),
 			
 			//Special sections
-			'attachments' =>	array('download', true)
+			'attachments' =>	array('download', true),
+			'quote' =>			array('quote', true)
 		),
 		
 		//Category level special pages
@@ -206,9 +207,13 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 		
 			//Compare and redirect if needed
 			if ($forumURI != $legalURI) {
-				$absoluteUrl = site_url('forum/'.$legalURI);
-				wp_redirect($absoluteUrl, 301);//Moved permanently
-				die();
+				preg_match('/^(.*?)(?:\?|$)/', $forumURI, $regs);
+				$paramlessForumURI = $regs[1];
+				if ($paramlessForumURI != $legalURI) { //Allow parameters
+					$absoluteUrl = site_url('forum/'.$legalURI);
+					wp_redirect($absoluteUrl, 301);//Moved permanently
+					die();
+				}
 			}
 		}
 	}

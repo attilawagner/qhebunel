@@ -23,8 +23,7 @@ function renderActionBar($thread, $pagenum) {
 	global $permission, $threadId;
 	echo('<div class="thread_actions">');
 	if ($permission >= QHEBUNEL_PERMISSION_WRITE) {
-		//TODO: reply link is the last page
-		echo('<a href="#">'.__('Reply', 'qhebunel').'</a>');
+		echo('<a href="#send-reply">'.__('Reply', 'qhebunel').'</a>');
 	}
 	
 	$postPerPage = QHEBUNEL_POSTS_PER_PAGE;
@@ -174,7 +173,7 @@ function renderSinglePost($post) {
 		_e('Attachments:', 'qhebunel');
 		echo('<ul>');
 		foreach ($attachments as $attachment) {
-			$url = get_site_url(null, "forum/attachments/${attachment['aid']}-${attachment['safename']}");
+			$url = site_url("forum/attachments/${attachment['aid']}-${attachment['safename']}");
 			echo('<li><a href="'.$url.'">'.$attachment['safename'].'</a></li>');
 		}
 		echo('</ul></div>');
@@ -186,9 +185,7 @@ function renderSinglePost($post) {
 	echo('</div>');
 	
 	//Post action buttons
-	echo('<footer class="post_actions">');
-	echo('Reply, Quote, etc.');
-	echo('</footer>');
+	renderPostActions($post);
 	
 	echo('</div>');
 	
@@ -196,18 +193,40 @@ function renderSinglePost($post) {
 	echo('</article>');
 }
 
+function renderPostActions($post) {
+	global $permission, $threadId, $pageId;
+	
+	echo('<footer class="post_actions">');
+	if ($permission >= QHEBUNEL_PERMISSION_WRITE) {
+		$quoteUrl = QhebunelUI::getUrlForThread($threadId, $pageId).'?quote='.$post['pid'].'#send-reply';
+		echo('<a class="post_action reply_link" href="#send-reply">'.__('Reply', 'qhebunel').'</a> ');
+		echo('<a class="post_action quote_link" href="'.$quoteUrl.'">'.__('Quote', 'qhebunel').'</a> ');
+	}
+	echo('</footer>');
+}
+
 function renderReplyForm() {
 	global $threadId;
+	
+	//Get quoted post
+	if (isset($_GET['quote'])) {
+		$defaultText = htmlentities2(QhebunelUI::getQuoteForPost($_GET['quote']));
+	} else {
+		$defaultText = '';
+	}
+	
+	echo('<div id="send-reply">');
 	echo('<form id="replyForm" action="'.site_url('forum/').'" method="post" enctype="multipart/form-data">');
 	echo('<input type="hidden" name="action" value="reply" />');
 	echo('<input type="hidden" name="MAX_FILE_SIZE" value="' . QHEBUNEL_ATTACHMENT_MAX_SIZE . '" />');
 	echo('<input type="hidden" name="reply_thread" value="'.$threadId.'" />');
-	echo('<textarea name="reply_message"></textarea>');
+	echo('<textarea name="reply_message">'.$defaultText.'</textarea>');
 	if (QhebunelUser::hasPersmissionToUpload()) {
 		echo('<div class="attachments"><span class="attachmentlist">'.__('Attachments','qhebunel').'</span><div class="attachmentlist"><div class="file"><input type="file" name="attachments[]" class="attachment" /><input type="button" value="Remove" class="remove" /></div></div></div>');
 	}
 	echo('<input type="submit" name="new_thread" value="'.__('Post reply','qhebunel').'" />');
 	echo('</form>');
+	echo('</div>');
 }
 
 function renderNoPermissionPage() {
