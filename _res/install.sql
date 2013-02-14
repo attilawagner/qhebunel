@@ -3,13 +3,8 @@ create table `qheb_user_ext` (
 	`uid` bigint(20) unsigned,								/* UserID */
 	`avatar` varchar(255),									/* Avatar image name */
 	`postcount` int(10) unsigned not null default 0,		/* Post count */
-	`rank` tinyint(3) default 1,							/* Rank ID - 0: banned; 1:normal user; 2: mod; 3: admin; */
 	`signature` varchar(1000),								/* User signature */
-	`malname` varchar(50),									/* MAL username */
-	`vndbid` varchar(50),									/* vndb user id */
-	`anidbid` varchar(50),									/* AniDB user profile id */
-	`twittername` varchar(50),								/* Twitter username */
-	`daname` varchar(50),									/* deviantArt username */
+	`banned` tinyint(1) unsigned not null default 0,		/* Flag for banning users from the site */
 	primary key (`uid`)
 	) character set utf8 collate utf8_unicode_ci engine MyISAM;
 

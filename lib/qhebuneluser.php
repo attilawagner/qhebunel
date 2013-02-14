@@ -11,11 +11,7 @@ class QhebunelUser {
 	 * @return boolean True if the currently logged in user has admin privileges.
 	 */
 	public static function isAdmin() {
-		$udata = self::getData();
-		if (isset($udata['rank'])) {
-			return $udata['rank'] >= 3;
-		}
-		return false;
+		return current_user_can('edit_users');
 	}
 	
 	/**
@@ -23,9 +19,9 @@ class QhebunelUser {
 	 * @return boolean True if the currently logged in user has moderator privileges.
 	 */
 	public static function isModerator() {
-		$udata = self::getData();
-		if (isset($udata['rank'])) {
-			return $udata['rank'] >= 2;
+		$ugroups = self::getGroups();
+		if (in_array(3, $ugroups)) { //Check for the built in Moderators group
+			return true;
 		}
 		return false;
 	}
@@ -160,36 +156,6 @@ class QhebunelUser {
 	public static function hasPersmissionToUpload() {
 		global $current_user;
 		return ($current_user->ID > 0);
-	}
-	
-	/**
-	 * 
-	 * Updates the users's forum rank when it's WP rank was modified.
-	 * @param $uid integer Gets it from the action hook in qhebunel.php 
-	 */
-	
-	public static function update_user_ranks($uid) {
-		global $wpdb;
-		//We need to actualize the prefixes, because WP uses them in not just tablenames but in meta key names as well. 
-		$usermeta_tablename 	= $wpdb->prefix . 'usermeta';
-		$level_meta_key_name 	= $wpdb->prefix . 'user_level';
-		$role_query = $wpdb->get_results(
-		"SELECT meta_value FROM ". $usermeta_tablename ." WHERE meta_key = '".$level_meta_key_name."' AND user_id = ".$uid.";");
-		$role = $role_query[0]->meta_value;
-		//Updating forum roles, based on the user's wp_power_level in the wp_usermeta table. (with local prefixes)
-		if ($role == 10){ 		//Admin
-			$wpdb->query(
-				'UPDATE `qheb_user_ext` SET `rank`= 3 WHERE `uid`='.$uid.';'
-			);
-		} elseif ($role == 7){ 	//Editor
-			$wpdb->query(
-				'UPDATE `qheb_user_ext` SET `rank`= 2 WHERE `uid`='.$uid.';'
-			);
-		} else {
-			$wpdb->query( 		//user
-				'UPDATE `qheb_user_ext` SET `rank`= 1 WHERE `uid`='.$uid.';'
-			);
-		}
 	}
 }
 ?>

@@ -52,29 +52,10 @@ if (isset($_POST['qheb_ulist_modif']) && check_admin_referer('qheb_usermodif', '
 				}
 				$q = substr($q, 0, -1).';';
 				$wpdb->query($q);
-				
-				//Grant mod permissions
-				foreach ($uids as $uid) {
-					$uid = (int)$uid;
-					if ($uid > 0) {
-						$wpdb->query('insert into `qheb_user_ext` set `uid`='.$uid.', `rank`=2 on duplicate key update `rank`=2;');
-					}
-				}
 				break;
 			
 			
 			case 'removemod':
-				//Revoke permissions
-				$uidss = array();
-				foreach ($uids as $uid) {
-					$uid = (int)$uid;
-					if ($uid > 0) {
-						$uidss[] = $uid;
-					}
-				}
-				$uidss = implode(',',$uidss);
-				$wpdb->query('update `qheb_user_ext` set `rank`=1 where `uid` in ('.$uidss.');');
-				
 				//Remove from the mod group
 				$q = 'delete from `qheb_user_group_links` where ';
 				foreach ($uids as $uid) {
@@ -89,25 +70,28 @@ if (isset($_POST['qheb_ulist_modif']) && check_admin_referer('qheb_usermodif', '
 			
 			
 			case 'ban':
+				$uidss = array();
 				foreach ($uids as $uid) {
 					$uid = (int)$uid;
 					if ($uid > 0) {
-						$wpdb->query('insert into `qheb_user_ext` set `uid`=${uid}, `rank`=0 on duplicate key update `rank`=0;');
+						$uidss[] = $uid;
 					}
 				}
+				$uidss = implode(',',$uidss);
+				$wpdb->query('update `qheb_user_ext` set `banned`=1 where `uid` in ('.$uidss.');');
 				break;
 			
 			
 			case 'unban':
-				$uids = array();
+				$uidss = array();
 				foreach ($uids as $uid) {
 					$uid = (int)$uid;
 					if ($uid > 0) {
-						$uids[] = $uid;
+						$uidss[] = $uid;
 					}
 				}
-				$uids = implode(',',$uids);
-				$wpdb->query('update `qheb_user_ext` set `rank`=1 where `uid` in ('.$uids.');');
+				$uidss = implode(',',$uidss);
+				$wpdb->query('update `qheb_user_ext` set `banned`=0 where `uid` in ('.$uidss.');');
 				break;
 		}
 	}
@@ -124,7 +108,7 @@ if (isset($_REQUEST['showgroup'])) {
 	}
 }
 $users = $wpdb->get_results('
-	select `u`.`ID` as `uid`, `u`.`display_name`, `u`.`user_login`, `e`.`rank`, group_concat(`g`.`name`) as `glist`
+	select `u`.`ID` as `uid`, `u`.`display_name`, `u`.`user_login`, `e`.`banned`, group_concat(`g`.`name`) as `glist`
 	from `qheb_user_ext` as `e`
 	  right join `qheb_wp_users` as `u`
 	    on (`e`.`uid`=`u`.`ID`)
@@ -204,7 +188,8 @@ function qheb_ulist_top_groups() {
 			<tbody>
 				<?php
 				foreach ($users as $user) {
-					echo('<tr><td><label><input type="checkbox" name="qheb_ulist_user[]" value="'.$user['uid'].'" />'.$user['display_name'].($user['display_name'] != $user['user_login'] ? ' ('.$user['user_login'].')' : '').'</label></td>');
+					$label_class = ($user['banned'] == 1 ? ' class="banned"' : '');
+					echo('<tr'.$label_class.'><td><label><input type="checkbox" name="qheb_ulist_user[]" value="'.$user['uid'].'" />'.$user['display_name'].($user['display_name'] != $user['user_login'] ? ' ('.$user['user_login'].')' : '').'</label></td>');
 					echo('<td>'.$user['glist'].'</td></tr>');
 				}
 				?>
