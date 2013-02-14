@@ -173,6 +173,7 @@ add_action('wp_head', array('Qhebunel','buildHeadFragment'));
 register_activation_hook(__FILE__, array('Qhebunel', 'pluginActivation'));
 register_deactivation_hook(__FILE__, array('Qhebunel', 'pluginDeactivation'));
 add_action('user_register', array('QhebunelUser', 'addDefaultData'));
+add_action('edit_user_profile_update', array('QhebunelUser', 'update_user_ranks'));
 
 //Register hooks to add emoticon parsing globally
 add_filter('the_content', array('QhebunelEmoticons', 'replaceInText'), 5);

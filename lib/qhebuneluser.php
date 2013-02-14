@@ -161,5 +161,35 @@ class QhebunelUser {
 		global $current_user;
 		return ($current_user->ID > 0);
 	}
+	
+	/**
+	 * 
+	 * Updates the users's forum rank when it's WP rank was modified.
+	 * @param $uid integer Gets it from the action hook in qhebunel.php 
+	 */
+	
+	public static function update_user_ranks($uid) {
+		global $wpdb;
+		//We need to actualize the prefixes, because WP uses them in not just tablenames but in meta key names as well. 
+		$usermeta_tablename 	= $wpdb->prefix . 'usermeta';
+		$level_meta_key_name 	= $wpdb->prefix . 'user_level';
+		$role_query = $wpdb->get_results(
+		"SELECT meta_value FROM ". $usermeta_tablename ." WHERE meta_key = '".$level_meta_key_name."' AND user_id = ".$uid.";");
+		$role = $role_query[0]->meta_value;
+		//Updating forum roles, based on the user's wp_power_level in the wp_usermeta table. (with local prefixes)
+		if ($role == 10){ 		//Admin
+			$wpdb->query(
+				'UPDATE `qheb_user_ext` SET `rank`= 3 WHERE `uid`='.$uid.';'
+			);
+		} elseif ($role == 7){ 	//Editor
+			$wpdb->query(
+				'UPDATE `qheb_user_ext` SET `rank`= 2 WHERE `uid`='.$uid.';'
+			);
+		} else {
+			$wpdb->query( 		//user
+				'UPDATE `qheb_user_ext` SET `rank`= 1 WHERE `uid`='.$uid.';'
+			);
+		}
+	}
 }
 ?>
