@@ -165,6 +165,7 @@ require_once 'lib/qhebunelui.php';
 require_once 'lib/qhebunelemoticons.php';
 require_once 'lib/qhebunelfiles.php';
 require_once 'lib/qhebunelbadges.php';
+require_once 'lib/qhebunelpost.php';
 
 //Register hooks
 add_action('init', array('Qhebunel','init'), 99);

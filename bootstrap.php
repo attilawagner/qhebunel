@@ -69,7 +69,8 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 			
 			//Special sections
 			'attachments' =>	array('download', true),
-			'quote' =>			array('quote', true)
+			'quote' =>			array('quote', true),
+			'delete-post' =>	array('deletepost', true)
 		),
 		
 		//Category level special pages

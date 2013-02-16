@@ -102,7 +102,7 @@ $ext_data = $wpdb->get_row(
 				<td>
 					<?php
 						if (!empty($ext_data['signature'])) {
-							echo('<div class="user_signature">'.QhebunelUI::format_post($ext_data['signature']).'</div>');
+							echo('<div class="user-signature">'.QhebunelUI::format_post($ext_data['signature']).'</div>');
 						} else {
 							_e('You don\'t have a signature.', 'qhebunel');
 						}

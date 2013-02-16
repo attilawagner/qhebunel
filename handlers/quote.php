@@ -22,7 +22,7 @@ if ($site_host != $ref_host && !isset($_SERVER['HTTP_RANGE'])) {
 if (preg_match('%^(\d+)$%s', $section_params, $regs)) {
 	$post_id = $regs[1];
 	
-	echo(QhebunelUI::get_quote_for_post($post_id));
+	echo(QhebunelPost::get_quote_for_post($post_id));
 	
 } else {
 	//Invalid URL (does not match regex)

@@ -133,6 +133,7 @@ create table `qheb_posts` (
 	`editdate` datetime,									/* Last edit date */
 	`editor` bigint(20) unsigned,							/* Last editor user ID (can be a mod or the original poster) */
 	`editreason` varchar(200),								/* Last edit reason */
+	`flag` tinyint(1) unsigned not null default 0,			/* Flag: 0-Nothing; 1-Deletion unconfirmed; 2-Reported */
 	primary key (`pid`),
 	index `thread` (`tid`, `postdate`),
 	index `user` (`uid`)

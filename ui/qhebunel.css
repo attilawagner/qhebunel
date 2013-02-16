@@ -59,24 +59,24 @@ input.error, textarea.error, select.error {
 /*
 Thread
 */
-.qheb_thread {
+.qheb-thread {
 	padding: 0;
 }
-.qheb_thread .thread_pagination {
+.qheb-thread .thread-pagination {
 	display: inline-block;
 	float: right;
 }
-.qheb_thread .thread_actions {
+.qheb-thread .thread-actions {
 	margin: 12px 0;
 }
-.qheb_post {
+.qheb-post {
 	position: relative;
 	list-style: none;
 	border: 1px solid;
 	margin: 0 0 6px;
 	padding: 0;
 }
-.qheb_post:after {
+.qheb-post:after {
 	content: '.'; 
 	display: block; 
 	clear: both; 
@@ -84,59 +84,68 @@ Thread
 	height: 0; 
 	line-height: 0;
 }
-.qheb_post .user_info {
+.qheb-post .user-info {
 	width: 160px;
 	float: left;
 	border-right: 1px solid;
 	overflow: hidden;
 }
-.qheb_post .user_name {
+.qheb-post .user-name {
 	text-align: center;
 }
-.qheb_post .user_avatar {
+.qheb-post .user-avatar {
 	text-align: center;
 }
-.qheb_post .post_holder {
+.qheb-post .post-holder {
 	width: 621px;
 	float: left;
 	border-left: 1px solid;
 	margin-left: -1px;
 	padding: 3px;
 }
-.qheb_post .post_message {
+.qheb-post .post-message {
 }
-.qheb_post .post_message .spoiler {
+.qheb-post .post-message .spoiler {
 	border: 2px dashed #aaa;
 	padding: 3px;
 }
-.qheb_post .post_message .spoiler.spoiler-closed div {
+.qheb-post .post-message .spoiler.spoiler-closed div {
 	display:none;
 }
-.qheb_post .user_signature {
+.qheb-post .user-signature {
 	max-height: 100px;
 	margin-top: 10px;
 	padding-top: 2px;
 	border-top: 1px solid #bfc3c6;
 	overflow: hidden;
 }
-.qheb_post .post_meta {
+.qheb-post .post-meta {
 	font-size: 9pt;
 	text-align: right;
 }
-.qheb_post .post_actions {
+.qheb-post .post-actions {
 	margin-top: 7px;
 	border-top: 1px solid;
 	padding: 2px 5px;
 	text-align: right;
 	font-size: 11pt;
 }
-.qheb_post .post_attachments {
+.post-actions a {
+	margin: 0 0 0 16px;
+}
+.qheb-post .post-attachments {
 	margin-top: 7px;
 }
-.post_attachments ul {
+.post-attachments ul {
 	list-style: none;
 	margin: 0;
 	padding: 0 0 0 17px;
+}
+.qheb-post.deleted {
+	background: rgba(0,0,0,0.3);
+}
+.qheb-post.reported {
+	background: rgba(255,0,0,0.3);
 }
 #reply-form textarea {
 	height: 250px;
@@ -202,7 +211,7 @@ Profile - user settings
 	width: 546px;
 	resize: vertical;
 }
-.profile_settings .user_signature {
+.profile_settings .user-signature {
 	max-height: 100px;
 	overflow: hidden;
 }

@@ -321,11 +321,11 @@ function initPostPermalinks() {
  */
 function initPostReplyLinks() {
 	(function($){
-		$('a.reply_link').each(function(){
+		$('a.reply-link').each(function(){
 			var a = $(this);
 			a.click(onReplyLinkClick);
 		});
-		$('a.quote_link').each(function(){
+		$('a.quote-link').each(function(){
 			var a = $(this);
 			a.click(onQuoteLinkClick);
 		});
