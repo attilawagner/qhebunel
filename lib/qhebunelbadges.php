@@ -19,7 +19,7 @@ class QhebunelBadges {
 	 */
 	public static function save_badge($badge_id, $group_id, $name, $description, $large_image, $small_image) {
 		global $wpdb;
-		
+		$new_badge = false;
 		//Create row in DB to get an ID
 		if ($badge_id == null) {
 			$wpdb->query(
@@ -34,30 +34,64 @@ class QhebunelBadges {
 			if (($badge_id = $wpdb->insert_id) == 0) {
 				return false;
 			}
+			$new_badge = true;
 		}
 		
 		//Save the images
 		$saved_paths = QhebunelFiles::save_badge_images($badge_id, $large_image, $small_image);
-		if ($saved_paths === false) {
-			$wpdb->query(
-				$wpdb->prepare(
-					'delete from `qheb_badges` where `bid`=%d;',
-					$badge_id
-				)
-			);
-			return false;
-		}
 		
-		//Update the row
-		$wpdb->query(
-			$wpdb->prepare(
-				'update `qheb_badges` set `largeimage`=%s, `smallimage`=%s where `bid`=%d;',
-				$saved_paths['large'],
-				$saved_paths['small'],
-				$badge_id
-			)
-		);
-		return true;
+		if ($new_badge) {
+			if ($saved_paths === false) {
+				//Delete the DB record for new badges that doesn't have an image
+				$wpdb->query(
+					$wpdb->prepare(
+						'delete from `qheb_badges` where `bid`=%d;',
+						$badge_id
+					)
+				);
+				return false;
+			} else {
+				
+				//Update the row
+				$wpdb->query(
+					$wpdb->prepare(
+						'update `qheb_badges` set `largeimage`=%s, `smallimage`=%s where `bid`=%d;',
+						$saved_paths['large'],
+						$saved_paths['small'],
+						$badge_id
+					)
+				);
+				return true;
+			}
+		} else {
+			//Badge update
+			if ($saved_paths === false) {
+				//It's a badge update WITHOUT new images
+				$wpdb->query(
+					$wpdb->prepare(
+						'update `qheb_badges` set `name`=%s, `description`=%s where `bid`=%d;',
+						$name,
+						$description,
+						$badge_id
+					)
+				);
+				return true;
+			} else {
+				
+				//It's a badge update WITH new images
+				$wpdb->query(
+					$wpdb->prepare(
+						'update `qheb_badges` set `largeimage`=%s, `smallimage`=%s, `name`=%s, `description`=%s where `bid`=%d;',
+						$saved_paths['large'],
+						$saved_paths['small'],
+						$name,
+						$description,
+						$badge_id
+					)
+				);
+				return true;
+			}
+		}
 	}
 	
 	/**
