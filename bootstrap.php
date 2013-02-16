@@ -65,6 +65,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 			//Special pages
 			'error' =>			array('error', false, __('Error', 'qhebunel')),
 			'profile' =>		array('profile', false, __('Profile settings', 'qhebunel')),
+			'edit-post' =>		array('editpost', false, __('Edit post', 'qhebunel')),
 			
 			//Special sections
 			'attachments' =>	array('download', true),

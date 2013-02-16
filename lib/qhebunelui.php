@@ -115,6 +115,7 @@ class QhebunelUI {
 	 * 
 	 * @param integer $post_id ID of the post.
 	 * @param boolean $permalink True if a short permalink is needed.
+	 * Defaults to false.
 	 * @return string URL pointing to the post.
 	 */
 	public static function get_url_for_post($post_id, $permalink = false) {

@@ -411,6 +411,35 @@ class QhebunelFiles {
 	}
 	
 	/**
+	 * Deletes the attachment from the filesystem and from the database
+	 * @param integer $attachment_id ID in the database
+	 */
+	public static function delete_attachment($attachment_id) {
+		global $wpdb;
+		$attachment = $wpdb->get_row(
+			$wpdb->prepare(
+				'select `pid`,`uid`,`safename` from `qheb_attachments` where `aid`=%d;',
+				$attachment_id
+			),
+			ARRAY_A
+		);
+		
+		if (empty($attachment)) {
+			return;
+		}
+		
+		$path = WP_CONTENT_DIR.'/'.self::get_attachment_path($attachment['uid'], $attachment['pid'], $attachment_id, $attachment['safename']);
+		@unlink($path);
+		
+		$wpdb->query(
+			$wpdb->prepare(
+				'delete from `qheb_attachments` where `aid`=%d;',
+				$attachment_id
+			)
+		);
+	}
+	
+	/**
 	 * Streams the given file to the user.
 	 * If http_send_file() is avaliable (pre PHP 5.3 with PECL extension, or PHP 5.3+),
 	 * it will be used, or a PHP 5.0 compatible script will handle it.

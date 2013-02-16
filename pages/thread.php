@@ -81,10 +81,12 @@ function render_thread() {
 	
 	$posts = $wpdb->get_results(
 		$wpdb->prepare(
-			'select `p`.*, `u`.`display_name`, `e`.`avatar`, `e`.`signature`, `a`.`acount`
+			'select `p`.*, `u`.`display_name`, `u2`.`display_name` as `editorname`, `e`.`avatar`, `e`.`signature`, `a`.`acount`
 			from `qheb_posts` as `p`
 			left join `qheb_wp_users` as `u`
 				on (`u`.`ID`=`p`.`uid`)
+			left join `qheb_wp_users` as `u2`
+				on (`u2`.`ID`=`p`.`editor`)
 			left join `qheb_user_ext` as `e`
 				on (`e`.`uid`=`p`.`uid`)
 			left join
@@ -151,6 +153,7 @@ function render_single_post($post) {
 	
 	//Post meta
 	echo('<header class="post_meta">');
+	echo('<a href="'.QhebunelUI::get_url_for_post($post['pid'], true).'" title="'.__('Permalink', 'qhebunel').'">#</a> ');
 	echo('<time class="post_date" datetime="'.QhebunelDate::get_datetime_attribute($post['postdate']).'" title="'.QhebunelDate::get_relative_date($post['postdate']).'">'.QhebunelDate::get_post_date($post['postdate']).'</time>');
 	echo('</header>');
 	
@@ -194,14 +197,28 @@ function render_single_post($post) {
 }
 
 function render_post_actions($post) {
-	global $permission, $thread_id, $page_id;
-	
+	global $permission, $thread_id, $page_id, $current_user;
 	echo('<footer class="post_actions">');
+	if ($post['editor'] != null) {
+		echo('<div class="edit-info">');
+		$edit_date = '<time class="edit-date" datetime="'.QhebunelDate::get_datetime_attribute($post['editdate']).'" title="'.QhebunelDate::get_relative_date($post['editdate']).'">'.QhebunelDate::get_post_date($post['editdate']).'</time>';
+		echo('<span class="edit-user">'.sprintf(__('Last edited by: %1$s on %2$s.', 'qhebunel'), $post['editorname'], $edit_date).'</span> ');
+		if (!empty($post['editreason'])) {
+			echo('<span class="edit-reason">'.sprintf(__('Reason: %s', 'qhebunel'), $post['editreason']).'</span> ');
+		}
+		echo('</div>');
+	}
+	echo('<div>');
+	if ($post['uid'] == $current_user->ID || QhebunelUser::is_moderator()) {
+		$edit_url = site_url('forum/edit-post/'.$post['pid']);
+		echo('<a class="post_action edit_link" href="'.$edit_url.'">'.__('Edit', 'qhebunel').'</a> ');
+	}
 	if ($permission >= QHEBUNEL_PERMISSION_WRITE) {
 		$quote_url = QhebunelUI::get_url_for_thread($thread_id, $page_id).'?quote='.$post['pid'].'#send-reply';
 		echo('<a class="post_action reply_link" href="#send-reply">'.__('Reply', 'qhebunel').'</a> ');
 		echo('<a class="post_action quote_link" href="'.$quote_url.'">'.__('Quote', 'qhebunel').'</a> ');
 	}
+	echo('</div>');
 	echo('</footer>');
 }
 

@@ -56,10 +56,10 @@ if (!has_permissions()) {
 } else {
 ?>
 
-<form id="new_thread_form" onsubmit="return qheb_validateNewThreadForm();" action="<?=site_url('forum/');?>" method="post" enctype="multipart/form-data">
+<form id="new-thread-form" onsubmit="return qheb_validateNewThreadForm();" action="<?=site_url('forum/');?>" method="post" enctype="multipart/form-data">
 <input type="hidden" name="action" value="newthread" />
 <input type="hidden" name="MAX_FILE_SIZE" value="<?=QHEBUNEL_ATTACHMENT_MAX_SIZE?>" />
-<table class="qheb_post_table qheb_new_thread">
+<table class="qheb-post-table qheb_new_thread">
 <tfoot>
 	<tr>
 		<th colspan="2"><input type="submit" name="new_thread" value="<?php _e('Start thread','qhebunel'); ?>" /></th>
