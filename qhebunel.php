@@ -103,10 +103,7 @@ class Qhebunel {
 	 * Helper function to undo WP's magic quoting.
 	 */
 	private static function remove_wp_magic_quotes() {
-		//$_GET     = stripslashes_deep($_GET);
-		$_POST    = stripslashes_deep($_POST);
-		//$_COOKIE  = stripslashes_deep($_COOKIE);
-		//$_REQUEST = stripslashes_deep($_REQUEST);
+		$_POST = stripslashes_deep($_POST);
 	}
 	
 	/**
@@ -174,6 +171,7 @@ add_action('wp_head', array('Qhebunel','build_head_fragment'));
 register_activation_hook(__FILE__, array('Qhebunel', 'plugin_activation'));
 register_deactivation_hook(__FILE__, array('Qhebunel', 'plugin_deactivation'));
 add_action('user_register', array('QhebunelUser', 'add_default_data'));
+add_action('init', array('QhebunelUser', 'block_banned_user'), 0);
 
 //Register hooks to add emoticon parsing globally
 add_filter('the_content', array('QhebunelEmoticons', 'replace_in_text'), 5);

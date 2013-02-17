@@ -35,7 +35,7 @@ class QhebunelUser {
 		global $QHEB_UDATA, $current_user, $wpdb;
 		if (!isset($QHEB_UDATA)) {
 			$QHEB_UDATA[] = array();
-			if ($current_user->ID > 0) {
+			if (isset($current_user) && $current_user instanceof WP_User) {
 				$udata = $wpdb->get_row(
 					$wpdb->prepare(
 						"select * from `qheb_user_ext` where `uid`=%d;",
@@ -156,6 +156,25 @@ class QhebunelUser {
 	public static function has_persmission_to_upload() {
 		global $current_user;
 		return ($current_user->ID > 0);
+	}
+	
+	/**
+	 * This function is registered as an init action hook.
+	 * Checks whether the current user is banned, and if that's the case,
+	 * terminates further loading.
+	 */
+	public static function block_banned_user() {
+		$user_data = self::get_data();
+		if (@$user_data['banned'] == 1) {
+			//Set cookie
+			/*setcookie(self::BANNED_COOKIE_NAME, '1', 0, COOKIEPATH, COOKIE_DOMAIN, false, true);
+			if (COOKIEPATH != SITECOOKIEPATH) {
+				setcookie(self::BANNED_COOKIE_NAME, '1', 0, SITECOOKIEPATH, COOKIE_DOMAIN, false, true);
+			}*/
+			
+			//Terminate further loading
+			die(__('You are banned from this site.', 'qhebunel'));
+		}
 	}
 }
 ?>
