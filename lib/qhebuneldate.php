@@ -22,9 +22,9 @@ class QhebunelDate {
 			return self::get_human_time_diff($time);
 		} else {
 			//TODO: make it into an option
-			$use_short_date_for_current_year = false; //Option from the general settings admin page
+			$use_short_date_for_current_year = true; //Option from the general settings admin page
 			
-			$use_short_format = true; //flag for choosing the format string
+			$use_short_format = false; //flag for choosing the format string
 			if ($use_short_date_for_current_year) {
 				$year = substr($datetime, 0, 4);
 				$this_year = date('Y');

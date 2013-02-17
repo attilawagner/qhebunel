@@ -143,6 +143,18 @@ create table `qheb_attachments` (
 	index `post` (`pid`)
 	) character set utf8 collate utf8_unicode_ci engine MyISAM;
 
+/* Private messages */
+create table `qheb_privmessages` (
+	`mid` bigint(20) unsigned auto_increment,				/* Message ID */
+	`from` bigint(20) unsigned not null,					/* User ID */
+	`to` bigint(20) unsigned not null,						/* User ID */
+	`text` varchar(10000) not null,							/* Message body */
+	`sentdate` datetime not null,							/* Date the user sent the message */
+	`readdate` datetime null,								/* Date the user read the message */
+	primary key (`mid`),
+	index `from` (`from` asc, `mid` desc),
+	index `to` (`to` asc, `mid` desc)
+	) character set utf8 collate utf8_unicode_ci engine MyISAM;
 
 /* View for the WP_Users table - used as an alias*/
 create or replace view `qheb_wp_users` as select * from `wp_users`;

@@ -219,3 +219,72 @@ Profile - user settings
 	font-size: 17px;
 	line-height: 29px;
 }
+
+/*
+Private messages
+*/
+.private-msg-list {
+	width: 250px;
+	border: 1px solid;
+	float: left;
+	max-heigh: 400px;
+	overflow-y: auto;
+	overflow-x: none;
+}
+.private-msg-list a {
+	display: block;
+	border-bottom: 1px solid;
+}
+.private-msg-list time {
+	font-size: 12px;
+	float: right;
+	padding-right: 5px;
+}
+.private-msg-icon {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	margin: 0 5px -2px;
+	background: url(private_msg_icons.png) transparent no-repeat 0 -200px;
+}
+.private-msg-list a.inbox.unread .private-msg-icon {
+	background-position: 0 0;
+}
+.private-msg-list a.inbox.read .private-msg-icon {
+	background-position: 0 -16px;
+}
+.private-msg-list a.outbox.unread .private-msg-icon {
+	background-position: 0 -32px;
+}
+.private-msg-list a.outbox.read .private-msg-icon {
+	background-position: 0 -48px;
+}
+.private-msg-excrept {
+	display: block;
+}
+.private-msg-conversation {
+	margin-left: 270px;
+	max-heigh: 400px;
+	overflow-y: scroll;
+	overflow-x: none;
+
+}
+.private-msg-conversation time {
+	float: right;
+	padding-right: 5px;
+	font-size: 12px;
+}
+.private-msg-msg {
+	margin: 0 0 20px;
+}
+.private-msg-text {
+	display: block;
+	padding: 0 0 0 20px;
+}
+.private-msg-title {
+	margin-left: 270px;
+}
+.private-msg-form {
+	margin-left: 270px;
+	display: block;
+}

@@ -11,7 +11,7 @@ if (!defined('QHEBUNEL_REQUEST') || QHEBUNEL_REQUEST !== true) die;
 
 //Show message to users who aren't logged in
 if ($current_user->ID == 0) {
-	echo('<div class="qheb_error_message">'.__('You must log in to edit your profile.', 'qhebunel').'</div>');
+	echo('<div class="qheb-error-message">'.__('You must log in to edit your profile.', 'qhebunel').'</div>');
 	return;//stop page rendering, but create footer
 }
 

@@ -267,7 +267,7 @@ function render_reply_form() {
 }
 
 function render_no_permission_page() {
-	echo('<div class="qheb_error_message">'.__('You do not have sufficient permissions to view this thread.', 'qhebunel').'</div>');
+	echo('<div class="qheb-error-message">'.__('You do not have sufficient permissions to view this thread.', 'qhebunel').'</div>');
 }
 
 /*

@@ -66,7 +66,7 @@ function render_thread_list() {
  * Displays an error message.
  */
 function render_no_permission_page() {
-	echo('<div class="qheb_error_message">'.__('You do not have sufficient permissions to view this category.', 'qhebunel').'</div>');
+	echo('<div class="qheb-error-message">'.__('You do not have sufficient permissions to view this category.', 'qhebunel').'</div>');
 }
 
 /*

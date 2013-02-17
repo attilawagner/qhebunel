@@ -52,7 +52,7 @@ function category_list() {
 }
 
 if (!has_permissions()) {
-	echo('<div class="qheb_error_message">'.__('You do not have permissions to start a new thread in this category.', 'qhebunel').'</div>');
+	echo('<div class="qheb-error-message">'.__('You do not have permissions to start a new thread in this category.', 'qhebunel').'</div>');
 } else {
 ?>
 

@@ -26,7 +26,7 @@ $post = $wpdb->get_row(
 	ARRAY_A
 );
 if (empty($post)) {
-	echo('<div class="qheb_error_message">'.__('The post does not exists in the database.', 'qhebunel').'</div>');
+	echo('<div class="qheb-error-message">'.__('The post does not exists in the database.', 'qhebunel').'</div>');
 	return; //Stop processing this file, render footer
 }
 
@@ -37,11 +37,11 @@ if (empty($post)) {
  *  - Moderators can edit other users' posts.
  */
 if ($post['closedate'] != null) {
-	echo('<div class="qheb_error_message">'.__('You cannot edit a post in a closed thread.', 'qhebunel').'</div>');
+	echo('<div class="qheb-error-message">'.__('You cannot edit a post in a closed thread.', 'qhebunel').'</div>');
 	return; //Stop processing this file, render footer
 }
 if ($post['uid'] != $current_user->ID && !QhebunelUser::is_moderator()) {
-	echo('<div class="qheb_error_message">'.__('You can only edit your own posts.', 'qhebunel').'</div>');
+	echo('<div class="qheb-error-message">'.__('You can only edit your own posts.', 'qhebunel').'</div>');
 	return; //Stop processing this file, render footer
 }
 

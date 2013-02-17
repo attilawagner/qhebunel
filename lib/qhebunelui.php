@@ -190,5 +190,26 @@ class QhebunelUI {
 			)
 		);
 	}
+	
+	/**
+	 * Gives back the URL pointing to the private message
+	 * conversation between the currently logged in user and the
+	 * given user.
+	 * @param integer $user_id User ID. Won't be validated.
+	 * @param integer $page_num Page number in the history.
+	 * Defaults to 0, the latest page. 
+	 * @return string URL pointing to the private message conversation.
+	 */
+	public static function get_url_for_pm_user($user_id, $page_num=0) {
+		$user_id = (int)$user_id;
+		if ($user_id <= 0) {
+			return '';
+		}
+		$url = 'forum/pm/'.$user_id;
+		if ($page_num > 0) {
+			$url .= '/page-'.$page_num;
+		}
+		return site_url($url);
+	}
 }
 ?>
