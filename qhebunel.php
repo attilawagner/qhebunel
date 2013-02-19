@@ -148,6 +148,13 @@ class Qhebunel {
 		);
 		echo '<script type="text/javascript">var qhebunelConfig='.json_encode($js_config).';</script>';
 	}
+	
+	/**
+	 * Registers the widgets provided by the plugin.
+	 */
+	public static function register_widgets() {
+		register_widget("QhebunelPMWidget");
+	}
 }
 
 //Define constants
@@ -164,6 +171,9 @@ require_once 'lib/qhebunelfiles.php';
 require_once 'lib/qhebunelbadges.php';
 require_once 'lib/qhebunelpost.php';
 
+//Include widgets
+require_once 'pmwidget.php';
+
 //Register hooks
 add_action('init', array('Qhebunel','init'), 99);
 add_action('admin_menu', array('Qhebunel','register_admin_menus'));
@@ -172,11 +182,13 @@ register_activation_hook(__FILE__, array('Qhebunel', 'plugin_activation'));
 register_deactivation_hook(__FILE__, array('Qhebunel', 'plugin_deactivation'));
 add_action('user_register', array('QhebunelUser', 'add_default_data'));
 add_action('init', array('QhebunelUser', 'block_banned_user'), 0);
+add_action('widgets_init', array('Qhebunel', 'register_widgets'));
 
 //Register hooks to add emoticon parsing globally
 add_filter('the_content', array('QhebunelEmoticons', 'replace_in_text'), 5);
 add_filter('the_excrept', array('QhebunelEmoticons', 'replace_in_text'));
 add_filter('comment_text', array('QhebunelEmoticons', 'replace_in_text'));
+
 
 add_action('activated_plugin','save_error');
 function save_error(){

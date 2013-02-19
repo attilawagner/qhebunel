@@ -163,7 +163,8 @@ create table `qheb_privmessages` (
 	`readdate` datetime null,								/* Date the user read the message */
 	primary key (`mid`),
 	index `from` (`from` asc, `mid` desc),
-	index `to` (`to` asc, `mid` desc)
+	index `to` (`to` asc, `mid` desc),
+	index `unread` (`to`, `readdate`)
 	) character set utf8 collate utf8_unicode_ci engine MyISAM;
 
 /* View for the WP_Users table - used as an alias*/
