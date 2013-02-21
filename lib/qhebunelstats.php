@@ -30,7 +30,7 @@ class QhebunelStats {
 					$thread_id,
 					$current_user->ID,
 					current_time('mysql'),
-					VISIT_EXPIRATION
+					self::VISIT_EXPIRATION
 				)
 			);
 		}
