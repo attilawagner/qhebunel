@@ -14,7 +14,7 @@ class QhebunelPMWidget extends WP_Widget {
 			'qhebunel_pm_widget',
 			'PM Notification',
 			array(
-				'description' => __('Displays a notification if the user got a new PM.', 'qhebunel')
+				'description' => __('Displays a notification if the user has unread private messages.', 'qhebunel')
 			)
 		);
 	}

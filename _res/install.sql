@@ -71,7 +71,6 @@ create table `qheb_badge_groups` (
 	primary key (`bgid`)
 	) character set utf8 collate utf8_unicode_ci engine MyISAM;
 
-
 /* Categories */
 create table `qheb_categories` (
 	`catid` int(10) unsigned auto_increment,				/* Category ID */
@@ -93,7 +92,6 @@ create table `qheb_category_permissions` (
 	index `gid` (`gid`)
 	) character set utf8 collate utf8_unicode_ci engine MyISAM;
 
-
 /* Threads */
 create table `qheb_threads` (
 	`tid` bigint(20) unsigned auto_increment,				/* Thread ID */
@@ -111,7 +109,6 @@ create table `qheb_threads` (
 	index `cat` (`catid`, `lastpostid`),
 	index `user` (`starter`)
 	) character set utf8 collate utf8_unicode_ci engine MyISAM;
-
 
 /* Posts */
 create table `qheb_posts` (
@@ -143,6 +140,15 @@ create table `qheb_attachments` (
 	index `post` (`pid`)
 	) character set utf8 collate utf8_unicode_ci engine MyISAM;
 
+/* Thread visits */
+create table `qheb_visits` (
+	`tid` bigint(20) unsigned not null,						/* Thread ID */
+	`uid` bigint(20) unsigned not null,						/* User ID */
+	`visitdate` datetime not null,							/* Date of last visit */
+	`visitcount` bigint(20) unsigned,						/* Number of visits by the user */
+	primary key (`tid`,`uid`)
+	) character set utf8 collate utf8_unicode_ci engine MyISAM;
+
 /* Private messages */
 create table `qheb_privmessages` (
 	`mid` bigint(20) unsigned auto_increment,				/* Message ID */
@@ -156,6 +162,27 @@ create table `qheb_privmessages` (
 	index `to` (`to` asc, `mid` desc),
 	index `unread` (`to`, `readdate`)
 	) character set utf8 collate utf8_unicode_ci engine MyISAM;
+
+/* Stored procedure to log user visit in a thread */
+delimiter ;;;
+create procedure qheb_log_user_visit(in p_tid int, in p_uid int, in reference_time datetime, in expiration int)
+begin
+  declare is_expired bool default true;
+  declare last_visit datetime;
+  declare last_post datetime;
+  set last_visit=(select `visitdate` from `qheb_visits` where `tid`=p_tid and `uid`=p_uid);
+  set is_expired=IF(last_visit is null, true, timestampdiff(second,last_visit,reference_time)>expiration);
+  if is_expired=false then
+	set last_post=(select greatest(`postdate`,`editdate`) from `qheb_posts` where `tid`=p_tid order by `pid` desc limit 1);
+    set is_expired=(last_post>reference_time);
+  end if;
+  if is_expired=true then
+	insert into `qheb_visits` (`tid`,`uid`,`visitdate`,`visitcount`) values (p_tid,p_uid,reference_time,1)
+      on duplicate key update `visitcount`=`visitcount`+1, `visitdate`=reference_time;
+  end if;
+end;
+;;;
+delimiter ;
 
 /* View for the WP_Users table - used as an alias*/
 create or replace view `qheb_wp_users` as select * from `wp_users`;

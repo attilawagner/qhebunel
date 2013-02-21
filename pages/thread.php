@@ -277,5 +277,8 @@ if ($permission == QHEBUNEL_PERMISSION_NONE) {
 	render_no_permission_page();
 } else {
 	render_thread();
+	
+	//Save stats
+	QhebunelStats::log_visit($thread_id);
 }
 ?>

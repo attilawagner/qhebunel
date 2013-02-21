@@ -170,6 +170,7 @@ require_once 'lib/qhebunelemoticons.php';
 require_once 'lib/qhebunelfiles.php';
 require_once 'lib/qhebunelbadges.php';
 require_once 'lib/qhebunelpost.php';
+require_once 'lib/qhebunelstats.php';
 
 //Include widgets
 require_once 'pmwidget.php';
