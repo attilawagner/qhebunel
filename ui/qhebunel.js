@@ -334,7 +334,7 @@ function initPostReplyLinks() {
 
 function onReplyLinkClick() {
 	var a = jQuery(this);
-	var post = a.parent().parent().parent();
+	var post = a.parent().parent().parent().parent();
 	if (post.next().attr('id') != 'send-reply') {
 		var oldContainer = jQuery('#send-reply');
 		var container = jQuery('<div style="opacity:0;display:none;"></div>').insertAfter(post);
@@ -364,7 +364,7 @@ function onReplyLinkClick() {
 function onQuoteLinkClick() {
 	var container = jQuery('#send-reply');
 	var a = jQuery(this);
-	var post = a.parent().parent().parent();
+	var post = a.parent().parent().parent().parent();
 	if (post.next().attr('id') != 'send-reply') {
 		var oldContainer = jQuery('#send-reply');
 		var container = jQuery('<div style="opacity:0;display:none;"></div>').insertAfter(post);
