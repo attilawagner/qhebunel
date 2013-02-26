@@ -117,6 +117,7 @@ create table `qheb_threads` (
 	`lastpostid` bigint(20) unsigned,						/* Last post ID */
 	`views` int(10) unsigned default 0,						/* View count */
 	`uri` varchar(100) not null,							/* URL component for the thread */
+	`pinned` tinyint(1) unsigned not null default 0,		/* Flag to mark pinned threads */
 	primary key (`tid`),
 	index `cat` (`catid`, `lastpostid`),
 	index `user` (`starter`)

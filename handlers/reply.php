@@ -16,17 +16,18 @@ if (empty($reply_message) || $reply_thread_id <= 0) {
 }
 
 //Get category id
-$reply_cat_id = $wpdb->get_var(
+$thread = $wpdb->get_row(
 	$wpdb->prepare(
-		'select `catid` from `qheb_threads` where `tid`=%d limit 1;',
+		'select `catid`,`closedate` from `qheb_threads` where `tid`=%d limit 1;',
 		$reply_thread_id
 	),
-	0,
-	0
+	ARRAY_A
 );
-if (empty($reply_cat_id) || $reply_cat_id <= 0) {
+if (empty($thread) || $thread['closedate'] != null) {
+	//User cannot post into a closed or nonexisting thread
 	Qhebunel::redirect_to_error_page();
 }
+$reply_cat_id = $thread['catid'];
 
 //Check permissions
 $permission = QhebunelUser::get_permissions_for_category($reply_cat_id);

@@ -44,6 +44,22 @@ Thread list
 	white-space: nowrap;
 	display: block;
 }
+.thread-icon {							/* normal, no unread, open */
+}
+.thread-icon.unread {					/* normal, unread, open */
+}
+.thread-icon.pinned {					/* pinned, no unread, open */
+}
+.thread-icon.pinned.unread {			/* pinned, unread, open */
+}
+.thread-icon.closed {					/* normal, no unread, closed */
+}
+.thread-icon.closed.unread {			/* normal, unread, closed */
+}
+.thread-icon.closed.pinned {			/* pinned, no unread, closed */
+}
+.thread-icon.closed.pinned.unread {		/* pinned, unread, closed */
+}
 
 /*
 New thread
@@ -68,6 +84,12 @@ Thread
 }
 .qheb-thread .thread-actions {
 	margin: 12px 0;
+}
+.qheb-thread .thread-actions a {
+	margin: 0 16px 0 0;
+}
+.qheb-thread .thread-pagination a {
+	margin: 0;
 }
 .qheb-post {
 	position: relative;

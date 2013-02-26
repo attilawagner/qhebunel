@@ -65,19 +65,21 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 			//Special pages
 			'error' =>			array('error', false, __('Error', 'qhebunel')),
 			'profile' =>		array('profile', false, __('Profile settings', 'qhebunel')),
-			'edit-post' =>		array('editpost', false, __('Edit post', 'qhebunel')),
+			'edit-post' =>		array('postedit', false, __('Edit post', 'qhebunel')),
 			'pm' =>				array('pm', false, __('Private messages', 'qhebunel')),
 			
 			//Special sections
 			'attachments' =>	array('download', true),
 			'quote' =>			array('quote', true),
-			'delete-post' =>	array('deletepost', true)
+			'delete-post' =>	array('postdelete', true),
+			'close-thread' =>	array('threadclose', true),
+			'pin-thread' =>		array('threadpin', true),
 		),
 		
 		//Category level special pages
 		'category' => array(
 			//Special pages
-			'new-thread' =>		array('newthread', false, __('Create new thread', 'qhebunel'))
+			'new-thread' =>		array('threadnew', false, __('Create new thread', 'qhebunel'))
 		)
 	);
 	

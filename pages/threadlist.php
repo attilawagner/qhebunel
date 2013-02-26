@@ -35,7 +35,7 @@ function render_thread_list() {
 	echo('<table class="qheb_threadlist"><thead><tr><th>'.__('Thread topic','qhebunel').'</th><th>'.__('Posts','qhebunel').'</th><th>'.__('Last post','qhebunel').'</th><th>'.__('Starter','qhebunel').'</th></tr></thead><tbody>');
 	$threads = $wpdb->get_results(
 		$wpdb->prepare(
-			'select `t`.`tid`, `t`.`title`, `t`.`startdate`, `t`.`starter`, `t`.`uri`, `us`.`display_name` as `startname`, `t`.`postcount`, `t`.`lastpostid`, `p`.`uid` as `lastuid`, `p`.`postdate` as `lastdate`, `ul`.`display_name` as `lastname`, `n`.`new`
+			'select `t`.`tid`, `t`.`title`, `t`.`startdate`, `t`.`starter`, `t`.`uri`, `us`.`display_name` as `startname`, `t`.`postcount`, `t`.`lastpostid`, `p`.`uid` as `lastuid`, `p`.`postdate` as `lastdate`, `ul`.`display_name` as `lastname`, `n`.`new`, `t`.`pinned`,`t`.`closedate`
 			from `qheb_threads` as `t`
 			  left join `qheb_wp_users` as `us`
 			    on (`us`.`id`=`t`.`starter`)
@@ -54,7 +54,7 @@ function render_thread_list() {
 			    ) as `n`
 			    on (`n`.`tid`=`t`.`tid`)
 			where `t`.`catid`=%d
-			order by `lastpostid` desc;',
+			order by `t`.`pinned` desc, `t`.`lastpostid` desc;',
 			@$current_user->ID,
 			$cat_id
 		),
@@ -70,11 +70,32 @@ function render_thread_list() {
 			$starter = '<span class="name">'.$start_user.'</span> <span class="date" title="'.mysql2date('j F, Y @ G:i', $thread['startdate']).'">'.QhebunelDate::get_list_date($thread['startdate']).'</span>';
 			$thread_link = QhebunelUI::get_url_for_thread($thread['tid']);
 			$new_posts = ($thread['new'] > 0 ? '<span class="new-posts">'.sprintf(_n('(%d new)', '(%d new)', $thread['new'], 'qhebunel'),$thread['new']).'</span>' : '');
-			echo('<tr><td><a href="'.$thread_link.'">'.QhebunelUI::format_title($thread['title']).'</a></td><td>'.$thread['postcount'].' '.$new_posts.'</td><td>'.$lastpost.'</td><td>'.$starter.'</td></tr>');
+			$icon = get_icon_for_thread($thread);
+			echo('<tr><td>'.$icon.'<a href="'.$thread_link.'">'.QhebunelUI::format_title($thread['title']).'</a></td><td>'.$thread['postcount'].' '.$new_posts.'</td><td>'.$lastpost.'</td><td>'.$starter.'</td></tr>');
 		}
 	}
 	echo('</tbody></table>');
 	echo(get_date_template());
+}
+
+/**
+ * Returns the &lt;span&gt; tag for the thread icon.
+ * @param array $thread A thread row from the database.
+ * @return string HTML fragment.
+ */
+function get_icon_for_thread($thread) {
+	$icon = '<span class="thread-icon';
+	if (!empty($thread['closedate'])) {
+		$icon .= ' closed';
+	}
+	if ($thread['pinned']) {
+		$icon .= ' pinned';
+	}
+	if ($thread['new'] > 0) {
+		$icon .= ' unread';
+	}
+	$icon .= '"></span>';
+	return $icon;
 }
 
 /**

@@ -21,8 +21,24 @@ $permission = QhebunelUser::get_permissions_for_category($cat_id);
 function render_action_bar($pagenum) {
 	global $permission, $thread_id, $thread;
 	echo('<div class="thread-actions">');
-	if ($permission >= QHEBUNEL_PERMISSION_WRITE) {
-		echo('<a href="#send-reply">'.__('Reply', 'qhebunel').'</a>');
+	if ($permission >= QHEBUNEL_PERMISSION_WRITE && empty($thread['closedate'])) {
+		echo('<a href="#send-reply">'.__('Reply', 'qhebunel').'</a> ');
+	}
+	if (QhebunelUser::is_moderator()) {
+		
+		//Close and reopen
+		if (empty($thread['closedate'])) {
+			echo('<a href="'.site_url('forum/close-thread/'.$thread_id).'">'.__('Close thread', 'qhebunel').'</a> ');
+		} else {
+			echo('<a href="'.site_url('forum/close-thread/'.$thread_id.'/reopen').'">'.__('Reopen thread', 'qhebunel').'</a> ');
+		}
+		
+		//Pin and unpin
+		if ($thread['pinned']) {
+			echo('<a href="'.site_url('forum/pin-thread/'.$thread_id.'/unpin').'">'.__('Unpin thread', 'qhebunel').'</a> ');
+		} else {
+			echo('<a href="'.site_url('forum/pin-thread/'.$thread_id).'">'.__('Pin thread', 'qhebunel').'</a> ');
+		}
 	}
 	
 	$post_per_page = QHEBUNEL_POSTS_PER_PAGE;
@@ -243,27 +259,31 @@ function render_post_actions($post) {
 }
 
 function render_reply_form() {
-	global $thread_id;
+	global $thread_id, $thread;
 	
-	//Get quoted post
-	if (isset($_GET['quote'])) {
-		$default_text = htmlentities2(QhebunelPost::get_quote_for_post($_GET['quote']));
-	} else {
-		$default_text = '';
-	}
+	if ($thread['closedate'] == null) {
 	
-	echo('<div id="send-reply">');
-	echo('<form id="reply-form" action="'.site_url('forum/').'" method="post" enctype="multipart/form-data">');
-	echo('<input type="hidden" name="action" value="reply" />');
-	echo('<input type="hidden" name="MAX_FILE_SIZE" value="' . QHEBUNEL_ATTACHMENT_MAX_SIZE . '" />');
-	echo('<input type="hidden" name="reply_thread" value="'.$thread_id.'" />');
-	echo('<textarea name="reply_message">'.$default_text.'</textarea>');
-	if (QhebunelUser::has_persmission_to_upload()) {
-		echo('<div class="attachments"><span class="attachmentlist">'.__('Attachments','qhebunel').'</span><div class="attachmentlist"><div class="file"><input type="file" name="attachments[]" class="attachment" /><input type="button" value="Remove" class="remove" /></div></div></div>');
+		//Get quoted post
+		if (isset($_GET['quote'])) {
+			$default_text = htmlentities2(QhebunelPost::get_quote_for_post($_GET['quote']));
+		} else {
+			$default_text = '';
+		}
+		
+		echo('<div id="send-reply">');
+		echo('<form id="reply-form" action="'.site_url('forum/').'" method="post" enctype="multipart/form-data">');
+		echo('<input type="hidden" name="action" value="reply" />');
+		echo('<input type="hidden" name="MAX_FILE_SIZE" value="' . QHEBUNEL_ATTACHMENT_MAX_SIZE . '" />');
+		echo('<input type="hidden" name="reply_thread" value="'.$thread_id.'" />');
+		echo('<textarea name="reply_message">'.$default_text.'</textarea>');
+		if (QhebunelUser::has_persmission_to_upload()) {
+			echo('<div class="attachments"><span class="attachmentlist">'.__('Attachments','qhebunel').'</span><div class="attachmentlist"><div class="file"><input type="file" name="attachments[]" class="attachment" /><input type="button" value="Remove" class="remove" /></div></div></div>');
+		}
+		echo('<input type="submit" name="new_thread" value="'.__('Post reply','qhebunel').'" />');
+		echo('</form>');
+		echo('</div>');
+	
 	}
-	echo('<input type="submit" name="new_thread" value="'.__('Post reply','qhebunel').'" />');
-	echo('</form>');
-	echo('</div>');
 }
 
 function render_no_permission_page() {
