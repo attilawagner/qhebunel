@@ -39,6 +39,9 @@ function render_action_bar($pagenum) {
 		} else {
 			echo('<a href="'.site_url('forum/pin-thread/'.$thread_id).'">'.__('Pin thread', 'qhebunel').'</a> ');
 		}
+		
+		//Delete
+		echo('<a href="'.site_url('forum/delete-thread/'.$thread_id).'">'.__('Delete thread', 'qhebunel').'</a> ');
 	}
 	
 	$post_per_page = QHEBUNEL_POSTS_PER_PAGE;
@@ -241,7 +244,7 @@ function render_post_actions($post) {
 		echo('<a class="post-action reply-link" href="#send-reply">'.__('Reply', 'qhebunel').'</a> ');
 		echo('<a class="post-action quote-link" href="'.$quote_url.'">'.__('Quote', 'qhebunel').'</a> ');
 	}
-	if ($thread_open && $post['uid'] == $current_user->ID || QhebunelUser::is_moderator()) {
+	if ($thread_open && $post['uid'] == $current_user->ID/* || QhebunelUser::is_moderator()*/) {
 		$edit_url = site_url('forum/edit-post/'.$post['pid']);
 		echo('<a class="post-action edit-link" href="'.$edit_url.'">'.__('Edit', 'qhebunel').'</a> ');
 		if ($post['flag'] == QhebunelPost::FLAG_DELETION_UNCONFIRMED) {

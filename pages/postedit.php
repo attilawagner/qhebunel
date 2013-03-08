@@ -69,7 +69,7 @@ function render_old_attachment_list() {
 
 ?>
 <form id="edit-post-form" onsubmit="return qheb_validateNewThreadForm();" action="<?=site_url('forum/');?>" method="post" enctype="multipart/form-data">
-<input type="hidden" name="action" value="editpost" />
+<input type="hidden" name="action" value="postedit" />
 <input type="hidden" name="post-id" value="<?=$post_id?>" />
 <input type="hidden" name="MAX_FILE_SIZE" value="<?=QHEBUNEL_ATTACHMENT_MAX_SIZE?>" />
 <table class="qheb-post-table">

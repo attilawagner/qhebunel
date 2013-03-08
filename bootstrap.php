@@ -32,7 +32,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 		require_once($handler);
 	} else {
 		//Redirec to to main page if action is unsupported
-		$absolute_url = get_url('forum/');
+		$absolute_url = site_url('forum/');
 		wp_redirect($absolute_url, 301);//Moved permanently
 	}
 	die();
@@ -66,6 +66,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 			'error' =>			array('error', false, __('Error', 'qhebunel')),
 			'profile' =>		array('profile', false, __('Profile settings', 'qhebunel')),
 			'edit-post' =>		array('postedit', false, __('Edit post', 'qhebunel')),
+			'delete-thread' =>	array('threaddelete', false, __('Delete thread', 'qhebunel')),
 			'pm' =>				array('pm', false, __('Private messages', 'qhebunel')),
 			
 			//Special sections

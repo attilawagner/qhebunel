@@ -46,60 +46,15 @@ if ($post['uid'] != $current_user->ID && !QhebunelUser::is_moderator()) {
 
 if ($post['flag'] == QhebunelPost::FLAG_DELETION_UNCONFIRMED && $confirmed) {
 	//Remove post
-	$attachments = $wpdb->get_results(
-		$wpdb->prepare(
-			'select `aid` from `qheb_attachments` where `pid`=%d;',
-			$post_id
-		),
-		ARRAY_A
-	);
-	foreach ($attachments as $att) {
-		QhebunelFiles::delete_attachment($att['aid']);
-	}
-	$wpdb->query(
-		$wpdb->prepare(
-			'delete from `qheb_attachments` where `pid`=%d;',
-			$post_id
-		)
-	);
-	$wpdb->query(
-		$wpdb->prepare(
-			'delete from `qheb_posts` where `pid`=%d;',
-			$post_id
-		)
-	);
+	$thread_exists = QhebunelPost::delete_post($post_id);
 	
-	//Get postcount
-	$post_count = $wpdb->get_var(
-		$wpdb->prepare(
-			'select `postcount` from `qheb_threads` where `tid`=%d;',
-			$post['tid']
-		)
-	);
-	
-	if ($post_count > 1) {
-		//Update postcount in thread
-		$wpdb->query(
-			$wpdb->prepare(
-				'update `qheb_threads` set `postcount`=`postcount`-1 where `tid`=%d;',
-				$post['tid']
-			)
-		);
-		
+	if ($thread_exists) {
 		//Redirect to thread
 		$absolute_url = QhebunelUI::get_url_for_thread($post['tid'], -1);
 		wp_redirect($absolute_url);//Temporal redirect
 		die();
 		
 	} else {
-		//This was the last post, delete thread
-		$wpdb->query(
-			$wpdb->prepare(
-				'delete from `qheb_threads` where `tid`=%d;',
-				$post['tid']
-			)
-		);
-		
 		//Redirect to category
 		$absolute_url = QhebunelUI::get_url_for_category($post['catid']);
 		wp_redirect($absolute_url);//Temporal redirect
