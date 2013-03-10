@@ -53,14 +53,28 @@ class QhebunelFiles {
 		$temp_path = $abs_path.'.tmp'; //Save image temporarily to this file, so an error does not delete the current avatar.
 		@unlink($temp_path); //remove previous temp file if it remained due to an error
 		
-		$img_result = image_resize($file_arr['tmp_name'], QHEBUNEL_AVATAR_MAX_WIDTH, QHEBUNEL_AVATAR_MAX_HEIGHT, false, $temp_path);
-		
-		//Check for image_resize errors
-		if (is_wp_error($img_result)) {
-			if ($img_result->get_error_code() == 'error_getting_dimensions') {
+		//Resize and save the image
+		$avatar_img = wp_get_image_editor($file_arr['tmp_name']);
+		if (is_wp_error($avatar_img)) {
+			return false; //Cannot open file
+		}
+		$resize_result = $avatar_img->resize(QHEBUNEL_AVATAR_MAX_WIDTH, QHEBUNEL_AVATAR_MAX_HEIGHT, false);
+		if (is_wp_error($resize_result)) {
+			unset($avatar_img);
+			if ($resize_result->get_error_code() == 'error_getting_dimensions') {
 				//No resize needed, so we just need to copy the uploaded file
 				@move_uploaded_file($file_arr['tmp_name'], $temp_path);
+			} else {
+				return false; //Some other error that we cannot handle
 			}
+		} else {
+			//The resized image needs to be saved
+			$save_result = $avatar_img->save($temp_path);
+			unset($avatar_img);
+			if (is_wp_error($save_result)) {
+				return false; //Some other error that we cannot handle
+			}
+			$temp_path = $save_result['path']; //WP 3.5+ does not save the file at the requested path, but adds another extension at its end
 		}
 		
 		if (is_file($temp_path) && filesize($temp_path) <= QHEBUNEL_AVATAR_MAX_FILESIZE) {
