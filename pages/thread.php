@@ -42,6 +42,9 @@ function render_action_bar($pagenum) {
 		
 		//Delete
 		echo('<a href="'.site_url('forum/delete-thread/'.$thread_id).'">'.__('Delete thread', 'qhebunel').'</a> ');
+		
+		//Move
+		echo('<a href="'.site_url('forum/move-thread/'.$thread_id).'">'.__('Move thread', 'qhebunel').'</a> ');
 	}
 	
 	$post_per_page = QHEBUNEL_POSTS_PER_PAGE;

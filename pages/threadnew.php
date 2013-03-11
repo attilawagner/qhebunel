@@ -20,37 +20,6 @@ function has_permissions() {
 	return QhebunelUser::get_permissions_for_category($cat_id) >= QHEBUNEL_PERMISSION_START;
 }
 
-/**
- * Renders a &lt;select&gt; tag with the list
- * of categories.
- */
-function category_list() {
-	global $wpdb, $cat_id;
-	$groups = QhebunelUser::get_groups();
-	$categories = $wpdb->get_results(
-		'select distinct `c`.`catid`, `c`.`parent`, `c`.`name`
-		from `qheb_categories` as `c` left join `qheb_category_permissions` as `cp`
-		on (`c`.`catid`=`cp`.`catid`)
-		where `cp`.`gid` in ('.implode(',',$groups).')
-		and `cp`.`access`>=3
-		order by `c`.`orderid` asc;',
-		ARRAY_A
-	);
-	echo('<select name="topic_category">');
-	foreach ($categories as $cat1) {
-		if ($cat1['parent'] == 0) {
-			echo('<optgroup label="'.$cat1['name'].'">');
-			foreach ($categories as $cat2) {
-				if ($cat2['parent'] == $cat1['catid']) {
-					echo('<option value="'.$cat2['catid'].'"'.($cat2['catid'] == $cat_id ? ' selected="selected"' : '').'>'.$cat2['name'].'</option>');
-				}
-			}
-			echo('</optgroup>');
-		}
-	}
-	echo('</select>');
-}
-
 if (!has_permissions()) {
 	echo('<div class="qheb-error-message">'.__('You do not have permissions to start a new thread in this category.', 'qhebunel').'</div>');
 } else {
@@ -68,7 +37,7 @@ if (!has_permissions()) {
 <tbody>
 	<tr>
 		<th><?php _e('Category','qhebunel'); ?></th>
-		<td><?php category_list(); ?></td>
+		<td><?php QhebunelPost::render_category_dropdown('topic_category', $cat_id); ?></td>
 	</tr>
 	<tr>
 		<th><?php _e('Topic title','qhebunel'); ?></th>

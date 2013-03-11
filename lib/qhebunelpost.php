@@ -156,5 +156,56 @@ class QhebunelPost {
 			)
 		);
 	}
+	
+	/**
+	 * Renders a &lt;select&gt; tag with the list of categories to the output.
+	 * Only those categories will be listed where the current user has
+	 * at least the specified permission. Admins get the entire list.
+	 * @param string $name Name of the &lt;select&gt; tag.
+	 * @param integer $selected_id The ID of the category that should be selected by default.
+	 * @param integer $permission_level One of the QHEBUNEL_PERMISSION_* constants.
+	 */
+	public static function render_category_dropdown($name, $selected_id = null, $permission_level = QHEBUNEL_PERMISSION_START) {
+		global $wpdb;
+		if (QhebunelUser::is_admin()) {
+			$categories = $wpdb->get_results(
+				$wpdb->prepare(
+					'select distinct `c`.`catid`, `c`.`parent`, `c`.`name`
+					from `qheb_categories` as `c`
+					order by `c`.`orderid` asc;',
+					$permission_level
+				),
+				ARRAY_A
+			);
+		} else {
+			$groups = QhebunelUser::get_groups();
+			$categories = $wpdb->get_results(
+				$wpdb->prepare(
+					'select distinct `c`.`catid`, `c`.`parent`, `c`.`name`
+					from `qheb_categories` as `c`
+					  left join `qheb_category_permissions` as `cp`
+					    on (`c`.`catid`=`cp`.`catid`)
+					where `cp`.`gid` in ('.implode(',',$groups).')
+					and `cp`.`access`>=%d
+					order by `c`.`orderid` asc;',
+					$permission_level
+				),
+				ARRAY_A
+			);
+		}
+		echo('<select name="'.$name.'">');
+		foreach ($categories as $cat1) {
+			if ($cat1['parent'] == 0) {
+				echo('<optgroup label="'.$cat1['name'].'">');
+				foreach ($categories as $cat2) {
+					if ($cat2['parent'] == $cat1['catid']) {
+						echo('<option value="'.$cat2['catid'].'"'.($cat2['catid'] == $selected_id ? ' selected="selected"' : '').'>'.$cat2['name'].'</option>');
+					}
+				}
+				echo('</optgroup>');
+			}
+		}
+		echo('</select>');
+	}
 }
 ?>

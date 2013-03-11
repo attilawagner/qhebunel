@@ -1,7 +1,7 @@
 <?php
 /**
  * Qhebunel
- * Thread deletion confirmation page
+ * Thread moving page
  * 
  * Thread ID is in the global $section_param variable.
  */
@@ -15,7 +15,7 @@ $thread_id = $section_params;
  * Check for moderator permissions
  */
 if (QhebunelUser::is_moderator() == false) {
-	echo('<div class="qheb-error-message">'.__('You must be a moderator to delete a thread.', 'qhebunel').'</div>');
+	echo('<div class="qheb-error-message">'.__('You must be a moderator to move a thread.', 'qhebunel').'</div>');
 	return; //Stop processing this file, render footer
 }
 
@@ -42,12 +42,16 @@ if (empty($thread)) {
 
 ?>
 <form id="delete-thread-form" action="<?=site_url('forum/');?>" method="post" enctype="multipart/form-data">
-<input type="hidden" name="action" value="threaddelete" />
+<input type="hidden" name="action" value="threadmove" />
 <input type="hidden" name="thread-id" value="<?=$thread_id?>" />
 <table class="qheb-post-table">
 <tfoot>
 	<tr>
-		<th colspan="2"><input type="submit" name="save" value="<?php _e('Delete thread','qhebunel'); ?>" /></th>
+		<th><?php _e('Target category','qhebunel'); ?></th>
+		<td><?php QhebunelPost::render_category_dropdown('target-category', $thread['catid']); ?></td>
+	</tr>
+	<tr>
+		<th colspan="2"><input type="submit" name="save" value="<?php _e('Move thread','qhebunel'); ?>" /></th>
 	</tr>
 </tfoot>
 <tbody>
