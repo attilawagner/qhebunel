@@ -141,7 +141,7 @@ class QhebunelBB {
 	 * @return string The text without unnecessary line breaks.
 	 */
 	private static function remove_multiple_line_breaks($text) {
-		return preg_replace('%(?:<br */?>\p{Z}*(\[[^\]]*\])?\p{Z}*)+%siu', '<br/>$1', $text);
+		return preg_replace('%(<br */?>\p{Z}*){2,}%iu', '<br/><br/>', $text);
 	}
 	
 	/**
