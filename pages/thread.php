@@ -137,6 +137,7 @@ function render_thread() {
 	render_action_bar($page_num);
 	
 	render_reply_form();
+	render_move_post_form();
 	
 	echo('</div>');
 }
@@ -247,7 +248,7 @@ function render_post_actions($post) {
 		echo('<a class="post-action reply-link" href="#send-reply">'.__('Reply', 'qhebunel').'</a> ');
 		echo('<a class="post-action quote-link" href="'.$quote_url.'">'.__('Quote', 'qhebunel').'</a> ');
 	}
-	if ($thread_open && $post['uid'] == $current_user->ID/* || QhebunelUser::is_moderator()*/) {
+	if ($thread_open && ($post['uid'] == $current_user->ID || QhebunelUser::is_moderator())) {
 		$edit_url = site_url('forum/edit-post/'.$post['pid']);
 		echo('<a class="post-action edit-link" href="'.$edit_url.'">'.__('Edit', 'qhebunel').'</a> ');
 		if ($post['flag'] == QhebunelPost::FLAG_DELETION_UNCONFIRMED) {
@@ -259,6 +260,9 @@ function render_post_actions($post) {
 			$del_url = site_url('forum/delete-post/'.$post['pid']);
 			echo('<a class="post-action delete-link" href="'.$del_url.'">'.__('Delete', 'qhebunel').'</a> ');
 		}
+	}
+	if ($thread_open && QhebunelUser::is_moderator()) {
+		echo('<a class="post-action move-link" href="#">'.__('Move', 'qhebunel').'</a> ');
 	}
 	echo('</div>');
 	echo('</footer>');
@@ -289,6 +293,20 @@ function render_reply_form() {
 		echo('</form>');
 		echo('</div>');
 	
+	}
+}
+
+function render_move_post_form() {
+	if (QhebunelUser::is_moderator()) {
+		echo('<div id="move-post">');
+		echo('<form id="move-post-form" action="'.site_url('forum/').'" method="post">');
+		echo('<input type="hidden" name="action" value="postmove" />');
+		echo('<input type="hidden" name="post" id="move-post-id" value="" />');
+		echo('<label id="move-post-category-label">'.__('Select category:').' <select name="category" id="move-post-category" disabled="disabled"><option>'.__('Loading...', 'qhebunel').'</option></select></label> ');
+		echo('<label id="move-post-thread-label">'.__('Select thread:').' <select name="thread" id="move-post-thread" disabled="disabled"><option>'.__('Loading...', 'qhebunel').'</option><option value="new">'.__('Create new thread', 'qhebunel').'</option></select></label> ');
+		echo('<label id="move-post-thread-title-label">'.__('Title for the new thread:').' <input name="thread-title" id="move-post-thread-title" type="text" disabled="disabled" /></label> ');
+		echo('<input id="move-post-submit" type="submit" name="move" value="'.__('Move post', 'qhebunel').'" disabled="disabled" />');
+		echo('</div>');
 	}
 }
 

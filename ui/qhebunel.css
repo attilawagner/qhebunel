@@ -199,6 +199,22 @@ Thread
 	padding: 5px 15px;
 	margin: 10px 0;
 }
+#move-post {
+	display: none;
+}
+#move-post label {
+	margin-left: 15px;
+}
+#move-post select, #move-post input[type=text] {
+	width: 175px;
+	margin-left: 8px;
+}
+#move-post input[type=submit], #move-post label {
+	margin-top: 10px;
+}
+#move-post #move-post-thread-title-label {
+	display: block;
+}
 
 /*
 Edit post

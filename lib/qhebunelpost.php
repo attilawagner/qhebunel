@@ -15,7 +15,7 @@ class QhebunelPost {
 	 * creates a BBCode quote from it.
 	 *
 	 * @param integer $post_id Post ID.
-	 * @return string Post as a quote. Empty string if the post does not exists.
+	 * @return string Post as a quote. Empty string if the post does not exist.
 	 */
 	public static function get_quote_for_post($post_id) {
 		global $wpdb;
@@ -164,10 +164,12 @@ class QhebunelPost {
 	 * @param string $name Name of the &lt;select&gt; tag.
 	 * @param integer $selected_id The ID of the category that should be selected by default.
 	 * @param integer $permission_level One of the QHEBUNEL_PERMISSION_* constants.
+	 * @param mixed $user_id User ID whose permissions are tested. If left at its default value
+	 * ('current'), the current user will be tested.
 	 */
-	public static function render_category_dropdown($name, $selected_id = null, $permission_level = QHEBUNEL_PERMISSION_START) {
+	public static function render_category_dropdown($name, $selected_id = null, $permission_level = QHEBUNEL_PERMISSION_START, $user_id = 'current') {
 		global $wpdb;
-		if (QhebunelUser::is_admin()) {
+		if ($user_id == 'current' && QhebunelUser::is_admin()) {
 			$categories = $wpdb->get_results(
 				$wpdb->prepare(
 					'select distinct `c`.`catid`, `c`.`parent`, `c`.`name`
@@ -178,7 +180,7 @@ class QhebunelPost {
 				ARRAY_A
 			);
 		} else {
-			$groups = QhebunelUser::get_groups();
+			$groups = QhebunelUser::get_groups($user_id);
 			$categories = $wpdb->get_results(
 				$wpdb->prepare(
 					'select distinct `c`.`catid`, `c`.`parent`, `c`.`name`

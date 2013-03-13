@@ -28,7 +28,7 @@ $post = $wpdb->get_row(
 	),
 	ARRAY_A
 );
-if (empty($post)) {die('asd');
+if (empty($post)) {
 	Qhebunel::redirect_to_error_page();
 }
 /*

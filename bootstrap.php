@@ -76,6 +76,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 			'delete-post' =>	array('postdelete', true),
 			'close-thread' =>	array('threadclose', true),
 			'pin-thread' =>		array('threadpin', true),
+			'move-post-ajax' =>	array('postmoveajax', true),
 		),
 		
 		//Category level special pages

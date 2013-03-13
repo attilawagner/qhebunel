@@ -39,7 +39,7 @@ $target_category = $wpdb->get_results(
 	ARRAY_A
 );
 if (empty($target_category)) {
-	Qhebunel::redirect_to_error_page(); //Target category does not exists
+	Qhebunel::redirect_to_error_page(); //Target category does not exist
 }
 if ($target_category['permission'] < QHEBUNEL_PERMISSION_START && !QhebunelUser::is_admin()) {
 	Qhebunel::redirect_to_error_page(); //Current user cannot start/move a thread in this category

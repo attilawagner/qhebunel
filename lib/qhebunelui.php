@@ -58,7 +58,7 @@ class QhebunelUI {
 	 * @param integer $page_id Optional, zero-based. If provided, the link will point to the given page.
 	 * To get the link to the last page, use -1.
 	 * @return string Absolute URL for the thread (or page in the thread),
-	 * or an empty string if the thread does not exists.
+	 * or an empty string if the thread does not exist.
 	 */
 	public static function get_url_for_thread($thread_id, $page_id = 0) {
 		global $wpdb;

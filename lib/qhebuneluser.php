@@ -50,30 +50,49 @@ class QhebunelUser {
 	}
 	
 	/**
-	 * Loads the list of user groups for the currently logged in user,
-	 * and stores it in the global $QHEB_UGROUPS variable.
+	 * Loads the list of user groups for the provided or the currently logged in user.
+	 * @param mixed $user_id The user ID which for the groups are requested.
+	 * If it's set to 'current' (as per default), groups for the current user will be returned,
+	 * and they will be also saved to the global $QHEB_UGROUPS variable.
 	 * @return array $QHEB_UGROUPS
 	 */
-	public static function get_groups() {
-		global $QHEB_UGROUPS, $wpdb, $current_user;
-		if (!isset($QHEB_UGROUPS)) {
-			$QHEB_UGROUPS = array();
-			$QHEB_UGROUPS[] = 1;//Everyone
-			if ($current_user->ID > 0) {
-				$QHEB_UGROUPS[] = 2;//Registered users
-				$res = $wpdb->get_results(
-					$wpdb->prepare(
-						"select `gid` from `qheb_user_group_links` where `uid`=%d;",
-						$current_user->ID
-					),
-					ARRAY_N
-				);
-				foreach ($res as $g) {
-					$QHEB_UGROUPS[] = $g[0];
-				}
+	public static function get_groups($user_id = 'current') {
+		global $QHEB_UGROUPS, $current_user;
+		if ($user_id == 'current') {
+			if (!isset($QHEB_UGROUPS)) {
+				$QHEB_UGROUPS = self::get_groups_for_user($current_user->ID);
+			}
+			return $QHEB_UGROUPS;
+		} else {
+			return self::get_groups_for_user($user_id);
+		}
+	}
+	
+	/**
+	 * Loads the user groups for the provided user.
+	 * Used by get_groups().
+	 * @param integer $user_id The user which for the groups are requested.
+	 * If null is passed, only the 'Everyone' group will be returned.
+	 * @return array Group list.
+	 */
+	private static function get_groups_for_user($user_id = null) {
+		global $wpdb;
+		$groups = array();
+		$groups[] = 1;//Everyone
+		if ($user_id != null) {
+			$groups[] = 2;//Registered users
+			$db_groups = $wpdb->get_results(
+				$wpdb->prepare(
+					"select `gid` from `qheb_user_group_links` where `uid`=%d;",
+					$user_id
+				),
+				ARRAY_N
+			);
+			foreach ($db_groups as $g) {
+				$groups[] = $g[0];
 			}
 		}
-		return $QHEB_UGROUPS;
+		return $groups;
 	}
 	
 	/**

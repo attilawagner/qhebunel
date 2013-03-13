@@ -5,7 +5,7 @@
  */
 if (!defined('QHEBUNEL_REQUEST') || QHEBUNEL_REQUEST !== true) die;
 
-$topic_title = $_POST['topic_title'];
+$topic_title = trim($_POST['topic_title']);
 $topic_cat_id = $_POST['topic_category'];
 $topic_body = $_POST['topic_message'];
 
@@ -23,7 +23,6 @@ if ($permission < QHEBUNEL_PERMISSION_START) {
 //Save thread to db
 global $current_user;
 $thread_uri = Qhebunel::get_uri_component_for_title($topic_title);
-$wpdb->flush();
 $wpdb->query(
 	$wpdb->prepare(
 		'insert into `qheb_threads` (`title`, `catid`, `startdate`, `starter`, `uri`) values (%s, %d, %s, %d, %s);',

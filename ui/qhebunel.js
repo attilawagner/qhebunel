@@ -407,6 +407,83 @@ function onQuoteLinkClick() {
 	return false;
 }
 
+function initPostMoveLinks() {
+	jQuery('.qheb-thread a.post-action.move-link').click(function(){
+		var a = jQuery(this);
+		var pfooter = a.parent().parent();
+		var post = pfooter.parent().parent();
+		var movediv = jQuery('#move-post');
+		var postId = /post-(\d+)/.exec(post.attr('id'));
+		if (postId == null) {
+			return false;
+		}
+		postId = postId[1];
+		
+		jQuery('#move-post-id').val(postId);
+		pfooter.append(movediv.detach());
+		movediv.show();
+		
+		jQuery.get(qhebunelConfig.forumRoot+'move-post-ajax/categories/'+postId, function(data){
+			var select = jQuery(data);
+			if (select.prop('tagName') == "SELECT") {
+				var catSelect = jQuery('#move-post-category');
+				catSelect.contents().remove();
+				catSelect.append(select.contents());
+				catSelect.val(catSelect.find('option[selected="selected"]').val());
+				catSelect.unbind('change');
+				catSelect.bind('change', onPostMoveCategoryChange);
+				catSelect.removeAttr('disabled');
+				
+				onPostMoveCategoryChange();
+			}
+		});
+		
+		return false;
+	});
+}
+
+function onPostMoveCategoryChange() {
+	var catSelect = jQuery('#move-post-category');
+	var threadSelect = jQuery('#move-post-thread');
+	var submitButton = jQuery('#move-post-submit');
+	var threadTitle = jQuery('#move-post-thread-title');
+	threadSelect.attr('disabled', 'disabled');
+	submitButton.attr('disabled', 'disabled');
+	
+	var catId = catSelect.val();
+	jQuery.get(qhebunelConfig.forumRoot+'move-post-ajax/threads/'+catId, function(data){
+		var newThread = threadSelect.find('option:last').detach();
+		threadSelect.contents().remove();
+		threadSelect.append(data);
+		threadSelect.append(newThread);
+		
+		threadSelect.unbind('change');
+		threadSelect.bind('change', onPostMoveThreadChange);
+		threadTitle.unbind('input');
+		threadTitle.bind('input', onPostMoveThreadChange);
+		threadSelect.removeAttr('disabled');
+		onPostMoveThreadChange();
+	});
+}
+
+function onPostMoveThreadChange() {
+	var threadSelect = jQuery('#move-post-thread');
+	var submitButton = jQuery('#move-post-submit');
+	var threadTitle = jQuery('#move-post-thread-title');
+	
+	if (threadSelect.val() != 'new') {
+		submitButton.removeAttr('disabled');
+		threadTitle.attr('disabled', 'disabled');
+	} else {
+		threadTitle.removeAttr('disabled');
+		if (threadTitle.val().trim().length > 0) {
+			submitButton.removeAttr('disabled');
+		} else {
+			submitButton.attr('disabled', 'disabled');
+		}
+	}
+}
+
 /*
  * Page initialization
  */
@@ -418,4 +495,5 @@ jQuery(document).ready(function() {
 	initSpoilers();
 	initPostPermalinks();
 	initPostReplyLinks();
+	initPostMoveLinks();
 });

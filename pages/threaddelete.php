@@ -36,7 +36,7 @@ $thread = $wpdb->get_row(
 	ARRAY_A
 );
 if (empty($thread)) {
-	echo('<div class="qheb-error-message">'.__('The thread does not exists in the database.', 'qhebunel').'</div>');
+	echo('<div class="qheb-error-message">'.__('The thread does not exist in the database.', 'qhebunel').'</div>');
 	return; //Stop processing this file, render footer
 }
 

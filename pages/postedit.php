@@ -26,7 +26,7 @@ $post = $wpdb->get_row(
 	ARRAY_A
 );
 if (empty($post)) {
-	echo('<div class="qheb-error-message">'.__('The post does not exists in the database.', 'qhebunel').'</div>');
+	echo('<div class="qheb-error-message">'.__('The post does not exist in the database.', 'qhebunel').'</div>');
 	return; //Stop processing this file, render footer
 }
 
