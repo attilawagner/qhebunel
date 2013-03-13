@@ -166,7 +166,7 @@ create table `qheb_privmessages` (
 
 /* Stored procedure to log user visit in a thread */
 delimiter ;;;
-create procedure qheb_log_user_visit(in p_tid int, in p_uid int, in reference_time datetime, in expiration int)
+create procedure `qheb_log_user_visit` (in p_tid int, in p_uid int, in reference_time datetime, in expiration int)
 begin
   declare is_expired bool default true;
   declare last_visit datetime;

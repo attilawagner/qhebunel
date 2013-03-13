@@ -178,7 +178,7 @@ create table `qheb_privmessages` (
 
 /* Stored procedure to log user visit in a thread */
 delimiter ;;;
-create procedure qheb_log_user_visit(in p_tid int, in p_uid int, in reference_time datetime, in expiration int)
+create procedure `qheb_log_user_visit` (in p_tid int, in p_uid int, in reference_time datetime, in expiration int)
 begin
   declare is_expired bool default true;
   declare last_visit datetime;
@@ -262,12 +262,25 @@ function qhebunel_install() {
 	
 	/*
 	 * Run install script command by command
+	 * (except the parts defining the stored procedures)
 	 */
-	$sql_commands = explode(';', $install_sql);
+	$procedureless_sql_script = preg_replace('/ delimiter (.+?) (.*?)\1\s+delimiter ; /sim', '', $install_sql);
+	$sql_commands = explode(';', $procedureless_sql_script);
 	foreach ($sql_commands as $command) {
 		$command = trim($command);
 		if (!empty($command)) {
 			$wpdb->query($command);
+		}
+	}
+	
+	/*
+	 * Define the stored procedures
+	 */
+	preg_match_all('/ delimiter (.+?) (.*?)\1\s+delimiter ; /sim', $install_sql, $procedure_regs, PREG_SET_ORDER);
+	foreach ($procedure_regs as $regs) {
+		$procedure_definition = $regs[2];
+		if (!empty($procedure_definition)) {
+			$wpdb->query($procedure_definition);
 		}
 	}
 	
@@ -315,20 +328,34 @@ function qhebunel_uninstall() {
 	global $wpdb, $install_sql;
 	$tables = array();
 	$views = array();
+	$procedures = array();
 	
 	//Tables
-	preg_match_all('/create table (?:if not exists )?`(.*?)`/', $install_sql, $preg_res, PREG_SET_ORDER);
+	preg_match_all('/create +table +(?:if not exists +)?`(.*?)`/', $install_sql, $preg_res, PREG_SET_ORDER);
 	foreach ($preg_res as $res) {
 		$tables[] = $res[1];
 	}
 	
 	//Views
-	preg_match_all('/create (?:or replace )?view `(.*?)`/', $install_sql, $preg_res, PREG_SET_ORDER);
+	preg_match_all('/create +(?:or replace +)?view +`(.*?)`/', $install_sql, $preg_res, PREG_SET_ORDER);
 	foreach ($preg_res as $res) {
 		$views[] = $res[1];
 	}
 	
-	$wpdb->query('drop table `'.implode('`,`', $tables).'`;');
-	$wpdb->query('drop view `'.implode('`,`', $views).'`;');
+	//Stored procedures
+	preg_match_all('/create +procedure +`(.*?)`/', $install_sql, $preg_res, PREG_SET_ORDER);
+	foreach ($preg_res as $res) {
+		$procedures[] = $res[1];
+	}
+	
+	if (!empty($tables)) {
+		$wpdb->query('drop table if exists `'.implode('`,`', $tables).'`;');
+	}
+	if (!empty($views)) {
+		$wpdb->query('drop view if exists `'.implode('`,`', $views).'`;');
+	}
+	if (!empty($procedures)) {
+		$wpdb->query('drop procedure if exists `'.implode('`,`', $procedures).'`;');
+	}
 }
 ?>
