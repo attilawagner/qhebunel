@@ -70,7 +70,7 @@ class QhebunelBB {
 	 * @return string HTML code.
 	 */
 	public static function parse($text) {
-		$tokens = self::tokenize_text($text);
+		$tokens = self::tokenize_text(self::remove_multiple_line_breaks($text));
 		if (empty($tokens)) {
 			return '';
 		}
@@ -80,7 +80,7 @@ class QhebunelBB {
 		foreach ($tokens as $token) {
 			if (is_string($token)) {
 				//Add string tokens to output stack
-				self::add_text_token($stack, self::remove_line_breaks($token));
+				self::add_text_token($stack, $token);
 			} else {
 				
 				if ($token['closing']) {
@@ -135,18 +135,13 @@ class QhebunelBB {
 	}
 	
 	/**
-	 * Removes the first and last &lt;br/&gt; tags
-	 * from the beginning and end of the given string.
-	 *  
+	 * Replaces multiple occurences of &lt;br/&gt; tags with a single one.
+	 * BBCode opening and closing tags and whitespaces are ignored between the &lt;br/&gt; tags.
 	 * @param string $text Text to clean up.
 	 * @return string The text without unnecessary line breaks.
 	 */
-	private static function remove_line_breaks($text) {
-		if (preg_match('%^(?:<br ?/?>)?(.*?)(?:<br ?/?>)?$%s', $text, $regs)) {
-			return $regs[1];
-		} else {
-			return '';
-		}
+	private static function remove_multiple_line_breaks($text) {
+		return preg_replace('%(?:<br */?>\p{Z}*(\[[^\]]*\])?\p{Z}*)+%siu', '<br/>$1', $text);
 	}
 	
 	/**
