@@ -39,13 +39,9 @@ function qheb_inputSetError(field) {
 }
 
 /**
- * Loads SCEditor for the given textarea.
+ * Adds custom code handling to the SCEditor plugin.
  */
-function initSCE(selector, options) {
-	var toolbar = "bold,italic,underline,strike,subscript,superscript|left,center,right,justify|" +
-		"size,color,removeformat|cut,copy,paste,pastetext|bulletlist,orderedlist|" +
-		"table|code,quote,spoiler|horizontalrule,image,email,link,unlink|emoticon,youtube,date,time|" +
-		"print,source";
+function initSCEPlugin() {
 	jQuery.sceditorBBCodePlugin.bbcode.set(
 		"spoiler",
 		{
@@ -87,58 +83,79 @@ function initSCE(selector, options) {
 		}
 	);
 	jQuery.sceditorBBCodePlugin.bbcode.set(
-			"quote",
-			{
-				styles: {
-				},
-				tags: {
-					blockquote: null
-				},
-				isSelfClosing: false,
-				isInline: false,
-				isHtmlInline: undefined,
-				allowedChildren: null,
-				allowsEmpty: false,
-				excludeClosing: false,
-				skipLastLineBreak: false,
-				
-				breakBefore: false,
-				breakStart: true,
-				breakEnd: true,
-				breakAfter: true,
-				
-				format: function(element, content){
-					var cite,post,user;
-					element = jQuery(element);
-					cite = element.children('cite');
-					post = cite.attr('post');
-					user = cite.text().match(/^(.*):\s*$/);
-					if (typeof user !== "undefined" && user != null && user.length > 0){
-						user = user[1];
-					} else {
-						user = '';
-					}
-					content = content.substr(cite.text().length);
-					console.log('[quote="'+user+'" post='+post+']'+content+'[/quote]');
-					return '[quote="'+user+'" post='+post+']'+content+'[/quote]';
-				},
-				html: function(token, attrs, content) {
-					var name='', post='';
-					if(typeof attrs.defaultattr !== "undefined") {
-						name = attrs.defaultattr + ': ';
-					}
-					if (typeof attrs.post !== "undefined") {
-						post = attrs.post;
-					}
-					content = '<cite post="' + post + '">' + name + '</cite>' + content;
-					return '<blockquote>' + content + '</blockquote>';
+		"quote",
+		{
+			styles: {
+			},
+			tags: {
+				blockquote: null
+			},
+			isSelfClosing: false,
+			isInline: false,
+			isHtmlInline: undefined,
+			allowedChildren: null,
+			allowsEmpty: false,
+			excludeClosing: false,
+			skipLastLineBreak: false,
+			
+			breakBefore: false,
+			breakStart: true,
+			breakEnd: true,
+			breakAfter: true,
+			
+			format: function(element, content){
+				var cite,post,user;
+				element = jQuery(element);
+				cite = element.children('cite');
+				post = cite.attr('post');
+				user = cite.text().match(/^(.*):\s*$/);
+				if (typeof user !== "undefined" && user != null && user.length > 0){
+					user = user[1];
+				} else {
+					user = '';
 				}
+				content = content.substr(cite.text().length);
+				console.log('[quote="'+user+'" post='+post+']'+content+'[/quote]');
+				return '[quote="'+user+'" post='+post+']'+content+'[/quote]';
+			},
+			html: function(token, attrs, content) {
+				var name='', post='';
+				if(typeof attrs.defaultattr !== "undefined") {
+					name = attrs.defaultattr + ': ';
+				}
+				if (typeof attrs.post !== "undefined") {
+					post = attrs.post;
+				}
+				content = '<cite post="' + post + '">' + name + '</cite>' + content;
+				return '<blockquote>' + content + '</blockquote>';
 			}
-		);
-	return jQuery(selector).sceditorBBCodePlugin(
+		}
+	);
+}
+
+/**
+ * Loads SCEditor for the given textarea.
+ * @param selector jQuery selector string to target the textarea that will be used as the base element.
+ * @param options Object containing parameters for the SCEditor instance.
+ * @returns The created editor instance.
+ */
+function initSCEInstance(selector, options) {
+	var toolbar = "bold,italic,underline,strike,subscript,superscript|left,center,right,justify|" +
+		"size,color,removeformat|cut,copy,paste,pastetext|bulletlist,orderedlist|" +
+		"table|code,quote,spoiler|horizontalrule,image,email,link,unlink|emoticon,youtube,date,time|" +
+		"print,source";
+	
+	var field = jQuery(selector);
+	if (field.length == 0) {
+		return; //Textarea does not exist
+	}
+	var w = field.width();
+	
+	return field.sceditorBBCodePlugin(
 		jQuery.extend(
-			{toolbar:toolbar,emoticonsRoot:qhebunelConfig.SCEditor.emoticonsRoot,emoticons:qhebunelConfig.SCEditor.emoticons},
-			options
+			{toolbar:toolbar,emoticonsRoot:qhebunelConfig.SCEditor.emoticonsRoot,emoticons:qhebunelConfig.SCEditor.emoticons,
+				resizeMinWidth:w, resizeMaxWidth:w, resizeMinHeight:150},
+			options || {}
 		)
 	);
 }
@@ -148,9 +165,7 @@ function initReplyForm() {
 	if (field.length == 0) {
 		return; //No reply form
 	}
-	
-	var w = field.width;
-	var editor = initSCE('#reply-form textarea', {resizeMinWidth:w, resizeMaxWidth:w, resizeMinHeight:150});
+	var editor = initSCEInstance('#reply-form textarea');
 	
 	jQuery('#reply-form').submit(function(){
 		if (editor.sceditor('instance').val() == "") {
@@ -166,8 +181,7 @@ function initNewThreadForm() {
 		return; //No reply form
 	}
 	
-	var w = field.width;
-	var editor = initSCE('#new-thread-form textarea', {resizeMinWidth:w, resizeMaxWidth:w, resizeMinHeight:150});
+	var editor = initSCEInstance('#new-thread-form textarea');
 
 	jQuery('#new-thread-form').submit(function(){
 		if (editor.sceditor('instance').val() == "") {
@@ -182,9 +196,7 @@ function initEditPostForm() {
 	if (field.length == 0) {
 		return; //No reply form
 	}
-	
-	var w = field.width;
-	var editor = initSCE('#edit-post-form textarea', {resizeMinWidth:w, resizeMaxWidth:w, resizeMinHeight:150});
+	var editor = initSCEInstance('#edit-post-form textarea');
 
 	jQuery('#edit-post-form').submit(function(){
 		if (editor.sceditor('instance').val() == "") {
@@ -195,7 +207,7 @@ function initEditPostForm() {
 	initUploadForm();
 }
 function initProfileForm() {
-	initSCE('.profile_settings textarea', {resizeEnabled:false});
+	initSCEInstance('.profile_settings textarea', {resizeEnabled:false});
 }
 function validateProfileForm() {
 	var ok = true;
@@ -348,12 +360,23 @@ function onReplyLinkClick() {
 				container.append(oldContainer.contents().detach());
 				oldContainer.remove();
 				container.attr('id','send-reply');
+				
 				container.animate({
 						"height": "toggle",
 						"opacity": "1"
 					},
 					"fast",
-					"linear"
+					"linear",
+					function(){
+						var editor = jQuery('#reply-form textarea').sceditor('instance');
+						if (editor.sourceMode() == false) {
+							editor.setWysiwygEditorValue("");
+							editor.sourceMode(true);
+						}
+						editor.setSourceEditorValue("");
+						editor.sourceMode(false);
+						editor.readOnly(false);
+					}
 				);
 			}
 		);
@@ -365,45 +388,44 @@ function onQuoteLinkClick() {
 	var container = jQuery('#send-reply');
 	var a = jQuery(this);
 	var post = a.parent().parent().parent().parent();
-	if (post.next().attr('id') != 'send-reply') {
-		var oldContainer = jQuery('#send-reply');
-		var container = jQuery('<div style="opacity:0;display:none;"></div>').insertAfter(post);
-		oldContainer.animate({
-				"height": "toggle",
-				"opacity": "0"
-			},
-			"fast",
-			"linear",
-			function() {
-				container.append(oldContainer.contents().detach());
-				oldContainer.remove();
-				container.attr('id','send-reply');
-				
-				//Load quote content
-				var postId = post.attr('id').match(/\d+/);
-				jQuery.get(
-					qhebunelConfig.forumRoot+"quote/"+postId,
-					function(data){
-						var editor = jQuery('#reply-form textarea').sceditor('instance');
-						if (editor.sourceMode() == false) {
-							editor.setWysiwygEditorValue("");
-							editor.sourceMode(true);
-						}
-						editor.setSourceEditorValue(data);
-						editor.sourceMode(false);
+	var oldContainer = jQuery('#send-reply');
+	var container = jQuery('<div style="opacity:0;display:none;"></div>').insertAfter(post);
+	oldContainer.animate({
+			"height": "toggle",
+			"opacity": "0"
+		},
+		"fast",
+		"linear",
+		function() {
+			container.append(oldContainer.contents().detach());
+			oldContainer.remove();
+			container.attr('id','send-reply');
+			
+			//Load quote content
+			var postId = post.attr('id').match(/\d+/);
+			jQuery.get(
+				qhebunelConfig.forumRoot+"quote/"+postId,
+				function(data){
+					var editor = jQuery('#reply-form textarea').sceditor('instance');
+					if (editor.sourceMode() == false) {
+						editor.setWysiwygEditorValue("");
+						editor.sourceMode(true);
 					}
-				);
-				
-				container.animate({
-						"height": "toggle",
-						"opacity": "1"
-					},
-					"fast",
-					"linear"
-				);
-			}
-		);
-	}
+					editor.setSourceEditorValue(data);
+					editor.sourceMode(false);
+					editor.readOnly(false);
+				}
+			);
+			
+			container.animate({
+					"height": "toggle",
+					"opacity": "1"
+				},
+				"fast",
+				"linear"
+			);
+		}
+	);
 	return false;
 }
 
@@ -488,6 +510,7 @@ function onPostMoveThreadChange() {
  * Page initialization
  */
 jQuery(document).ready(function() {
+	initSCEPlugin();
 	initReplyForm();
 	initProfileForm();
 	initNewThreadForm();
