@@ -78,6 +78,15 @@ Thread
 .qheb-thread {
 	padding: 0;
 }
+.qheb-thread .thread-title {
+	font-family: "Titillium Maps", Arial, "Helvetica Neue", Helvetica, sans-serif;
+	font-size: 16pt;
+	font-weight: normal;
+}
+.qheb-thread .thread-title div, .qheb-thread .thread-title h2 {
+	display: inline;
+	font: inherit;
+}
 .qheb-thread .thread-pagination {
 	display: inline-block;
 	float: right;

@@ -80,7 +80,11 @@ function render_thread() {
 	//Load thread info
 	$thread = $wpdb->get_row(
 		$wpdb->prepare(
-			'select * from `qheb_threads` where `tid`=%d limit 1;',
+			'select `t`.*, `c`.`name` as `catname`
+			from `qheb_threads` as `t`
+			  left join `qheb_categories` as `c`
+			    on (`c`.`catid`=`t`.`catid`)
+			where `tid`=%d limit 1;',
 			$thread_id
 		),
 		ARRAY_A
@@ -128,9 +132,14 @@ function render_thread() {
 	//A thread contains at least the opening post, so we do not need to check for empty result
 	echo('<div class="qheb-thread">');
 	
+	$category_name = '<div class="thread-category"><a href="'.QhebunelUI::get_url_for_category($thread['catid']).'">'.QhebunelUI::format_title($thread['catname']).'</a></div>';
 	//Use h2 tag only on the first page
 	$title_tag = ($page_id == 0 ? 'h2' : 'div');
-	echo('<'.$title_tag.' class="thread_title">'.QhebunelUI::format_title($thread['title']).'</'.$title_tag.'>');
+	$thread_name = '<'.$title_tag.' class="thread-name"><a href="'.QhebunelUI::get_url_for_thread($thread_id).'">'.QhebunelUI::format_title($thread['title']).'</'.$title_tag.'>';
+	echo('<div class="thread-title">');
+	/* translators: first parameter is the category name, second is the thread name */
+	printf(_x('%1$s: %2$s', 'thread-title', 'qhebunel'), $category_name, $thread_name);
+	echo('</div>');
 	
 	render_action_bar($page_num);
 	
