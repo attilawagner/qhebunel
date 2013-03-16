@@ -199,7 +199,7 @@ Thread
 	padding: 5px 15px;
 	margin: 10px 0;
 }
-#move-post {
+#move-post, #report-post {
 	display: none;
 }
 #move-post label {
@@ -214,6 +214,18 @@ Thread
 }
 #move-post #move-post-thread-title-label {
 	display: block;
+}
+.post-reports {
+}
+.post-report-message {
+	margin: 10px 0 0;
+}
+.post-report-message p {
+	margin: 5px 0;
+	text-align: left;
+}
+.post-report-message p.report-reason {
+	padding: 0 0 0 50px;
 }
 
 /*

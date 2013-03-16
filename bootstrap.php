@@ -74,6 +74,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 			'attachments' =>	array('download', true),
 			'quote' =>			array('quote', true),
 			'delete-post' =>	array('postdelete', true),
+			'clear-reports' =>	array('postreportclear', true),
 			'close-thread' =>	array('threadclose', true),
 			'pin-thread' =>		array('threadpin', true),
 			'move-post-ajax' =>	array('postmoveajax', true),

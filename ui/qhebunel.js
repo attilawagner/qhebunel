@@ -506,6 +506,35 @@ function onPostMoveThreadChange() {
 	}
 }
 
+function initPostReportLinks() {
+	jQuery('.qheb-thread a.post-action.report-link').click(function(){
+		var a = jQuery(this);
+		var pfooter = a.parent().parent();
+		var post = pfooter.parent().parent();
+		var reportdiv = jQuery('#report-post');
+		var postId = /post-(\d+)/.exec(post.attr('id'));
+		if (postId == null) {
+			return false;
+		}
+		postId = postId[1];
+		
+		jQuery('#report-post-id').val(postId);
+		pfooter.append(reportdiv.detach());
+		reportdiv.show();
+		
+		return false;
+	});
+	var reasonField =jQuery('#report-post-reason');
+	var submitButton = jQuery('#report-post-submit');
+	reasonField.bind('input', function() {
+		if (reasonField.val().trim().length > 0) {
+			submitButton.removeAttr('disabled');
+		} else {
+			submitButton.attr('disabled', 'disabled');
+		}
+	})
+}
+
 /*
  * Page initialization
  */
@@ -519,4 +548,5 @@ jQuery(document).ready(function() {
 	initPostPermalinks();
 	initPostReplyLinks();
 	initPostMoveLinks();
+	initPostReportLinks();
 });

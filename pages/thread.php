@@ -75,7 +75,7 @@ function render_action_bar($pagenum) {
  * Renders the thread with the title, action bars and posts.
  */
 function render_thread() {
-	global $wpdb, $thread_id,$thread_id,$page_id, $thread;
+	global $wpdb, $thread_id,$thread_id,$page_id, $thread,$current_user;
 	
 	//Load thread info
 	$thread = $wpdb->get_row(
@@ -101,7 +101,7 @@ function render_thread() {
 	
 	$posts = $wpdb->get_results(
 		$wpdb->prepare(
-			'select `p`.*, `u`.`display_name`, `u2`.`display_name` as `editorname`, `e`.`avatar`, `e`.`signature`, `a`.`acount`
+			'select `p`.*, `u`.`display_name`, `u2`.`display_name` as `editorname`, `e`.`avatar`, `e`.`signature`, `a`.`acount`, !isnull(`pr`.`pid`) as `userreported`
 			from `qheb_posts` as `p`
 			left join `qheb_wp_users` as `u`
 				on (`u`.`ID`=`p`.`uid`)
@@ -112,9 +112,13 @@ function render_thread() {
 			left join
 				(select `pid`, count(*) as `acount` from `qheb_attachments` group by `pid`) as `a`
 				on (`a`.`pid`=`p`.`pid`)
+			left join
+				(select `pid` from `qheb_post_reports` as `r` where `uid`=%d) as `pr`
+				on (`pr`.`pid`=`p`.`pid`)
 			where `tid`=%d
 			order by `tid` asc
 			limit %d,%d;',
+			$current_user->ID,
 			$thread_id,
 			$post_offset,
 			$post_per_page
@@ -138,6 +142,7 @@ function render_thread() {
 	
 	render_reply_form();
 	render_move_post_form();
+	render_report_post_form();
 	
 	echo('</div>');
 }
@@ -156,16 +161,7 @@ function render_single_post($post) {
 	}
 	
 	//Post holder div
-	switch($post['flag']) {
-		case QhebunelPost::FLAG_DELETION_UNCONFIRMED:
-			$class = ' deleted';
-			break;
-		case QhebunelPost::FLAG_REPORTED:
-			$class = ' reported';
-			break;
-		default:
-			$class = '';
-	}
+	$class = get_class_for_post($post);
 	echo('<article class="qheb-post'.$class.'" id="post-'.$post['pid'].'">');
 	
 	//User info
@@ -227,6 +223,26 @@ function render_single_post($post) {
 	echo('</article>');
 }
 
+function get_class_for_post($post) {
+	global $wpdb, $current_user;
+	
+	switch($post['flag']) {
+		case QhebunelPost::FLAG_DELETION_UNCONFIRMED:
+			return ' deleted';
+			break;
+		
+		case QhebunelPost::FLAG_REPORTED:
+			if ($post['userreported'] || QhebunelUser::is_moderator()) {
+				//Only those users see the reported status who have submitted a report for it.
+				//Moderators always see the reported status.
+				return ' reported';
+			}
+			break;
+	}
+	
+	return '';
+}
+
 function render_post_actions($post) {
 	global $permission, $thread_id, $page_id, $current_user, $thread;
 	$thread_open = $thread['closedate'] == null;
@@ -264,7 +280,19 @@ function render_post_actions($post) {
 	if ($thread_open && QhebunelUser::is_moderator()) {
 		echo('<a class="post-action move-link" href="#">'.__('Move', 'qhebunel').'</a> ');
 	}
+	if (!$post['userreported'] && QhebunelUser::has_permission_to_report()) {
+		echo('<a class="post-action report-link" href="#">'.__('Report', 'qhebunel').'</a> ');
+	}
+	if ($post['flag'] == QhebunelPost::FLAG_REPORTED && QhebunelUser::is_moderator()) {
+		$clear_url = site_url('forum/clear-reports/'.$post['pid']);
+		echo('<a class="post-action clear-reports-link" href="'.$clear_url.'">'.__('Clear reports', 'qhebunel').'</a> ');
+	}
 	echo('</div>');
+	
+	if ($post['flag'] == QhebunelPost::FLAG_REPORTED && QhebunelUser::is_moderator()) {
+		render_reports($post);
+	}
+	
 	echo('</footer>');
 }
 
@@ -306,6 +334,54 @@ function render_move_post_form() {
 		echo('<label id="move-post-thread-label">'.__('Select thread:').' <select name="thread" id="move-post-thread" disabled="disabled"><option>'.__('Loading...', 'qhebunel').'</option><option value="new">'.__('Create new thread', 'qhebunel').'</option></select></label> ');
 		echo('<label id="move-post-thread-title-label">'.__('Title for the new thread:').' <input name="thread-title" id="move-post-thread-title" type="text" disabled="disabled" /></label> ');
 		echo('<input id="move-post-submit" type="submit" name="move" value="'.__('Move post', 'qhebunel').'" disabled="disabled" />');
+		echo('</form>');
+		echo('</div>');
+	}
+}
+
+function render_reports($post) {
+	global $wpdb;
+	
+	$reports = $wpdb->get_results(
+		$wpdb->prepare(
+			'select `r`.*, `u`.`display_name` as `username`
+			from `qheb_post_reports` as `r`
+			  left join `qheb_wp_users` as `u`
+				on (`u`.`ID`=`r`.`uid`)
+			where `pid`=%d
+			order by `reportdate`;',
+			$post['pid']
+		),
+		ARRAY_A
+	);
+	
+	if (!empty($reports)) {
+		echo('<div class="post-reports">');
+		foreach ($reports as $report) {
+			echo('<div class="post-report-message">');
+			echo('<p class="report-meta">');
+			$time = '<time class="post_date" datetime="'.QhebunelDate::get_datetime_attribute($report['reportdate']).'" title="'.QhebunelDate::get_relative_date($report['reportdate']).'">'.QhebunelDate::get_post_date($report['reportdate']).'</time>';
+			/* translators: First parameter is the username, second is the date of the report submission */
+			printf(__('Reported by %1$s on %2$s:', 'qhebunel'), $report['username'], $time);
+			echo('</p>');
+			echo('<p class="report-reason">');
+			echo(htmlspecialchars($report['reason']));
+			echo('</p>');
+			echo('</div>');
+		}
+		echo('</div>');
+	}
+}
+
+function render_report_post_form() {
+	if (QhebunelUser::has_permission_to_report()) {
+		echo('<div id="report-post">');
+		echo('<form id="report-post-form" action="'.site_url('forum/').'" method="post">');
+		echo('<input type="hidden" name="action" value="postreport" />');
+		echo('<input type="hidden" name="post" id="report-post-id" value="" />');
+		echo('<label>'.__('Please describe why do you think this post should be removed:','qhebunel').'<textarea name="reason" id="report-post-reason"></textarea></label>');
+		echo('<input id="report-post-submit" type="submit" name="move" value="'.__('Submit report', 'qhebunel').'" disabled="disabled" />');
+		echo('</form>');
 		echo('</div>');
 	}
 }

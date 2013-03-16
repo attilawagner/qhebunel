@@ -150,6 +150,15 @@ create table `qheb_visits` (
 	primary key (`tid`,`uid`)
 	) character set utf8 collate utf8_unicode_ci engine MyISAM;
 
+/* Reports */
+create table `qheb_post_reports` (
+	`pid` bigint(20) unsigned not null,						/* Post ID */
+	`uid` bigint(20) unsigned not null,						/* User ID */
+	`reason` varchar(10000) not null,						/* Report reason */
+	`reportdate` datetime not null,							/* Date when the user submitted the report */
+	primary key (`pid`,`uid`)
+	) character set utf8 collate utf8_unicode_ci engine MyISAM;
+
 /* Private messages */
 create table `qheb_privmessages` (
 	`mid` bigint(20) unsigned auto_increment,				/* Message ID */

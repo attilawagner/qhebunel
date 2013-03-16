@@ -123,9 +123,13 @@ class QhebunelUser {
 		} else {
 			$groups = self::get_groups();
 			$permission = $wpdb->get_var(
-				'select ifnull(max(`access`),0) from `qheb_category_permissions` where `catid`='.(int)$cat_id.' and `gid` in ('.implode(',', $groups).');',
-				0,
-				0
+				$wpdb->prepare(
+					'select ifnull(max(`access`),0)
+					from `qheb_category_permissions`
+					where `catid`=%d
+					and `gid` in ('.implode(',', $groups).');',
+					$cat_id
+				)
 			);
 			return $permission;
 		}
@@ -173,6 +177,16 @@ class QhebunelUser {
 	 * @return boolean True if upload is allowed for the user.
 	 */
 	public static function has_persmission_to_upload() {
+		global $current_user;
+		return ($current_user->ID > 0);
+	}
+	
+	/**
+	 * Returns whether the current user can report a post.
+	 * Currently only logged in users can submit report.
+	 * @return boolean True if reporting a post is allowed for the current user.
+	 */
+	public static function has_permission_to_report() {
 		global $current_user;
 		return ($current_user->ID > 0);
 	}

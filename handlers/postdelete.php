@@ -76,11 +76,16 @@ if ($post['flag'] == QhebunelPost::FLAG_DELETION_UNCONFIRMED && $confirmed) {
 	die();
 	
 } elseif ($post['flag'] == QhebunelPost::FLAG_DELETION_UNCONFIRMED && $cancelled) {
-	//Remove mark
+	//Remove mark, and add reported mark back if it was there
+	$reporter_uid = $wpdb->get_var(
+		$wpdb->prepare(
+			'select `uid` from `qheb_post_reports` where `pid`=%d limit 1;'
+		)
+	);
 	$wpdb->query(
 		$wpdb->prepare(
 			'update `qheb_posts` set `flag`=%d where `pid`=%d;',
-			QhebunelPost::FLAG_NONE,
+			(empty($reporter_uid) ? QhebunelPost::FLAG_NONE : QhebunelPost::FLAG_REPORTED),
 			$post_id
 		)
 	);

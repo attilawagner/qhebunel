@@ -60,6 +60,13 @@ class QhebunelPost {
 			ARRAY_A
 		);
 		
+		//Remove reports
+		$wpdb->query(
+			$wpdb->prepare(
+				'delete from `qheb_post_reports` where `pid`=%d;'
+			)
+		);
+		
 		//Remove post and attachments
 		$attachments = $wpdb->get_results(
 			$wpdb->prepare(
@@ -208,6 +215,29 @@ class QhebunelPost {
 			}
 		}
 		echo('</select>');
+	}
+	
+	/**
+	 * Checks whether the current user has submitted a report for the post.
+	 * @param integer $post_id Post ID to check.
+	 * @return boolean True if the current user has submitted a report.
+	 */
+	public static function is_post_reported_by_user($post_id) {
+		global $wpdb, $current_user;
+		static $report_cache = array();
+		
+		if (isset($report_cache[$post_id])) {
+			return $report_cache[$post_id];
+		}
+		
+		$has_report = $wpdb->get_var(
+			$wpdb->prepare(
+				'select 1 as `reported` from `qheb_post_reports` where `pid`=%d and `uid`=%d;',
+				$post_id,
+				$current_user->ID
+			)
+		);
+		return $report_cache[$post_id] = ($has_report == 1);
 	}
 }
 ?>
