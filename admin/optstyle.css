@@ -15,6 +15,9 @@
 .qheb-catlist .qheb-catpos {
 	width: 8%;
 }
+.qheb-catlist .qheb-catprop {
+	width: 10%;
+}
 .qheb-catlist input[type="checkbox"] {
 	margin-right: 5px;
 }

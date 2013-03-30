@@ -13,11 +13,12 @@ class QhebunelBadges {
 	 * @param integer $group_id Badge group ID.
 	 * @param string $name Name of the badge.
 	 * @param string $description Description of the badge.
+	 * @param integer $points Value of the badge.
 	 * @param array $large_image A single item in $_FILES.
 	 * @param array $small_image A single item in $_FILES.
 	 * @return boolean True if the badge was saved successfully.
 	 */
-	public static function save_badge($badge_id, $group_id, $name, $description, $large_image, $small_image) {
+	public static function save_badge($badge_id, $group_id, $name, $description, $points, $large_image, $small_image) {
 		global $wpdb;
 		$new_badge = false;
 		//Create row in DB to get an ID
@@ -55,9 +56,10 @@ class QhebunelBadges {
 				//Update the row
 				$wpdb->query(
 					$wpdb->prepare(
-						'update `qheb_badges` set `largeimage`=%s, `smallimage`=%s where `bid`=%d;',
+						'update `qheb_badges` set `largeimage`=%s, `smallimage`=%s, `points`=%d where `bid`=%d;',
 						$saved_paths['large'],
 						$saved_paths['small'],
+						$points,
 						$badge_id
 					)
 				);
@@ -69,9 +71,10 @@ class QhebunelBadges {
 				//It's a badge update WITHOUT new images
 				$wpdb->query(
 					$wpdb->prepare(
-						'update `qheb_badges` set `name`=%s, `description`=%s where `bid`=%d;',
+						'update `qheb_badges` set `name`=%s, `description`=%s, `points`=%d where `bid`=%d;',
 						$name,
 						$description,
+						$points,
 						$badge_id
 					)
 				);
@@ -81,11 +84,12 @@ class QhebunelBadges {
 				//It's a badge update WITH new images
 				$wpdb->query(
 					$wpdb->prepare(
-						'update `qheb_badges` set `largeimage`=%s, `smallimage`=%s, `name`=%s, `description`=%s where `bid`=%d;',
+						'update `qheb_badges` set `largeimage`=%s, `smallimage`=%s, `name`=%s, `description`=%s, `points`=%d where `bid`=%d;',
 						$saved_paths['large'],
 						$saved_paths['small'],
 						$name,
 						$description,
+						$points,
 						$badge_id
 					)
 				);

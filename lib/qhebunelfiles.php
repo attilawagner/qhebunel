@@ -48,10 +48,8 @@ class QhebunelFiles {
 		if (empty($extension)) {
 			$extension = 'jpg'; //Best guess...
 		}
-		$abs_path_extless = WP_CONTENT_DIR.'/'.$dest_path;//without file extension
-		$abs_path = $abs_path_extless.'.'.$extension;
+		$abs_path = WP_CONTENT_DIR.'/'.$dest_path.'.'.$extension;
 		$temp_path = $abs_path.'.tmp'; //Save image temporarily to this file, so an error does not delete the current avatar.
-		@unlink($temp_path); //remove previous temp file if it remained due to an error
 		
 		//Resize and save the image
 		$avatar_img = wp_get_image_editor($file_arr['tmp_name']);
@@ -82,15 +80,7 @@ class QhebunelFiles {
 			$mode = $stat['mode'] & 0000666;
 			@chmod($temp_path, $mode);
 			if (@rename($temp_path, $abs_path)) {
-				//Remove old avatar, if it had a different file extension and remove temp files too
-				$exts = array('jpg', 'jpeg', 'png', 'gif');
-				foreach ($exts as $ext) {
-					if ($ext != $extension) {
-						@unlink($abs_path_extless.'.'.$ext);
-					}
-					@unlink($abs_path_extless.'.'.$ext.'.tmp');
-				}
-				
+				self::delete_old_files($abs_path);
 				//Success
 				return self::get_user_dir_path($user_id).'.'.$extension;
 			}
@@ -392,16 +382,89 @@ class QhebunelFiles {
 				$small_path = WP_CONTENT_DIR.'/'.$small_path_segment;
 			}
 		}
+		if (!$has_small_image) {
+			//Fallback: generate small icon from large image
+			$small_path_segment = self::get_badge_image_path($badge_id, $large_ext, false);
+			$small_path = WP_CONTENT_DIR.'/'.$small_path_segment;
+		}
 		
-		if (!@move_uploaded_file($large_image['tmp_name'], $large_path)) {
+		/*
+		 * Resize and save large image
+		 */
+		$temp_path = $large_path.'.tmp'; //Save image temporarily to this file, so an error does not delete the current image.
+		$large_img = wp_get_image_editor($large_image['tmp_name']);
+		if (is_wp_error($large_img)) {
+			return false; //Cannot open file
+		}
+		$resize_result = $large_img->resize(QHEBUNEL_BADGE_SIZE_LARGE, QHEBUNEL_BADGE_SIZE_LARGE, false);
+		if (is_wp_error($resize_result)) {
+			if ($resize_result->get_error_code() == 'error_getting_dimensions') {
+				//No resize needed, so we just need to copy the uploaded file
+				@move_uploaded_file($large_image['tmp_name'], $temp_path);
+			} else {
+				return false; //Some other error that we cannot handle
+			}
+		} else {
+			//The resized image needs to be saved
+			$save_result = $large_img->save($temp_path);
+			if (is_wp_error($save_result)) {
+				return false; //Some other error that we cannot handle
+			}
+			$temp_path = $save_result['path']; //WP 3.5+ does not save the file at the requested path, but adds another extension at its end
+		}
+		$stat = @stat(WP_CONTENT_DIR);
+		$mode = $stat['mode'] & 0000666;
+		@chmod($temp_path, $mode);
+		if (@rename($temp_path, $large_path)) {
+			self::delete_old_files($large_path);
+		} else {
 			return false;
 		}
-		if ($has_small_image && !@move_uploaded_file($small_image['tmp_name'], $small_path)) {
-			$has_small_image = false;
+		
+		/*
+		 * Resize and save small image
+		 */
+		$temp_path = $small_path.'.tmp'; //Save image temporarily to this file, so an error does not delete the current image.
+		if ($has_small_image) {
+			$small_img = wp_get_image_editor($small_image['tmp_name']);
+		} else {
+			//Use the resized large image as a fallback
+			$small_img = $large_img;
 		}
+		if (is_wp_error($small_img)) {
+			return false; //Cannot open file
+		}
+		$resize_result = $small_img->resize(QHEBUNEL_BADGE_SIZE_SMALL, QHEBUNEL_BADGE_SIZE_SMALL, false);
+		if (is_wp_error($resize_result)) {
+			if ($resize_result->get_error_code() == 'error_getting_dimensions') {
+				//No resize needed, so we just need to copy the uploaded file
+				if ($has_small_image) {
+					@move_uploaded_file($small_image['tmp_name'], $temp_path);
+				} else {
+					//Copy the large image
+					@copy($large_path, $temp_path);
+				}
+			} else {
+				return false; //Some other error that we cannot handle
+			}
+		} else {
+			//The resized image needs to be saved
+			$save_result = $small_img->save($temp_path);
+			if (is_wp_error($save_result)) {
+				return false; //Some other error that we cannot handle
+			}
+			$temp_path = $save_result['path']; //WP 3.5+ does not save the file at the requested path, but adds another extension at its end
+		}
+		@chmod($temp_path, $mode);
+		if (@rename($temp_path, $small_path)) {
+			self::delete_old_files($small_path);
+		} else {
+			return false;
+		}
+		
 		return array(
 			'large' => $large_path_segment,
-			'small' => ($has_small_image ? $small_path_segment : '')
+			'small' => $small_path_segment
 		);
 	}
 	
@@ -451,6 +514,26 @@ class QhebunelFiles {
 				$attachment_id
 			)
 		);
+	}
+	
+	/**
+	 * Removes previous versions of the file. Gets the current extension from $path,
+	 * and removes files with the same name and different extensions.
+	 * Every temporary file will be deleted too, including the one that belongs to the current file.
+	 * @param string $path Absolute path to the new file.
+	 * @param array $extensions Array of strings.
+	 */
+	private static function delete_old_files($path, $extensions = array('jpg','jpeg','png','gif','bmp')) {
+		if (preg_match('/^(.*\.)([^.]*)$/', $path, $regs)) {
+			$path_extless = $regs[1];
+			$file_extension = $regs[2];
+			foreach ($extensions as $ext) {
+				if ($ext != $file_extension) {
+					@unlink($path_extless.$ext);
+				}
+				@unlink($path_extless.$ext.'.tmp');
+			}
+		}
 	}
 	
 	/**

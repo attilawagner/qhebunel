@@ -3,20 +3,43 @@ if(!current_user_can('manage_options')) {
 	die('Access Denied');
 }
 
-//Process new group request
-if (isset($_POST['qheb-badgeg-new']) && check_admin_referer('qheb_badgeg_addnew', 'qhebnonce')) {
+//Process new group or edit request
+if ((isset($_POST['qheb-badgeg-new']) || isset($_POST['qheb-badgeg-edit']))&& check_admin_referer('qheb_badgeg_addnew', 'qhebnonce')) {
+	$id = (int)$_POST['qheb_group_id'];
 	$name = $_POST['qheb-badgeg-name'];
 	$limit = (int)$_POST['qheb-badgeg-limit'];
 	$hidden = (isset($_POST['qheb-badgeg-hidden']) && $_POST['qheb-badgeg-hidden'] == 'true' ? 1 : 0);
-	if (!empty($name) && $limit >= 0) {
-		$wpdb->query(
-			$wpdb->prepare(
-				'insert into `qheb_badge_groups` values (0, %s, %d, %d);',
-				$name,
-				$limit,
-				$hidden
-			)
-		);
+	$awarded = (isset($_POST['qheb-badgeg-awarded']) && $_POST['qheb-badgeg-awarded'] == 'true' ? 1 : 0);
+	$priority = $_POST['qheb-badgeg-priority'];
+	if (!empty($name) && $limit >= 0 && $priority >=0 && $priority <=9) {
+		
+		if (empty($id)) {
+			//Create new badge group
+			$wpdb->query(
+				$wpdb->prepare(
+					'insert into `qheb_badge_groups` (`name`,`climit`,`awarded`,`hidden`,`priority`) values (%s, %d, %d, %d, %d);',
+					$name,
+					$limit,
+					$awarded,
+					$hidden,
+					$priority
+				)
+			);
+		} else {
+			//Modify existing group
+			$wpdb->query(
+				$wpdb->prepare(
+					'update `qheb_badge_groups` set `name`=%s, `climit`=%d, `awarded`=%d, `hidden`=%d, `priority`=%d where `bgid`=%d limit 1;',
+					$name,
+					$limit,
+					$awarded,
+					$hidden,
+					$priority,
+					$id
+				)
+			);
+		}
+		
 	}
 }
 
@@ -31,25 +54,6 @@ if (isset($_GET['editgid']) && $_GET['editgid'] > 0) {
 	);
 	if (isset($group[0])) {
 		$qheb_edit_group = $group[0];
-	}
-}
-
-//Process edit badge group request
-if (isset($_POST['qheb-badgeg-edit']) && check_admin_referer('qheb_badgeg_edit', 'qhebnonce')) {
-	$name = $_POST['qheb-badgeg-name'];
-	$limit = (int)$_POST['qheb-badgeg-limit'];
-	$hidden = (isset($_POST['qheb-badgeg-hidden']) && $_POST['qheb-badgeg-hidden'] == 'true' ? 1 : 0);
-	$id = (int)$_POST['qheb_group_id'];
-	if (!empty($name) && $limit >= 0 && $id > 0) {
-		$wpdb->query(
-			$wpdb->prepare(
-				'update `qheb_badge_groups` set `name`=%s, `climit`=%d, `hidden`=%d where `bgid`=%d limit 1;',
-				$name,
-				$limit,
-				$hidden,
-				$id
-			)
-		);
 	}
 }
 
@@ -88,7 +92,8 @@ if (isset($_POST['qheb-badge-new']) && isset($_GET['listgid']) && check_admin_re
 	$group_id = $_GET['listgid'];
 	$name = $_POST['qheb-badge-name'];
 	$description = $_POST['qheb-badge-desc'];
-	QhebunelBadges::save_badge($edit_badge_id, $group_id, $name, $description, $_FILES['qheb-badge-icon-large'], $_FILES['qheb-badge-icon-small']);
+	$points = $_POST['qheb-badge-points'];
+	QhebunelBadges::save_badge($edit_badge_id, $group_id, $name, $description, $points, $_FILES['qheb-badge-icon-large'], $_FILES['qheb-badge-icon-small']);
 }
 
 //Process delete badge request
@@ -123,6 +128,15 @@ if (isset($_GET['listgid']) && $_GET['listgid'] > 0) {
 	);
 }
 
+function render_priority_select($name, $default_value = 0) {
+	echo('<select name="'.$name.'" id="'.$name.'">');
+	echo('<option value="0"'.($default_value == 0 ? ' default="default"' : '').'>'.__('Not forced', 'qhebunel').'</option>');
+	for ($i=1; $i<10; $i++) {
+		echo('<option value="'.$i.'"'.($default_value == $i ? ' default="default"' : '').'>'.$i.'</option>');
+	}
+	echo('</select>');
+}
+
 //Set badge for editing
 if (isset($_GET['editbid']) && $_GET['editbid'] > 0) {
 	$edit_bid = (int)$_GET['editbid'];
@@ -136,7 +150,7 @@ if (isset($_GET['editbid']) && $_GET['editbid'] > 0) {
 
 //Load badge groups
 $bgroups = $wpdb->get_results('
-	select `g`.`bgid`, `g`.`name`, `g`.`climit`, `g`.`hidden`, count(`b`.`bid`) as `bcount`
+	select `g`.*, count(`b`.`bid`) as `bcount`
 	from `qheb_badge_groups` as `g`
 	  left join `qheb_badges` as `b`
 	    on (`b`.`bgid`=`g`.`bgid`)
@@ -155,15 +169,21 @@ $bgroups = $wpdb->get_results('
 			<thead>
 				<tr>
 					<th scope="col" class="qheb-catname"><?php _e('Group name'); ?></th>
-					<th scope="col" class="qheb-catdesc"><?php _e('Badges (Limit)'); ?></th>
+					<th scope="col" class="qheb-catprop"><?php _e('Badges (Limit)'); ?></th>
+					<th scope="col" class="qheb-catprop"><?php _e('Hidden'); ?></th>
+					<th scope="col" class="qheb-catprop"><?php _e('Award only'); ?></th>
+					<th scope="col" class="qheb-catprop"><?php _e('Display priority'); ?></th>
 					<th scope="col" class="qheb_catact"><?php _e('Actions'); ?></th>
 				</tr>
 			</thead>
 			<tfoot>
 				<tr>
 					<th scope="col" class="qheb-catname"><?php _e('Group name'); ?></th>
-					<th scope="col" class="qheb-catdesc"><?php _e('Badges (Limit)'); ?></th>
-					<th scope="col" class="qheb_catstart"><?php _e('Actions'); ?></th>
+					<th scope="col" class="qheb-catprop"><?php _e('Badges (Limit)'); ?></th>
+					<th scope="col" class="qheb-catprop"><?php _e('Hidden'); ?></th>
+					<th scope="col" class="qheb-catprop"><?php _e('Award only'); ?></th>
+					<th scope="col" class="qheb-catprop"><?php _e('Display priority'); ?></th>
+					<th scope="col" class="qheb_catact"><?php _e('Actions'); ?></th>
 				</tr>
 			</tfoot>
 			<tbody>
@@ -172,8 +192,11 @@ $bgroups = $wpdb->get_results('
 					echo('<tr><td colspan="3">'.__('There are no groups in the database.').'</td></tr>');
 				} else {
 					foreach ($bgroups as $group) {
-						echo('<tr><td'.($group['hidden'] ? ' class="qheb-bgroup-hidden"' : '').'><a href="'.admin_url('admin.php?page=qhebunel/admin/optbadges.php&amp;listgid='.$group['bgid']).'">'.$group['name'].'</a></td>');
+						echo('<tr><td><a href="'.admin_url('admin.php?page=qhebunel/admin/optbadges.php&amp;listgid='.$group['bgid']).'">'.$group['name'].'</a></td>');
 						echo('<td>'.$group['bcount'].($group['climit'] > 0 ? ' ('.$group['climit'].')' : '').'</td>');
+						echo('<td>'.($group['hidden'] ? __('Yes') : __('No')).'</td>');
+						echo('<td>'.($group['awarded'] ? __('Yes') : __('No')).'</td>');
+						echo('<td>'.($group['priority'] > 0 ? $group['priority'] : '').'</td>');
 						echo('<td><a href="'.admin_url('admin.php?page=qhebunel/admin/optbadges.php&amp;editgid='.$group['bgid']).'">'.__('Edit').'</a> <label><input type="checkbox" class="qheb-catdelcb" name="qheb_group_del_id[]" value="'.$group['bgid'].'" />'.__('Delete').'</label></td></tr>');
 					}
 				}
@@ -188,32 +211,41 @@ $bgroups = $wpdb->get_results('
 		</div>
 	</form>
 	
-	<?php if (isset($_GET['newgroup'])) { ?>
-		<h3 class="title"><?php _e('Create new'); ?></h3>
+	<?php if (isset($_GET['newgroup']) || isset($qheb_edit_group)) { ?>
+		<h3 class="title"><?php if (isset($qheb_edit_group)) { _e('Edit group', 'qhebunel'); } else { _e('Create new', 'qhebunel'); } ?></h3>
 		<form id="qheb_addcatform" name="qheb_addcatform" action="<?=admin_url('admin.php?page=qhebunel/admin/optbadges.php');?>" method="post">
 			<?php wp_nonce_field('qheb_badgeg_addnew','qhebnonce'); ?>
+			<input type="hidden" name="qheb_group_id" value="<?=@$qheb_edit_group['bgid'];?>" />
 			<div id="poststuff" class="metabox-holder qheb-metabox">
 				<div class="stuffbox">
 					<h3><span><?php _e('Create new group'); ?></span></h3>
 					<div class="inside">
 						<table class="editform">
 							<tr>
-								<th scope="row"><label for="qheb-badgeg-name"><?php _e('Group name'); ?></label></th>
-								<td><input type="text" name="qheb-badgeg-name" id="qheb-badgeg-name" /></td>
+								<th scope="row"><label for="qheb-badgeg-name"><?php _e('Group name', 'qhebunel'); ?></label></th>
+								<td><input type="text" name="qheb-badgeg-name" id="qheb-badgeg-name" value="<?=@$qheb_edit_group['name']?>" /></td>
 							</tr>
 							<tr title="<?php _e('How many badges can be given/claimed from this group?','qhebunel'); ?>">
-								<th scope="row"><label for="qheb-badgeg-limit"><?php _e('Claim limit'); ?></label></th>
-								<td><input type="text" name="qheb-badgeg-limit" id="qheb-badgeg-limit" /></td>
+								<th scope="row"><label for="qheb-badgeg-limit"><?php _e('Claim limit', 'qhebunel'); ?></label></th>
+								<td><input type="text" name="qheb-badgeg-limit" id="qheb-badgeg-limit" value="<?=@$qheb_edit_group['climit']?>" /></td>
 							</tr>
 							<tr title="<?php _e('Check this to make the entire group hidden from users. Awarded badges will still be visible.','qhebunel'); ?>">
-								<th scope="row"><label for="qheb-badgeg-hidden"><?php _e('Hidden'); ?></label></th>
-								<td><input type="checkbox" value="true" name="qheb-badgeg-hidden" id="qheb-badgeg-hidden" /></td>
+								<th scope="row"><label for="qheb-badgeg-hidden"><?php _e('Hidden', 'qhebunel'); ?></label></th>
+								<td><input type="checkbox" value="true" name="qheb-badgeg-hidden" id="qheb-badgeg-hidden" <?=(@$qheb_edit_group['hidden'] ? 'checked="checked"' : '');?> /></td>
+							</tr>
+							<tr title="<?php _e('If checked, only moderators can give these badges to users.','qhebunel'); ?>">
+								<th scope="row"><label for="qheb-badgeg-awarded"><?php _e('Award only', 'qhebunel'); ?></label></th>
+								<td><input type="checkbox" value="true" name="qheb-badgeg-awarded" id="qheb-badgeg-awarded" <?=(@$qheb_edit_group['awarded'] ? 'checked="checked"' : '');?> /></td>
+							</tr>
+							<tr title="<?php _e('If you set a display priority, badges in this group will be forced to be displayed below user avatars.','qhebunel'); ?>">
+								<th scope="row"><label for="qheb-badgeg-priority"><?php _e('Display priority', 'qhebunel'); ?></label></th>
+								<td><?php render_priority_select('qheb-badgeg-priority', @$qheb_edit_group['priority']); ?></td>
 							</tr>
 						</table>
 						<div id="submitlink" class="submitbox">
 							<div id="major-publishing-actions">
 								<div id="publishing-action">
-									<input type="submit" id="publish" class="button-primary" value="<?php _e('Create'); ?>" name="qheb-badgeg-new" />
+									<input type="submit" id="publish" class="button-primary" value="<?php if (isset($qheb_edit_group)) { _e('Save'); } else { _e('Create'); } ?>" name="<?=(isset($qheb_edit_group) ? 'qheb-badgeg-edit' : 'qheb-badgeg-new')?>" />
 								</div>
 								<div class="clear"></div>
 							</div>
@@ -225,42 +257,6 @@ $bgroups = $wpdb->get_results('
 		</form>
 	<?php } ?>
 	
-	<?php if (isset($qheb_edit_group)) { ?>
-		<form id="qheb_addcatform" name="qheb_addcatform" action="<?=admin_url('admin.php?page=qhebunel/admin/optbadges.php');?>" method="post">
-			<?php wp_nonce_field('qheb_badgeg_edit','qhebnonce'); ?>
-			<input type="hidden" name="qheb_group_id" value="<?=$qheb_edit_group['bgid'];?>" />
-			<div id="poststuff" class="metabox-holder qheb-metabox">
-				<div class="stuffbox">
-					<h3><span><?php _e('Edit group'); ?></span></h3>
-					<div class="inside">
-						<table class="editform">
-							<tr>
-								<th scope="row"><label for="qheb-badgeg-name"><?php _e('Group name'); ?></label></th>
-								<td><input type="text" name="qheb-badgeg-name" id="qheb-badgeg-name" value="<?=$qheb_edit_group['name'];?>" /></td>
-							</tr>
-							<tr title="<?php _e('How many badges can be given/claimed from this group?','qhebunel'); ?>">
-								<th scope="row"><label for="qheb-badgeg-limit"><?php _e('Claim limit'); ?></label></th>
-								<td><input type="text" name="qheb-badgeg-limit" id="qheb-badgeg-limit" value="<?=$qheb_edit_group['climit'];?>" /></td>
-							</tr>
-							<tr title="<?php _e('Check this to make the entire group hidden from users. Awarded badges will still be visible.','qhebunel'); ?>">
-								<th scope="row"><label for="qheb-badgeg-hidden"><?php _e('Hidden'); ?></label></th>
-								<td><input type="checkbox" value="true" name="qheb-badgeg-hidden" id="qheb-badgeg-hidden" <?=($qheb_edit_group['hidden'] ? ' checked="checked"' : '');?> /></td>
-							</tr>
-						</table>
-						<div id="submitlink" class="submitbox">
-							<div id="major-publishing-actions">
-								<div id="publishing-action">
-									<input type="submit" id="publish" class="button-primary" value="<?php _e('Save'); ?>" name="qheb-badgeg-edit" />
-								</div>
-								<div class="clear"></div>
-							</div>
-							<div class="clear"></div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</form>
-	<?php } ?>
 	
 	<?php if (isset($badge_list)) { ?>
 		<h3><?=$badge_list_name;?></h3>
@@ -274,6 +270,7 @@ $bgroups = $wpdb->get_results('
 						<th scope="col" class="qheb-bicon-small"><?php _e('Small image', 'qhebunel'); ?></th>
 						<th scope="col" class="qheb-bname"><?php _e('Name', 'qhebunel'); ?></th>
 						<th scope="col" class="qheb-bdesc"><?php _e('Description', 'qhebunel'); ?></th>
+						<th scope="col" class="qheb-bpoints"><?php _e('Point value', 'qhebunel'); ?></th>
 						<th scope="col" class="qheb-busers" title="<?php _e('Number of users who have the badge.', 'qhebunel'); ?>"><?php _e('Users', 'qhebunel'); ?></th>
 						<th scope="col" class="qheb-bact"><?php _e('Actions', 'qhebunel'); ?></th>
 					</tr>
@@ -284,6 +281,7 @@ $bgroups = $wpdb->get_results('
 						<th scope="col" class="qheb-bicon-small"><?php _e('Small image', 'qhebunel'); ?></th>
 						<th scope="col" class="qheb-bname"><?php _e('Name', 'qhebunel'); ?></th>
 						<th scope="col" class="qheb-bdesc"><?php _e('Description', 'qhebunel'); ?></th>
+						<th scope="col" class="qheb-bpoints"><?php _e('Point value', 'qhebunel'); ?></th>
 						<th scope="col" class="qheb-busers" title="<?php _e('Number of users who have the badge.', 'qhebunel'); ?>"><?php _e('Users', 'qhebunel'); ?></th>
 						<th scope="col" class="qheb-bact"><?php _e('Actions', 'qhebunel'); ?></th>
 					</tr>
@@ -298,6 +296,7 @@ $bgroups = $wpdb->get_results('
 							echo('<td>'.(empty($badge['smallimage']) ? __('Missing image', 'qhebunel') : '<img src="'.WP_CONTENT_URL.'/'.$badge['smallimage'].'" alt=""/>').'</td>');
 							echo('<td>'.$badge['name'].'</td>');
 							echo('<td>'.$badge['description'].'</td>');
+							echo('<td>'.$badge['points'].'</td>');
 							echo('<td>'.$badge['users'].'</td>');
 							echo('<td><a href="'.admin_url('admin.php?page=qhebunel/admin/optbadges.php&amp;listgid='.$badge_list_id.'&amp;editbid='.$badge['bid']).'">'.__('Edit').'</a> <label><input type="checkbox" class="qheb-catdelcb" name="qheb-badge-del-id[]" value="'.$badge['bid'].'" />'.__('Delete').'</label></td></tr>');
 						}
@@ -325,7 +324,7 @@ $bgroups = $wpdb->get_results('
 								<th scope="row"><label for="qheb-badge-icon-large"><?php _e('Normal icon','qhebunel'); ?></label></th>
 								<td><input type="file" name="qheb-badge-icon-large" id="qheb-badge-icon-large" /></td>
 							</tr>
-							<tr title="<?php printf(__('The image shown under the avatar next to forum posts. If not provided, the badge can only be viewed on the user\'s profile page. Allowed formats: %s.','qhebunel'), QHEBUNEL_BADGE_FORMATS); ?>">
+							<tr title="<?php printf(__('The image shown under the avatar next to forum posts. If not provided, it will be generated from the normal image. Allowed formats: %s.','qhebunel'), QHEBUNEL_BADGE_FORMATS); ?>">
 								<th scope="row"><label for="qheb-badge-icon-small"><?php _e('Small icon','qhebunel'); ?></label></th>
 								<td><input type="file" name="qheb-badge-icon-small" id="qheb-badge-icon-small" /></td>
 							</tr>
@@ -336,6 +335,10 @@ $bgroups = $wpdb->get_results('
 							<tr title="<?php _e('Description about the achivement the badge is awarded for.','qhebunel'); ?>">
 								<th scope="row"><label for="qheb-badge-desc"><?php _e('Description','qhebunel'); ?></label></th>
 								<td><input type="text" name="qheb-badge-desc" id="qheb-badge-desc" <?php echo(isset($edit_badge) ? 'value="'.htmlspecialchars($edit_badge['description']).'"' : ''); ?>/></td>
+							</tr>
+							<tr title="<?php _e('Value of the badge in points.','qhebunel'); ?>">
+								<th scope="row"><label for="qheb-badge-points"><?php _e('Point value','qhebunel'); ?></label></th>
+								<td><input type="text" name="qheb-badge-points" id="qheb-badge-points" <?php echo(isset($edit_badge) ? 'value="'.htmlspecialchars($edit_badge['points']).'"' : ''); ?>/></td>
 							</tr>
 						</table>
 						<div id="submitlink" class="submitbox">

@@ -46,9 +46,10 @@ create table `qheb_badges` (
 	`description` varchar(1000),							/* Longer description (eg: what can it be awarded for) */
 	`largeimage` varchar(255),								/* Icon file name - displayed on profile page */
 	`smallimage` varchar(255),								/* Icon file name - displayed next to posts */
+	`points` int(10) not null default 0,					/* Value of the badge */
 	primary key (`bid`),
 	unique index `name` (`name`),
-	index `group` (`bgid`)
+	index `group` (`bgid`, `name`)
 	) character set utf8 collate utf8_unicode_ci engine MyISAM;
 
 /* User and Badge linking */
@@ -58,17 +59,19 @@ create table `qheb_user_badge_links` (
 	`startdate` datetime not null,							/* When was the badge given to the user */
 	`show` tinyint(1) unsigned not null default 0,			/* Show the badge next to posts - 0:no, 1:yes, 2:forced */
 	unique index `ids` (`bid`, `uid`),
-	index `uid` (`uid`)
+	index `uid` (`uid`, `show` desc)
 	) character set utf8 collate utf8_unicode_ci engine MyISAM;
 
 /* Badge groups */
 create table `qheb_badge_groups` (
 	`bgid` int(10) unsigned auto_increment,					/* Badge group ID */
 	`name` varchar(50) not null,							/* Group name */
-	`climit` int(10) unsigned,								/* Claim limit - how many badges can the user claim from this group (if 0, only mods can award these badges) */
+	`climit` int(10) unsigned,								/* Claim limit - how many badges can the users claim from this group */
+	`awarded` tinyint(1) unsigned not null default 1,		/* Can the users claim the badge (0), or a only a moderator can give them (1). */
 	`hidden` tinyint(1) unsigned not null default 1,		/* If the group is hidden, users won't be able to browse it's content. */
-	unique index `name` (`name`),
-	primary key (`bgid`)
+	`priority` tinyint(1) unsigned not null default 0,		/* The display of these badges are forced below the avatars (1-9), or users can decide freely to show it off (0). */
+	primary key (`bgid`),
+	unique index `name` (`name`)
 	) character set utf8 collate utf8_unicode_ci engine MyISAM;
 
 /* Categories */
