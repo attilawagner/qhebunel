@@ -347,3 +347,36 @@ Private messages
 	margin-left: 270px;
 	display: block;
 }
+
+/*
+Badges
+*/
+ul.badge-wall {
+	list-style: none;
+}
+li.badge-frame {
+	display: inline-block;
+	width: 320px;
+	height: 110px;
+	margin: 5px;
+	border: 1px solid;
+}
+li.badge-frame .img {
+	width: 100px;
+	height: 100px;
+	line-height: 100px;
+	margin: 5px;
+	float: left;
+}
+li.badge-frame img {
+	vertical-align: middle;
+}
+li.badge-frame .name {
+	margin: 5px 5px 5px 110px;
+	text-align: center;
+	
+}
+li.badge-frame .status, li.badge-frame .actions {
+	text-align: center;
+	font-size: 0.85em;
+}

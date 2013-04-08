@@ -111,5 +111,14 @@ class QhebunelDate {
 	public static function get_datetime_attribute($datetime) {
 		return mysql2date('Y-m-d\TH:i', $datetime, false);
 	}
+	
+	/**
+	 * Formats the given MySQL date string into a local
+	 * format that shows year, month, and day.
+	 * @param unknown_type $datetime
+	 */
+	public static function get_short_date($datetime) {
+		return mysql2date('j F Y', $datetime);
+	}
 }
 ?>

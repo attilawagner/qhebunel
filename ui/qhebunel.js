@@ -219,6 +219,7 @@ function validateProfileForm() {
 	}
 	var pass1 = jQuery('#profileForm #pass1');
 	var pass2 = jQuery('#profileForm #pass2');
+	var oldPass = jQuery('#profileForm #old-pass');
 	if ((pass1.val() != "" || pass2.val() != "") && pass1.val() != pass2.val()) {
 		pass1.css('border-color', '#d00');
 		pass2.css('border-color', '#d00');
@@ -226,7 +227,13 @@ function validateProfileForm() {
 	} else {
 		pass1.css('border-color', '');
 		pass2.css('border-color', '');
+		if (oldPass.val() == "") {
+			oldPass.css('border-color', '#d00');
+		} else {
+			oldPass.css('border-color', '');
+		}
 	}
+	
 	return ok;
 }
 

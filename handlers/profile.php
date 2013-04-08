@@ -22,6 +22,7 @@ function qheb_user_profile_update() {
 	$email = $_POST['email'];
 	$pass1 = $_POST['pass1'];
 	$pass2 = $_POST['pass2'];
+	$old_pass = $_POST['old-pass'];
 	$signature = $_POST['signature'];
 	
 	//Clean whitespace from both ends of the text fields
@@ -31,9 +32,12 @@ function qheb_user_profile_update() {
 	}
 	
 	//TODO: checks, JS checks
-	$error_in_pass = (!empty($pass1) || !empty($pass2)) && $pass1 != $pass2;
+	$error_in_pass = (!empty($pass1) || !empty($pass2)) && ($pass1 != $pass2 || empty($old_pass));
 	if (empty($nick_name) || $error_in_pass|| empty($email)) {
-		Qhebunel::redirect_to_error_page();	
+		Qhebunel::redirect_to_error_page();
+	}
+	if (!empty($pass1) && !wp_check_password($old_pass, $current_user->user_pass, $current_user->ID)) {
+		Qhebunel::redirect_to_error_page();
 	}
 	
 	//Update user table
@@ -106,7 +110,7 @@ if (isset($_POST['update'])) {
 
 //Redirect to profile page
 //TODO: common function
-$relative_url .= 'profile';
+$relative_url .= 'edit-profile';
 $absolute_url = get_site_url(null, 'forum/'.$relative_url);
 wp_redirect($absolute_url);//Temporal redirect
 ?>

@@ -64,11 +64,13 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 		'global' => array(
 			//Special pages
 			'error' =>			array('error', false, __('Error', 'qhebunel')),
-			'profile' =>		array('profile', false, __('Profile settings', 'qhebunel')),
+			'profile' =>		array('profile', false, __('Profile', 'qhebunel')),
+			'edit-profile' =>	array('profileedit', false, __('Profile settings', 'qhebunel')),
 			'edit-post' =>		array('postedit', false, __('Edit post', 'qhebunel')),
 			'delete-thread' =>	array('threaddelete', false, __('Delete thread', 'qhebunel')),
 			'move-thread' =>	array('threadmove', false, __('Move thread', 'qhebunel')),
 			'pm' =>				array('pm', false, __('Private messages', 'qhebunel')),
+			'badges' =>			array('badges', false, __('Badges', 'qhebunel')),
 			
 			//Special sections
 			'attachments' =>	array('download', true),
