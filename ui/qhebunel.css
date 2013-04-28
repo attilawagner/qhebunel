@@ -353,6 +353,10 @@ Badges
 */
 ul.badge-wall {
 	list-style: none;
+	padding: 0;
+}
+ul.badge-wall-single {
+	text-align: center;
 }
 li.badge-frame {
 	display: inline-block;
@@ -360,6 +364,7 @@ li.badge-frame {
 	height: 110px;
 	margin: 5px;
 	border: 1px solid;
+	position: relative;
 }
 li.badge-frame .img {
 	width: 100px;
@@ -374,9 +379,45 @@ li.badge-frame img {
 li.badge-frame .name {
 	margin: 5px 5px 5px 110px;
 	text-align: center;
+}
+li.badge-frame .description {
+	text-align: center;
 	
+}
+li.badge-frame .status {
+	position: absolute;
+	left: 110px;
+	right: 5px;
+	bottom: 5px;
 }
 li.badge-frame .status, li.badge-frame .actions {
 	text-align: center;
 	font-size: 0.85em;
+	line-height: 0.85em;
+}
+.badge-action {
+	text-align: center;
+}
+.user-wall {
+	list-style: none;
+	padding: none;
+}
+.user-wall li {
+	text-align: center;
+	display: inline-block;
+	width: 150px;
+	height: 150px;
+}
+.user-wall .avatar-holder {
+	width: 100px;
+	height: 100px;
+	line-height: 100px;
+	margin: 0 auto;
+}
+.user-wall img {
+	vertical-align: middle;
+}
+.user-wall .date {
+	font-size: 0.85em;
+	line-height: 0.85em;
 }

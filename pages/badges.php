@@ -19,6 +19,39 @@ if (preg_match('%^(\d+)%', $section_params, $regs)) {
 	$badge_id = $regs[1];
 }
 
+/**
+ * @param array $badge Row from the databse.
+ */
+function render_badge($badge, $group = null) {
+	$awarded = empty($group) ? $badge['awarded'] : $group['awarded'];
+	if (empty($badge['startdate'])) {
+		$status = __('You do not have this badge.','qhebunel');
+	} else {
+		if ($awarded) {
+			$status = sprintf(__('This badge was awarded to you on %s.','qhebunel'), QhebunelDate::get_short_date($badge['startdate']));
+		} else {
+			$status = sprintf(__('You\'ve claimed this badge on %s.','qhebunel'), QhebunelDate::get_short_date($badge['startdate']));
+		}
+	}
+	
+	$url = QhebunelUI::get_url_for_badge($badge['bid']);
+	$class = empty($badge['startdate']) ?  '' : ' owned';
+	echo('<li class="badge-frame'.$class.'">');
+	echo('<div class="img"><a href="'.$url.'"><img src="'.WP_CONTENT_URL.'/'.$badge['largeimage'].'" alt="'.$badge['name'].'" /></a></div>');
+	echo('<div class="name"><a href="'.$url.'">'.$badge['name'].'</a></div>');
+	echo('<div class="description">'.$badge['description'].'</div>');
+	echo('<div class="status">'.$status.'</div>');
+	/*echo('<div class="actions">');
+	 if ($group['awarded'] == false) {
+	if (empty($badge['startdate'])) {
+	echo('<a href="">'.__('Claim','qhebunel').'</a> ');
+	} else {
+	echo('<a href="">'.__('Remove','qhebunel').'</a> ');
+	}
+	}
+	echo('</div>');*/
+	echo('</li>');
+}
 
 if (empty($badge_id)) {
 	/*
@@ -41,12 +74,16 @@ if (empty($badge_id)) {
 			from `qheb_badges` as `b`
 			  left join `qheb_badge_groups` as `g`
 			    on (`g`.`bgid`=`b`.`bgid`)
-			  left join `qheb_user_badge_links` as `l`
+			  left join (
+			      select `bid`,`startdate`
+			      from `qheb_user_badge_links`
+			      where `uid`=%d
+			    ) as `l`
 			    on (`l`.`bid`=`b`.`bid`)
-			where `g`.`hidden`<=%d and (`l`.`uid`=%d or `l`.`uid` is null)
+			where `g`.`hidden`<=%d
 			order by `b`.`name`',
-			(QhebunelUser::is_moderator() ? 1 : 0),
-			$current_user->ID
+			$current_user->ID,
+			(QhebunelUser::is_moderator() ? 1 : 0)
 		),
 		ARRAY_A
 	);
@@ -56,31 +93,7 @@ if (empty($badge_id)) {
 		echo('<ul class="badge-wall">');
 		foreach ($badges as $badge) {
 			if ($badge['bgid'] == $group['bgid']) {
-				if (empty($badge['startdate'])) {
-					$status = __('You do not have this badge.','qhebunel');
-				} else {
-					if ($group['awarded']) {
-						$status = sprintf(__('This badge was awarded to you on %s.','qhebunel'), QhebunelDate::get_short_date($badge['startdate']));
-					} else {
-						$status = sprintf(__('You\'ve claimed this badge on %s.','qhebunel'), QhebunelDate::get_short_date($badge['startdate']));
-					}
-				}
-				
-				$url = site_url('forum/badges/'.$badge['bid']);
-				echo('<li class="badge-frame">');
-				echo('<div class="img"><a href="'.$url.'"><img src="'.WP_CONTENT_URL.'/'.$badge['largeimage'].'" alt="'.$badge['name'].'" /></a></div>');
-				echo('<div class="name"><a href="'.$url.'">'.$badge['name'].'</a></div>');
-				echo('<div class="status">'.$status.'</div>');
-				/*echo('<div class="actions">');
-				if ($group['awarded'] == false) {
-					if (empty($badge['startdate'])) {
-						echo('<a href="">'.__('Claim','qhebunel').'</a> ');
-					} else {
-						echo('<a href="">'.__('Remove','qhebunel').'</a> ');
-					}
-				}
-				echo('</div>');*/
-				echo('</li>');
+				render_badge($badge, $group);
 			}
 		}
 		echo('</ul>');
@@ -92,18 +105,90 @@ if (empty($badge_id)) {
 	 */
 	$badge = $wpdb->get_row(
 		$wpdb->prepare(
-			'select `b`.*, `l`.`startdate`
+			'select `b`.*, `l`.`startdate`, `g`.`awarded`
 			from `qheb_badges` as `b`
 			  left join `qheb_badge_groups` as `g`
 			    on (`g`.`bgid`=`b`.`bgid`)
-			  left join `qheb_user_badge_links` as `l`
+			  left join (
+			      select `bid`,`startdate`
+			      from `qheb_user_badge_links`
+			      where `uid`=%d
+			    ) as `l`
 			    on (`l`.`bid`=`b`.`bid`)
-			where `g`.`hidden`<=%d and (`l`.`uid`=%d or `l`.`uid` is null)
-			order by `b`.`name`',
+			where `g`.`hidden`<=%d and `b`.`bid`=%d',
+			$current_user->ID,
 			(QhebunelUser::is_moderator() ? 1 : 0),
-			$current_user->ID
+			$badge_id
 		),
 		ARRAY_A
 	);
+	
+	if (empty($badge)) {
+		//Invalid ID or the user does not have the necessary permissions to view it
+		echo('<div class="qheb-error-message">'.__('The badge you requested cannot be displayed.', 'qhebunel').'</div>');
+		return;
+	}
+	
+	echo('<ul class="badge-wall badge-wall-single">');
+	render_badge($badge);
+	echo('</ul>');
+	
+	echo('<div class="badge-action">');
+	if (!$badge['awarded']) {
+		if (empty($badge['startdate'])) {
+			$url = site_url('forum/claim-badge/'.$badge['bid']);
+			echo('<a href="'.$url.'">'._x('Claim','badge action','qhebunel').'</a> ');
+		} else {
+			$url = site_url('forum/claim-badge/'.$badge['bid'].'/remove');
+			echo('<a href="'.$url.'">'._x('Remove','badge action','qhebunel').'</a> ');
+		}
+	}
+	echo('</div>');
+	
+	if (QhebunelUser::is_moderator()) {
+		echo('<h3>'.__('Award this badge','qhebunel').'</h3>');
+		echo('<form id="award-badge-form" action="'.site_url('forum/').'" method="post">');
+		echo('<input type="hidden" name="action" value="badgeaward" />');
+		echo('<input type="hidden" name="badge-id" value="'.$badge_id.'" />');
+		echo('<table class="profile_settings">');
+		echo('<tfoot><tr><td colspan="2"><input name="award" type="submit" value="'._x('Award','badge action','qhebunel').'" /></td></tr></tfoot>');
+		echo('<tbody><tr><th><label for="nickname">'.__('Nickname', 'qhebunel').'</label></th><td><input name="nickname" id="nickname" type="text" required="required" /></td></tbody>');
+		echo('</table>');
+		echo('</form>');
+	}
+	
+	$users = $wpdb->get_results(
+		$wpdb->prepare(
+			'select `u`.`ID` as `uid`, `u`.`display_name`, `l`.`startdate`, `e`.`avatar`
+			from `qheb_wp_users` as `u`
+			  left join `qheb_user_badge_links` as `l`
+			    on (`l`.`uid`=`u`.`ID`)
+			  left join `qheb_user_ext` as `e`
+			    on (`e`.`uid`=`u`.`ID`)
+			where `l`.`bid`=%d order by `u`.`display_name`;',
+			$badge_id
+		),
+		ARRAY_A
+	);
+	
+	if (empty($users)) {
+		echo('<div class="qheb-notice-message">'.__('Currently nobody has this badge.', 'qhebunel').'</div>');
+	} else {
+		echo('<h3>'.__('Users who have this badge','qhebunel').'</h3>');
+		echo('<ul class="user-wall">');
+		foreach ($users as $user) {
+			echo('<li>');
+			$avatar = ($user['avatar'] ? '<img src="'.WP_CONTENT_URL.'/forum/avatars/'.$user['avatar'].'" alt=""/>' : '');
+			echo('<div class="avatar-holder">'.$avatar.'</div>');
+			echo('<div class="name">'.$user['display_name'].'</div>');
+			echo('<div class="date">'.QhebunelDate::get_short_date($user['startdate']).'</div>');
+			if (QhebunelUser::is_moderator()) {
+				$url = site_url('forum/claim-badge/'.$badge['bid'].'/remove/'.$user['uid']);
+				echo('<div class="date"><a href="'.$url.'">'._x('Revoke','badge action','qhebunel').'</a></div>');
+			}
+			echo('</li>');
+		}
+		echo('</ul>');
+	}
 }
 ?>

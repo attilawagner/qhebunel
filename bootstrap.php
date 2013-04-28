@@ -80,6 +80,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 			'close-thread' =>	array('threadclose', true),
 			'pin-thread' =>		array('threadpin', true),
 			'move-post-ajax' =>	array('postmoveajax', true),
+			'claim-badge' =>	array('badgeclaim', true),
 		),
 		
 		//Category level special pages

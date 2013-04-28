@@ -197,7 +197,7 @@ class QhebunelUI {
 	 * given user.
 	 * @param integer $user_id User ID. Won't be validated.
 	 * @param integer $page_num Page number in the history.
-	 * Defaults to 0, the latest page. 
+	 * Defaults to 0, the latest page.
 	 * @return string URL pointing to the private message conversation.
 	 */
 	public static function get_url_for_pm_user($user_id, $page_num=0) {
@@ -210,6 +210,16 @@ class QhebunelUI {
 			$url .= '/page-'.$page_num;
 		}
 		return site_url($url);
+	}
+	
+	/**
+	 * Gives back the URL pointing to the page
+	 * showing details on the badge.
+	 * @param integer $badge_id Badge ID.
+	 * @return string URL pointing to the badge.
+	 */
+	public static function get_url_for_badge($badge_id) {
+		return site_url('forum/badges/'.$badge_id);
 	}
 }
 ?>

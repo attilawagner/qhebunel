@@ -124,6 +124,10 @@ class Qhebunel {
 	 * Calls wp_redirect() to show the user the error page.
 	 */
 	public static function redirect_to_error_page() {
+		/*
+		debug_print_backtrace();
+		die();
+		//*/
 		$absolute_url = site_url('forum/error');
 		wp_redirect($absolute_url);//Temporal redirect
 		die();
