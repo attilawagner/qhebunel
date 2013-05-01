@@ -145,8 +145,9 @@ if (empty($badge_id)) {
 		foreach ($users as $user) {
 			echo('<li>');
 			$avatar = ($user['avatar'] ? '<img src="'.WP_CONTENT_URL.'/forum/avatars/'.$user['avatar'].'" alt=""/>' : '');
-			echo('<div class="avatar-holder">'.$avatar.'</div>');
-			echo('<div class="name">'.$user['display_name'].'</div>');
+			$profile_url = QhebunelUI::get_url_for_user($user['uid']);
+			echo('<div class="avatar-holder"><a href="'.$profile_url.'">'.$avatar.'</a></div>');
+			echo('<div class="name"><a href="'.$profile_url.'">'.$user['display_name'].'</a></div>');
 			echo('<div class="date">'.QhebunelDate::get_short_date($user['startdate']).'</div>');
 			if (QhebunelUser::is_moderator()) {
 				$url = site_url('forum/claim-badge/'.$badge['bid'].'/remove/'.$user['uid']);

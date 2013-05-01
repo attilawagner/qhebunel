@@ -158,6 +158,7 @@ class Qhebunel {
 	 */
 	public static function register_widgets() {
 		register_widget("QhebunelPMWidget");
+		register_widget("QhebunelForumWidget");
 	}
 }
 
@@ -178,6 +179,7 @@ require_once 'lib/qhebunelstats.php';
 
 //Include widgets
 require_once 'pmwidget.php';
+require_once 'forumwidget.php';
 
 //Register hooks
 add_action('init', array('Qhebunel','init'), 99);

@@ -9,23 +9,36 @@
  */
 if (!defined('QHEBUNEL_REQUEST') || QHEBUNEL_REQUEST !== true) die;
 
+global $section_params;
+$user_id = (int)$section_params;
+
 //Show message to users who aren't logged in
-if ($current_user->ID == 0) {
+if (!is_user_logged_in()) {
 	echo('<div class="qheb-error-message">'.__('You must log in to edit your profile.', 'qhebunel').'</div>');
 	return;//stop page rendering, but create footer
 }
+if (!empty($user_id) && !QhebunelUser::is_moderator()) {
+	echo('<div class="qheb-error-message">'.__('You can only edit your own profile.', 'qhebunel').'</div>');
+	return;//stop page rendering, but create footer
+}
+
+//Select user
+if (empty($user_id)) {
+	$user_id = $current_user->ID;
+}
 
 //Load data to display
-$user_name = $current_user->data->user_login;
-$first_name = get_user_meta($current_user->ID, 'first_name', true);
-$last_name = get_user_meta($current_user->ID, 'last_name', true);
-$nick_name = $current_user->data->display_name;
-$email = $current_user->data->user_email;
+$user_data = get_userdata($user_id);
+$user_login = $user_data->user_login;
+$first_name = get_user_meta($user_id, 'first_name', true);
+$last_name = get_user_meta($user_id, 'last_name', true);
+$nick_name = $user_data->display_name;
+$email = $user_data->user_email;
 
 $ext_data = $wpdb->get_row(
 	$wpdb->prepare(
 		'select * from `qheb_user_ext` where `uid`=%d',
-		$current_user->ID
+		$user_id
 	),
 	ARRAY_A
 );
@@ -34,6 +47,7 @@ $ext_data = $wpdb->get_row(
 <form method="post" action="<?=site_url('forum/')?>" enctype="multipart/form-data" onsubmit="return validate_profile_form();" id="profile_form">
 	<input type="hidden" name="action" value="profile" />
 	<input type="hidden" name="MAX_FILE_SIZE" value="<?=QHEBUNEL_AVATAR_MAX_FILESIZE?>" />
+	<input type="hidden" name="user-id" value="<?=$user_id?>" />
 	<h2><?php _e('Basic information', 'qhebunel'); ?></h2>
 	<table class="profile_settings">
 		<tfoot>
@@ -42,7 +56,7 @@ $ext_data = $wpdb->get_row(
 		<tbody>
 			<tr title="<?php _e('This is the name you use to log in. You cannot change it.', 'qhebunel'); ?>">
 				<th><label for="username"><?php _e('Login name', 'qhebunel'); ?></label></th>
-				<td><input name="username" id="username" type="text" readonly="readonly" value="<?=$current_user->data->user_login?>" /><span class="icon">🔒</span></td>
+				<td><input name="username" id="username" type="text" readonly="readonly" value="<?=$user_login?>" /><span class="icon">🔒</span></td>
 			</tr>
 			<tr>
 				<th><label for="firstname"><?php _e('First name', 'qhebunel'); ?></label></th>
@@ -60,10 +74,12 @@ $ext_data = $wpdb->get_row(
 				<th><label for="email"><?php _e('Email', 'qhebunel'); ?></label></th>
 				<td><input name="email" id="email" type="email" required="required" value="<?=$email?>" /><span class="icon">✓</span></td>
 			</tr>
+			<?php if ($user_id == $current_user->ID) {?>
 			<tr title="<?php _e('Leave the password fields blank if you don\'t want to change your current password.', 'qhebunel'); ?>">
 				<th><label for="old-pass"><?php _e('Old password', 'qhebunel'); ?></label></th>
 				<td><input name="old-pass" id="old-pass" type="password" value="" /><span class="icon"></span></td>
 			</tr>
+			<?php } ?>
 			<tr title="<?php _e('Leave the password fields blank if you don\'t want to change your current password.', 'qhebunel'); ?>">
 				<th><label for="pass1"><?php _e('New password', 'qhebunel'); ?></label></th>
 				<td><input name="pass1" id="pass1" type="password" value="" /><span class="icon"></span></td>

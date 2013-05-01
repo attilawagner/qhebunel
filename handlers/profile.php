@@ -6,7 +6,15 @@
 if (!defined('QHEBUNEL_REQUEST') || QHEBUNEL_REQUEST !== true) die;
 
 //Only logged in users can modify their profile
-if ($current_user->ID <= 0) {
+if (!is_user_logged_in()) {
+	Qhebunel::redirect_to_error_page();
+}
+
+//Only mods can edit the profile of other users
+global $user_id, $updating_own;
+$user_id = $_POST['user-id'];
+$updating_own = ($user_id == $current_user->ID);
+if (empty($user_id) || (!$updating_own && !QhebunelUser::is_moderator())) {
 	Qhebunel::redirect_to_error_page();
 }
 
@@ -14,7 +22,7 @@ if ($current_user->ID <= 0) {
  * This function is called when the user clicks on the Save button at the bottom of the form.
  */
 function qheb_user_profile_update() {
-	global $wpdb, $current_user;
+	global $wpdb, $current_user, $user_id, $updating_own;
 	
 	$first_name = $_POST['firstname'];
 	$last_name = $_POST['lastname'];
@@ -32,17 +40,18 @@ function qheb_user_profile_update() {
 	}
 	
 	//TODO: checks, JS checks
-	$error_in_pass = (!empty($pass1) || !empty($pass2)) && ($pass1 != $pass2 || empty($old_pass));
+	//Password check is skipped when moderators update other users' profile
+	$error_in_pass = (!empty($pass1) || !empty($pass2)) && ($pass1 != $pass2 || (empty($old_pass) && $updating_own));
 	if (empty($nick_name) || $error_in_pass|| empty($email)) {
 		Qhebunel::redirect_to_error_page();
 	}
-	if (!empty($pass1) && !wp_check_password($old_pass, $current_user->user_pass, $current_user->ID)) {
+	if (!empty($pass1) && $updating_own && !wp_check_password($old_pass, $current_user->user_pass, $current_user->ID)) {
 		Qhebunel::redirect_to_error_page();
 	}
 	
 	//Update user table
 	$user_update_data = array(
-		'ID' =>				$current_user->ID,
+		'ID' =>				$user_id,
 		'user_email' =>		$email,
 		'display_name' =>	$nick_name
 	);
@@ -52,19 +61,18 @@ function qheb_user_profile_update() {
 	wp_update_user($user_update_data);
 	
 	//Update user meta
-	update_user_meta($current_user->ID, 'first_name', $first_name);
-	update_user_meta($current_user->ID, 'last_name', $last_name);
-	update_user_meta($current_user->ID, 'nickname', $nick_name);
+	update_user_meta($user_id, 'first_name', $first_name);
+	update_user_meta($user_id, 'last_name', $last_name);
+	update_user_meta($user_id, 'nickname', $nick_name);
 	
-	//TODO: avatar
 	if (!empty($_FILES['avatar'])) {
-		if (($avatar = QhebunelFiles::save_avatar($_FILES['avatar'])) !== false) {
+		if (($avatar = QhebunelFiles::save_avatar($_FILES['avatar'], $user_id)) !== false) {
 			//The path is returned, save it into the DB
 			$wpdb->query(
 				$wpdb->prepare(
 					'update `qheb_user_ext` set `avatar`=%s where `uid`=%d limit 1;',
 					$avatar,
-					$current_user->ID
+					$user_id
 				)
 			);
 		} else {
@@ -77,7 +85,7 @@ function qheb_user_profile_update() {
 		$wpdb->prepare(
 			'update `qheb_user_ext` set `signature`=%s where `uid`=%d limit 1;',
 			$signature,
-			$current_user->ID
+			$user_id
 		)
 	);
 }
@@ -86,16 +94,16 @@ function qheb_user_profile_update() {
  * This function is called when the user click on the Delete avatar button below the image.
  */
 function qheb_user_profile_delete_avatar() {
-	global $wpdb, $current_user;
+	global $wpdb, $current_user, $user_id;
 	
 	//Delete file
-	QhebunelFiles::delete_avatar();
+	QhebunelFiles::delete_avatar($user_id);
 	
 	//Remove from DB
 	$wpdb->query(
 		$wpdb->prepare(
 			'update `qheb_user_ext` set `avatar`=NULL where `uid`=%d limit 1;',
-			$current_user->ID
+			$user_id
 		)
 	);
 }
@@ -110,7 +118,7 @@ if (isset($_POST['update'])) {
 
 //Redirect to profile page
 //TODO: common function
-$relative_url .= 'edit-profile';
+$relative_url = 'edit-profile' . ($updating_own ? '' : '/'.$user_id);
 $absolute_url = get_site_url(null, 'forum/'.$relative_url);
 wp_redirect($absolute_url);//Temporal redirect
 ?>

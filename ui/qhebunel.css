@@ -297,6 +297,12 @@ Profile - user information page
 	text-align: center;
 	margin: 5px 0;
 }
+.user-basic-data .profile-actions {
+	text-align: center;
+	margin: 5px 0;
+	font-size: 0.85em;
+	line-height: 0.85em;
+}
 /*
 Private messages
 */

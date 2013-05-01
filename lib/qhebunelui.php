@@ -221,5 +221,15 @@ class QhebunelUI {
 	public static function get_url_for_badge($badge_id) {
 		return site_url('forum/badges/'.$badge_id);
 	}
+	
+	/**
+	 * Gives back an URL pointing to the profile page
+	 * of the specified user.
+	 * @param integer $user_id User ID.
+	 * @return string URL to the profile page.
+	 */
+	public static function get_url_for_user($user_id) {
+		return site_url('forum/profile/'.$user_id);
+	}
 }
 ?>

@@ -32,37 +32,38 @@ class QhebunelPMWidget extends WP_Widget {
 		extract($args);
 		
 		//The widget is invisible for unauthenticated user
-		if (@$current_user->ID > 0) {
+		if (!is_user_logged_in()) {
+			return;
+		}
 		
-			/*
-			 * Check for unread messages.
-			 */
-			$unread_count = $wpdb->get_var(
-				$wpdb->prepare(
-					'select count(*) from `qheb_privmessages`
-					where `to`=%d and `readdate` is null;',
-					$current_user->ID
-				)
-			);
+		/*
+		 * Check for unread messages.
+		 */
+		$unread_count = $wpdb->get_var(
+			$wpdb->prepare(
+				'select count(*) from `qheb_privmessages`
+				where `to`=%d and `readdate` is null;',
+				$current_user->ID
+			)
+		);
+		
+		//Display the widget only if there're unread messages or when it's set to show the 'no new' message.
+		if ($unread_count > 0 || $instance['only_unread'] == false) {
 			
-			//Display the widget only if there're unread messages or when it's set to show the 'no new' message.
-			if ($unread_count > 0 || $instance['only_unread'] == false) {
-				
-				$title = apply_filters('widget_title', $instance['title']);
-			
-				echo($before_widget);
-				if (!empty($title)) {
-					echo($before_title . $title . $after_title);
-				}
-				
-				if ($unread_count == 0) {
-					_e('No new messages', 'qhebunel');
-				} else {
-					printf(_n('One unread message', '%s unread messages', $unread_count, 'qhebunel'), $unread_count);
-				}
-				
-				echo($after_widget);
+			$title = apply_filters('widget_title', $instance['title']);
+		
+			echo($before_widget);
+			if (!empty($title)) {
+				echo($before_title . $title . $after_title);
 			}
+			
+			if ($unread_count == 0) {
+				_e('No new messages', 'qhebunel');
+			} else {
+				printf(_n('One unread message', '%s unread messages', $unread_count, 'qhebunel'), $unread_count);
+			}
+			
+			echo($after_widget);
 		}
 	}
 	
