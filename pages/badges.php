@@ -19,40 +19,6 @@ if (preg_match('%^(\d+)%', $section_params, $regs)) {
 	$badge_id = $regs[1];
 }
 
-/**
- * @param array $badge Row from the databse.
- */
-function render_badge($badge, $group = null) {
-	$awarded = empty($group) ? $badge['awarded'] : $group['awarded'];
-	if (empty($badge['startdate'])) {
-		$status = __('You do not have this badge.','qhebunel');
-	} else {
-		if ($awarded) {
-			$status = sprintf(__('This badge was awarded to you on %s.','qhebunel'), QhebunelDate::get_short_date($badge['startdate']));
-		} else {
-			$status = sprintf(__('You\'ve claimed this badge on %s.','qhebunel'), QhebunelDate::get_short_date($badge['startdate']));
-		}
-	}
-	
-	$url = QhebunelUI::get_url_for_badge($badge['bid']);
-	$class = empty($badge['startdate']) ?  '' : ' owned';
-	echo('<li class="badge-frame'.$class.'">');
-	echo('<div class="img"><a href="'.$url.'"><img src="'.WP_CONTENT_URL.'/'.$badge['largeimage'].'" alt="'.$badge['name'].'" /></a></div>');
-	echo('<div class="name"><a href="'.$url.'">'.$badge['name'].'</a></div>');
-	echo('<div class="description">'.$badge['description'].'</div>');
-	echo('<div class="status">'.$status.'</div>');
-	/*echo('<div class="actions">');
-	 if ($group['awarded'] == false) {
-	if (empty($badge['startdate'])) {
-	echo('<a href="">'.__('Claim','qhebunel').'</a> ');
-	} else {
-	echo('<a href="">'.__('Remove','qhebunel').'</a> ');
-	}
-	}
-	echo('</div>');*/
-	echo('</li>');
-}
-
 if (empty($badge_id)) {
 	/*
 	 * Render list of badges
@@ -81,7 +47,7 @@ if (empty($badge_id)) {
 			    ) as `l`
 			    on (`l`.`bid`=`b`.`bid`)
 			where `g`.`hidden`<=%d
-			order by `b`.`name`',
+			order by `b`.`name`;',
 			$current_user->ID,
 			(QhebunelUser::is_moderator() ? 1 : 0)
 		),
@@ -93,7 +59,7 @@ if (empty($badge_id)) {
 		echo('<ul class="badge-wall">');
 		foreach ($badges as $badge) {
 			if ($badge['bgid'] == $group['bgid']) {
-				render_badge($badge, $group);
+				QhebunelBadges::render_badge($badge, true, $group);
 			}
 		}
 		echo('</ul>');
@@ -130,7 +96,7 @@ if (empty($badge_id)) {
 	}
 	
 	echo('<ul class="badge-wall badge-wall-single">');
-	render_badge($badge);
+	QhebunelBadges::render_badge($badge, true);
 	echo('</ul>');
 	
 	echo('<div class="badge-action">');

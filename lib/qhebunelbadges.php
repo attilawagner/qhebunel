@@ -138,5 +138,78 @@ class QhebunelBadges {
 		@unlink(WP_CONTENT_DIR.'/'.$badge['largeimage']);
 		@unlink(WP_CONTENT_DIR.'/'.$badge['smallimage']);
 	}
+	
+	/**
+	 * Renders a badge as a &lt;li&gt; list item inside a badge list.
+	 * 
+	 * @param array|integer $badge Badge as an array or Badge ID.
+	 * @param boolean $own_badge True if the badge status is that of the current user.
+	 * @param array $group Optional. The badge group data where this badge belongs.
+	 * If not provided, and the badge is passed as an array, it must contain
+	 * the 'awarded' flag itself.
+	 */
+	public static function render_badge($badge, $own_badge = true, $group = null) {
+		//Load badge if only an ID is given
+		if (is_numeric($badge)) {
+			if (($badge = self::load_badge($badge)) === null) {
+				return;
+			}
+		}
+		
+		$awarded = empty($group) ? $badge['awarded'] : $group['awarded'];
+		$status = self::get_badge_status_message($badge, $awarded, $own_badge);
+		
+		$url = QhebunelUI::get_url_for_badge($badge['bid']);
+		$class = empty($badge['startdate']) ?  '' : ' owned';
+		echo('<li class="badge-frame'.$class.'">');
+		echo('<div class="img"><a href="'.$url.'"><img src="'.WP_CONTENT_URL.'/'.$badge['largeimage'].'" alt="'.$badge['name'].'" /></a></div>');
+		echo('<div class="name"><a href="'.$url.'">'.$badge['name'].'</a></div>');
+		echo('<div class="description">'.$badge['description'].'</div>');
+		echo('<div class="status">'.$status.'</div>');
+		echo('</li>');
+	}
+	
+	/**
+	 * Loads a badge from the database for the render_badge() method.
+	 * 
+	 * @param integer $badge_id Badge ID.
+	 * @return array If the badge exists in the database, its data is
+	 * returned as an array. If there was an error, null is returned.
+	 */
+	private static function load_badge($badge_id) {
+		die('TODO - UNIMPLEMENTED METHOD: QhebunelBadges::load_badge()');
+	}
+	
+	/**
+	 * Returns the status message for a badge.
+	 * 
+	 * @param array $badge The badge as an array.
+	 * @param boolean $awarded True if the badge cannot be claimed.
+	 * @param boolean $own_badge See render_badge().
+	 * @return string The string to display as the status.
+	 */
+	private static function get_badge_status_message($badge, $awarded, $own_badge) {
+		if ($own_badge) {
+			if (empty($badge['startdate'])) {
+				return __('You do not have this badge.','qhebunel');
+			} else {
+				if ($awarded) {
+					return sprintf(__('This badge was awarded to you on %s.','qhebunel'), QhebunelDate::get_short_date($badge['startdate']));
+				} else {
+					return sprintf(__('You\'ve claimed this badge on %s.','qhebunel'), QhebunelDate::get_short_date($badge['startdate']));
+				}
+			}
+		} else {
+			if (empty($badge['startdate'])) {
+				return __('User does not have this badge.','qhebunel');
+			} else {
+				if ($awarded) {
+					return sprintf(__('This badge was awarded to the user on %s.','qhebunel'), QhebunelDate::get_short_date($badge['startdate']));
+				} else {
+					return sprintf(__('The user claimed this badge on %s.','qhebunel'), QhebunelDate::get_short_date($badge['startdate']));
+				}
+			}
+		}
+	}
 }
 ?>

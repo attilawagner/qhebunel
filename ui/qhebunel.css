@@ -280,6 +280,24 @@ Profile - user settings
 }
 
 /*
+Profile - user information page
+*/
+.user-basic-data {
+	width: 380px;
+	height: 100px;
+	margin: 0 auto;
+}
+.user-basic-data .avatar-holder {
+	width: 100px;
+	height: 100px;
+	line-height: 100px;
+	margin: 0 auto;
+}
+.user-basic-data .name {
+	text-align: center;
+	margin: 5px 0;
+}
+/*
 Private messages
 */
 .private-msg-list {
