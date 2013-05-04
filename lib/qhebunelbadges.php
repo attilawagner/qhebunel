@@ -6,6 +6,18 @@
 class QhebunelBadges {
 	
 	/**
+	 * Holds information on the displayed badges of users.
+	 * @var array
+	 */
+	private static $badge_link_cache = array();
+	
+	/**
+	 * Holds the loaded badges.
+	 * @var array
+	 */
+	private static $badge_cache = array();
+	
+	/**
 	 * Saves or updates a badge.
 	 * No checks are run on the image size, but file types are checked.
 	 * 
@@ -209,6 +221,75 @@ class QhebunelBadges {
 					return sprintf(__('The user claimed this badge on %s.','qhebunel'), QhebunelDate::get_short_date($badge['startdate']));
 				}
 			}
+		}
+	}
+	
+	/**
+	 * Returns the badges that should be displayed under the user's avatar.
+	 * 
+	 * @param integer $user_id User ID.
+	 * @return array Badge rows from the database.
+	 */
+	public static function get_displayed_badges($user_id) {
+		if (empty(self::$badge_link_cache[$user_id])) {
+			self::preload_displayed_badges(array($user_id));
+		}
+		$badge_list = self::$badge_link_cache[$user_id];
+		
+		$ret = array();
+		foreach ($badge_list as $badge_id) {
+			$ret[] = self::$badge_cache[$badge_id];
+		}
+		return $ret;
+	}
+	
+	/**
+	 * Loads the badges for the given users that should be displayed
+	 * next to their avatars. Used in thread rendering to reduce the
+	 * number of database queries.
+	 * 
+	 * @param array $user_ids Array of integers.
+	 */
+	public static function preload_displayed_badges($user_ids) {
+		global $wpdb;
+		//Skip loaded users.
+		$loaded_user_ids = array_keys(self::$badge_link_cache);
+		$user_ids = array_diff($user_ids, $loaded_user_ids);
+		if (empty($user_ids)) {
+			return;
+		}
+		
+		$badge_links = $wpdb->get_results(
+			'select `l`.`uid`,`l`.`bid`
+			from `qheb_user_badge_links` as `l`
+			where `uid` in ('.implode(',', $user_ids).');',
+			ARRAY_A
+		);
+		if (empty($badge_links)) {
+			return;
+		}
+		
+		$badge_ids = array();
+		foreach ($badge_links as $link) {
+			$badge_ids[] = $link['bid'];
+			if (!array_key_exists($link['uid'], self::$badge_link_cache)) {
+				self::$badge_link_cache[$link['uid']] = array();
+			}
+			self::$badge_link_cache[$link['uid']][] = $link['bid'];
+		}
+		$badge_ids = array_unique($badge_ids);
+		//Skip already loaded badges
+		$loaded_badge_ids = array_keys(self::$badge_cache);
+		$badge_ids = array_diff($badge_ids, $loaded_badge_ids);
+		
+		$badges = $wpdb->get_results(
+			'select *
+			from `qheb_badges`
+			where `bid` in ('.implode(',',$badge_ids).');',
+			ARRAY_A
+		);
+		foreach ($badges as $badge) {
+			self::$badge_cache[$badge['bid']] = $badge;
 		}
 	}
 }

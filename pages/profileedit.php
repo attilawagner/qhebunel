@@ -137,8 +137,4 @@ $ext_data = $wpdb->get_row(
 			</tr>
 		</tbody>
 	</table>
-	
-	
-	<h2><?php _e('Badges', 'qhebunel'); ?></h2>
-
 </form>

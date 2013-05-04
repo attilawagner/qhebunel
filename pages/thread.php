@@ -129,6 +129,14 @@ function render_thread() {
 		),
 		ARRAY_A
 	);
+	
+	//Get users who has post on this page, and preload their badges
+	$user_ids = array();
+	foreach ($posts as $post) {
+		$user_ids[] = $post['uid'];
+	}
+	QhebunelBadges::preload_displayed_badges(array_unique($user_ids));
+	
 	//A thread contains at least the opening post, so we do not need to check for empty result
 	echo('<div class="qheb-thread">');
 	
@@ -175,14 +183,19 @@ function render_single_post($post) {
 	
 	//User info
 	echo('<aside class="user-info">');
-	echo('<div class="user-name">'.$post['display_name'].'</div>');
+	$profile_url = QhebunelUI::get_url_for_user($post['uid']);
+	echo('<div class="user-name"><a href="'.$profile_url.'">'.$post['display_name'].'</a></div>');
 	$avatar = '';
 	if (!empty($post['avatar'])) {
-		$avatar = '<img src="'.WP_CONTENT_URL.'/forum/avatars/'.$post['avatar'].'" alt="" />';
+		$avatar = '<a href="'.$profile_url.'"><img src="'.WP_CONTENT_URL.'/forum/avatars/'.$post['avatar'].'" alt="" /></a>';
 	}
 	echo('<div class="user-avatar">'.$avatar.'</div>');
 	echo('<div class="user_stats"></div>');
-	echo('<div class="user_badges"></div>');
+	$badges = '';
+	foreach (QhebunelBadges::get_displayed_badges($post['uid']) as $badge) {
+		$badges .= '<div><img src="'.WP_CONTENT_URL.'/'.$badge['smallimage'].'" alt="'.$badge['name'].'" title="'.$badge['name'].'" /></div>';
+	}
+	echo('<div class="user-badges">'.$badges.'</div>');
 	echo('</aside>');
 	
 	echo('<div class="post-holder">');

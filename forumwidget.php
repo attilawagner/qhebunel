@@ -31,11 +31,6 @@ class QhebunelForumWidget extends WP_Widget {
 		global $current_user;
 		extract($args);
 		
-		//The widget is invisible for unauthenticated user
-		if (!is_user_logged_in()) {
-			return;
-		}
-		
 		$title = apply_filters('widget_title', $instance['title']);
 	
 		echo($before_widget);
@@ -45,9 +40,11 @@ class QhebunelForumWidget extends WP_Widget {
 		
 		echo('<ul>');
 		echo('<li><a href="'.site_url('forum/').'">'.__('Categories','qhebunel').'</a> </li>');
-		echo('<li><a href="'.site_url('forum/badges').'">'.__('Badges','qhebunel').'</a> </li>');
-		echo('<li><a href="'.QhebunelUI::get_url_for_user($current_user->ID).'">'.__('View profile','qhebunel').'</a> </li>');
-		echo('<li><a href="'.site_url('forum/pm/').'">'.__('Private messages','qhebunel').'</a> </li>');
+		if (is_user_logged_in()) {
+			echo('<li><a href="'.site_url('forum/badges').'">'.__('Badges','qhebunel').'</a> </li>');
+			echo('<li><a href="'.QhebunelUI::get_url_for_user($current_user->ID).'">'.__('View profile','qhebunel').'</a> </li>');
+			echo('<li><a href="'.site_url('forum/pm/').'">'.__('Private messages','qhebunel').'</a> </li>');
+		}
 		echo('</ul>');
 		
 		echo($after_widget);

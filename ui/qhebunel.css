@@ -127,6 +127,16 @@ Thread
 .qheb-post .user-avatar {
 	text-align: center;
 }
+.qheb-post .user-badges {
+	text-align: center;
+	margin: 0 0 4px;
+}
+.qheb-post .user-badges div {
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	margin: 3px;
+}
 .qheb-post .post-holder {
 	width: 621px;
 	float: left;
