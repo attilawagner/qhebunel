@@ -226,7 +226,7 @@ function render_single_post($post) {
 		echo('<ul>');
 		foreach ($attachments as $attachment) {
 			$url = site_url("forum/attachments/${attachment['aid']}-${attachment['safename']}");
-			echo('<li><a href="'.$url.'">'.$attachment['safename'].'</a></li>');
+			echo('<li><a href="'.$url.'">'.$attachment['name'].'</a></li>');
 		}
 		echo('</ul></div>');
 	}

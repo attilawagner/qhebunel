@@ -231,12 +231,16 @@ class QhebunelBadges {
 	 * @return array Badge rows from the database.
 	 */
 	public static function get_displayed_badges($user_id) {
+		$ret = array();
+		
 		if (empty(self::$badge_link_cache[$user_id])) {
 			self::preload_displayed_badges(array($user_id));
 		}
-		$badge_list = self::$badge_link_cache[$user_id];
+		if (!array_key_exists($user_id, self::$badge_link_cache)) {
+			return $ret;
+		}
 		
-		$ret = array();
+		$badge_list = self::$badge_link_cache[$user_id];
 		foreach ($badge_list as $badge_id) {
 			$ret[] = self::$badge_cache[$badge_id];
 		}

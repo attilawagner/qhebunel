@@ -325,7 +325,6 @@ class QhebunelFiles {
 			$name = $regs[1];
 			$ext = $regs[2];
 		} else {
-			$name = $sane_name;
 			$ext = '';
 		}
 		
