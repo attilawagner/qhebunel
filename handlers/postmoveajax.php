@@ -39,7 +39,7 @@ if ($type == 'categories') {
 		ARRAY_A
 	);
 	
-	QhebunelPost::render_category_dropdown('', $post['catid'], QHEBUNEL_PERMISSION_WRITE, $post['uid']);
+	QhebunelPost::render_category_select('', $post['catid'], QHEBUNEL_PERMISSION_WRITE, $post['uid']);
 	
 } else if ($type == 'threads') {
 	/*

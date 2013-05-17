@@ -48,7 +48,7 @@ if (empty($thread)) {
 <tfoot>
 	<tr>
 		<th><?php _e('Target category','qhebunel'); ?></th>
-		<td><?php QhebunelPost::render_category_dropdown('target-category', $thread['catid']); ?></td>
+		<td><?php QhebunelPost::render_category_select('target-category', $thread['catid']); ?></td>
 	</tr>
 	<tr>
 		<th colspan="2"><input type="submit" name="save" value="<?php _e('Move thread','qhebunel'); ?>" /></th>

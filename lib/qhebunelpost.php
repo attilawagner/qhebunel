@@ -173,8 +173,10 @@ class QhebunelPost {
 	 * @param integer $permission_level One of the QHEBUNEL_PERMISSION_* constants.
 	 * @param mixed $user_id User ID whose permissions are tested. If left at its default value
 	 * ('current'), the current user will be tested.
+	 * @param boolean $multiple Make it a multiple choice select (true)
+	 * or render it as a dropdown list (false).
 	 */
-	public static function render_category_dropdown($name, $selected_id = null, $permission_level = QHEBUNEL_PERMISSION_START, $user_id = 'current') {
+	public static function render_category_select($name, $selected_id = null, $permission_level = QHEBUNEL_PERMISSION_START, $user_id = 'current', $multiple = false) {
 		global $wpdb;
 		if ($user_id == 'current' && QhebunelUser::is_admin()) {
 			$categories = $wpdb->get_results(
@@ -202,13 +204,14 @@ class QhebunelPost {
 				ARRAY_A
 			);
 		}
-		echo('<select name="'.$name.'">');
+		echo('<select name="'.$name.'"'.($multiple ? ' multiple' : '').'>');
 		foreach ($categories as $cat1) {
 			if ($cat1['parent'] == 0) {
 				echo('<optgroup label="'.$cat1['name'].'">');
 				foreach ($categories as $cat2) {
 					if ($cat2['parent'] == $cat1['catid']) {
-						echo('<option value="'.$cat2['catid'].'"'.($cat2['catid'] == $selected_id ? ' selected="selected"' : '').'>'.$cat2['name'].'</option>');
+						$selected = $cat2['catid'] == $selected_id || ($selected_id == null && $multiple);
+						echo('<option value="'.$cat2['catid'].'"'.($selected ? ' selected="selected"' : '').'>'.$cat2['name'].'</option>');
 					}
 				}
 				echo('</optgroup>');

@@ -37,7 +37,7 @@ if (!has_permissions()) {
 <tbody>
 	<tr>
 		<th><?php _e('Category','qhebunel'); ?></th>
-		<td><?php QhebunelPost::render_category_dropdown('topic_category', $cat_id); ?></td>
+		<td><?php QhebunelPost::render_category_select('topic_category', $cat_id); ?></td>
 	</tr>
 	<tr>
 		<th><?php _e('Topic title','qhebunel'); ?></th>

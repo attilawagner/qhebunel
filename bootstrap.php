@@ -71,6 +71,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 			'move-thread' =>	array('threadmove', false, __('Move thread', 'qhebunel')),
 			'pm' =>				array('pm', false, __('Private messages', 'qhebunel')),
 			'badges' =>			array('badges', false, __('Badges', 'qhebunel')),
+			'search' =>			array('search', false, __('Search', 'qhebunel')),
 			
 			//Special sections
 			'attachments' =>	array('download', true),

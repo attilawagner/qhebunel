@@ -320,9 +320,10 @@ Private messages
 	width: 250px;
 	border: 1px solid;
 	float: left;
-	max-heigh: 400px;
+	max-height: 400px;
 	overflow-y: auto;
 	overflow-x: none;
+	margin-bottom: 22px;
 }
 .private-msg-list a {
 	display: block;
