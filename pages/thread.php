@@ -100,43 +100,6 @@ function render_thread() {
 		$page_num--;
 	}
 	
-	$post_per_page = QHEBUNEL_POSTS_PER_PAGE;
-	$post_offset = $page_num * $post_per_page;
-	
-	$posts = $wpdb->get_results(
-		$wpdb->prepare(
-			'select `p`.*, `u`.`display_name`, `u2`.`display_name` as `editorname`, `e`.`avatar`, `e`.`signature`, `a`.`acount`, !isnull(`pr`.`pid`) as `userreported`
-			from `qheb_posts` as `p`
-			left join `qheb_wp_users` as `u`
-				on (`u`.`ID`=`p`.`uid`)
-			left join `qheb_wp_users` as `u2`
-				on (`u2`.`ID`=`p`.`editor`)
-			left join `qheb_user_ext` as `e`
-				on (`e`.`uid`=`p`.`uid`)
-			left join
-				(select `pid`, count(*) as `acount` from `qheb_attachments` group by `pid`) as `a`
-				on (`a`.`pid`=`p`.`pid`)
-			left join
-				(select `pid` from `qheb_post_reports` as `r` where `uid`=%d) as `pr`
-				on (`pr`.`pid`=`p`.`pid`)
-			where `tid`=%d
-			order by `tid` asc
-			limit %d,%d;',
-			$current_user->ID,
-			$thread_id,
-			$post_offset,
-			$post_per_page
-		),
-		ARRAY_A
-	);
-	
-	//Get users who has post on this page, and preload their badges
-	$user_ids = array();
-	foreach ($posts as $post) {
-		$user_ids[] = $post['uid'];
-	}
-	QhebunelBadges::preload_displayed_badges(array_unique($user_ids));
-	
 	//A thread contains at least the opening post, so we do not need to check for empty result
 	echo('<div class="qheb-thread">');
 	
@@ -151,9 +114,7 @@ function render_thread() {
 	
 	render_action_bar($page_num);
 	
-	foreach ($posts as $post) {
-		render_single_post($post);
-	}
+	QhebunelPost::render_posts($thread_id, $page_num);
 	
 	render_action_bar($page_num);
 	
@@ -164,159 +125,7 @@ function render_thread() {
 	echo('</div>');
 }
 
-/**
- * Renders a single post into the main container div.
- */
-function render_single_post($post) {
-	global $wpdb;
-	
-	/*
-	 * Add meta for anonymous users.
-	 */
-	if ($post['uid'] == 0) {
-		$post['display_name'] = __('A guest', 'qhebunel');
-	}
-	
-	//Post holder div
-	$class = get_class_for_post($post);
-	echo('<article class="qheb-post'.$class.'" id="post-'.$post['pid'].'">');
-	
-	//User info
-	echo('<aside class="user-info">');
-	$profile_url = QhebunelUI::get_url_for_user($post['uid']);
-	echo('<div class="user-name"><a href="'.$profile_url.'">'.$post['display_name'].'</a></div>');
-	$avatar = '';
-	if (!empty($post['avatar'])) {
-		$avatar = '<a href="'.$profile_url.'"><img src="'.WP_CONTENT_URL.'/forum/avatars/'.$post['avatar'].'" alt="" /></a>';
-	}
-	echo('<div class="user-avatar">'.$avatar.'</div>');
-	echo('<div class="user_stats"></div>');
-	$badges = '';
-	foreach (QhebunelBadges::get_displayed_badges($post['uid']) as $badge) {
-		$badges .= '<div><img src="'.WP_CONTENT_URL.'/'.$badge['smallimage'].'" alt="'.$badge['name'].'" title="'.$badge['name'].'" /></div>';
-	}
-	echo('<div class="user-badges">'.$badges.'</div>');
-	echo('</aside>');
-	
-	echo('<div class="post-holder">');
-	
-	//Post meta
-	echo('<header class="post-meta">');
-	echo('<a href="'.QhebunelUI::get_url_for_post($post['pid'], true).'" title="'.__('Permalink', 'qhebunel').'">#</a> ');
-	echo('<time class="post_date" datetime="'.QhebunelDate::get_datetime_attribute($post['postdate']).'" title="'.QhebunelDate::get_relative_date($post['postdate']).'">'.QhebunelDate::get_post_date($post['postdate']).'</time>');
-	echo('</header>');
-	
-	//Post content
-	echo('<div class="post-message">');
-	echo(QhebunelUI::format_post($post['text']));
-	echo('</div>');
-	
-	//Attachments
-	if ($post['acount'] > 0) {
-		$attachments = $wpdb->get_results(
-			$wpdb->prepare(
-				'select * from `qheb_attachments` where `pid`=%d',
-				$post['pid']
-			),
-			ARRAY_A
-		);
-		
-		echo('<div class="post-attachments">');
-		_e('Attachments:', 'qhebunel');
-		echo('<ul>');
-		foreach ($attachments as $attachment) {
-			$url = site_url("forum/attachments/${attachment['aid']}-${attachment['safename']}");
-			echo('<li><a href="'.$url.'">'.$attachment['name'].'</a></li>');
-		}
-		echo('</ul></div>');
-	}
-	
-	//Signature
-	echo('<div class="user-signature">');
-	echo(QhebunelUI::format_post($post['signature']));
-	echo('</div>');
-	
-	//Post action buttons
-	render_post_actions($post);
-	
-	echo('</div>');
-	
-	//Post holder div
-	echo('</article>');
-}
 
-function get_class_for_post($post) {
-	global $wpdb, $current_user;
-	
-	switch($post['flag']) {
-		case QhebunelPost::FLAG_DELETION_UNCONFIRMED:
-			return ' deleted';
-			break;
-		
-		case QhebunelPost::FLAG_REPORTED:
-			if ($post['userreported'] || QhebunelUser::is_moderator()) {
-				//Only those users see the reported status who have submitted a report for it.
-				//Moderators always see the reported status.
-				return ' reported';
-			}
-			break;
-	}
-	
-	return '';
-}
-
-function render_post_actions($post) {
-	global $permission, $thread_id, $page_id, $current_user, $thread;
-	$thread_open = $thread['closedate'] == null;
-	
-	echo('<footer class="post-actions">');
-	if ($post['editor'] != null) {
-		echo('<div class="edit-info">');
-		$edit_date = '<time class="edit-date" datetime="'.QhebunelDate::get_datetime_attribute($post['editdate']).'" title="'.QhebunelDate::get_relative_date($post['editdate']).'">'.QhebunelDate::get_post_date($post['editdate']).'</time>';
-		echo('<span class="edit-user">'.sprintf(__('Last edited by: %1$s on %2$s.', 'qhebunel'), $post['editorname'], $edit_date).'</span> ');
-		if (!empty($post['editreason'])) {
-			echo('<span class="edit-reason">'.sprintf(__('Reason: %s', 'qhebunel'), htmlentities2($post['editreason'])).'</span> ');
-		}
-		echo('</div>');
-	}
-	
-	echo('<div>');
-	if ($thread_open && $permission >= QHEBUNEL_PERMISSION_WRITE) {
-		$quote_url = QhebunelUI::get_url_for_thread($thread_id, $page_id).'?quote='.$post['pid'].'#send-reply';
-		echo('<a class="post-action reply-link" href="#send-reply">'.__('Reply', 'qhebunel').'</a> ');
-		echo('<a class="post-action quote-link" href="'.$quote_url.'">'.__('Quote', 'qhebunel').'</a> ');
-	}
-	if ($thread_open && ($post['uid'] == $current_user->ID || QhebunelUser::is_moderator())) {
-		$edit_url = site_url('forum/edit-post/'.$post['pid']);
-		echo('<a class="post-action edit-link" href="'.$edit_url.'">'.__('Edit', 'qhebunel').'</a> ');
-		if ($post['flag'] == QhebunelPost::FLAG_DELETION_UNCONFIRMED) {
-			$del_url = site_url('forum/delete-post/'.$post['pid'].'/confirm');
-			echo('<a class="post-action delete-link" href="'.$del_url.'">'.__('Confirm deletion', 'qhebunel').'</a> ');
-			$del_url = site_url('forum/delete-post/'.$post['pid'].'/cancel');
-			echo('<a class="post-action delete-link" href="'.$del_url.'">'.__('Cancel deletion', 'qhebunel').'</a> ');
-		} else {
-			$del_url = site_url('forum/delete-post/'.$post['pid']);
-			echo('<a class="post-action delete-link" href="'.$del_url.'">'.__('Delete', 'qhebunel').'</a> ');
-		}
-	}
-	if ($thread_open && QhebunelUser::is_moderator()) {
-		echo('<a class="post-action move-link" href="#">'.__('Move', 'qhebunel').'</a> ');
-	}
-	if (!$post['userreported'] && QhebunelUser::has_permission_to_report()) {
-		echo('<a class="post-action report-link" href="#">'.__('Report', 'qhebunel').'</a> ');
-	}
-	if ($post['flag'] == QhebunelPost::FLAG_REPORTED && QhebunelUser::is_moderator()) {
-		$clear_url = site_url('forum/clear-reports/'.$post['pid']);
-		echo('<a class="post-action clear-reports-link" href="'.$clear_url.'">'.__('Clear reports', 'qhebunel').'</a> ');
-	}
-	echo('</div>');
-	
-	if ($post['flag'] == QhebunelPost::FLAG_REPORTED && QhebunelUser::is_moderator()) {
-		render_reports($post);
-	}
-	
-	echo('</footer>');
-}
 
 function render_reply_form() {
 	global $thread_id, $thread;

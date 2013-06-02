@@ -164,7 +164,7 @@ if (!$params_are_valid) {
 	 */
 	
 	if ($search['result_type'] == 'posts') {
-		$query = "select * \n";
+		$query = "select distinct `p`.`pid` \n";
 	} else {
 		$query = "select distinct `t`.`tid` \n";
 	}
@@ -260,8 +260,8 @@ if (!$params_are_valid) {
 		$matching_ids[] = $row[0];
 	}
 	
-if ($search['result_type'] == 'posts') {
-		echo('post listing');
+	if ($search['result_type'] == 'posts') {
+		QhebunelPost::render_posts(null, 0, $matching_ids, false);
 	} else {
 		QhebunelPost::render_thread_list(null, $matching_ids);
 	}
