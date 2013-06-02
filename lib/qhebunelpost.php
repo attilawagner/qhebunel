@@ -204,14 +204,17 @@ class QhebunelPost {
 				ARRAY_A
 			);
 		}
+		if ($multiple) {
+			$name .= '[]';
+		}
 		echo('<select name="'.$name.'"'.($multiple ? ' multiple' : '').'>');
 		foreach ($categories as $cat1) {
 			if ($cat1['parent'] == 0) {
 				echo('<optgroup label="'.$cat1['name'].'">');
 				foreach ($categories as $cat2) {
 					if ($cat2['parent'] == $cat1['catid']) {
-						$selected = $cat2['catid'] == $selected_id || ($selected_id == null && $multiple);
-						echo('<option value="'.$cat2['catid'].'"'.($selected ? ' selected="selected"' : '').'>'.$cat2['name'].'</option>');
+						$selected = $cat2['catid'] == $selected_id;
+						echo('<option value="'.$cat2['catid'].'"'.($selected ? ' selected' : '').'>'.$cat2['name'].'</option>');
 					}
 				}
 				echo('</optgroup>');
@@ -241,6 +244,97 @@ class QhebunelPost {
 			)
 		);
 		return $report_cache[$post_id] = ($has_report == 1);
+	}
+	
+	/**
+	 * Renders a list of threads filtered by category ID
+	 * or by a given list of thread IDs. At least one parameter must be specified.
+	 * @param integer $category Optional.
+	 * @param array $thread_ids Optional.
+	 */
+	public static function render_thread_list($category = null, $thread_ids = null) {
+		global $wpdb, $cat_id, $current_user;
+		
+		$conditions = array();
+		if (!empty($category)) {
+			$category = (int)$category;
+			$conditions[] = '`t`.`catid`='.$category;
+		}
+		if (is_array($thread_ids)) {
+			$ids = array();
+			foreach ($thread_ids as $id) {
+				$id = (int)$id;
+				if ($id > 0) {
+					$ids[] = $id;
+				}
+			}
+			$conditions[] = '`t`.`tid` in (' . implode(',', $ids) . ')';
+		}
+		
+		echo('<table class="qheb_threadlist"><thead><tr><th>'.__('Thread topic','qhebunel').'</th><th>'.__('Posts','qhebunel').'</th><th>'.__('Last post','qhebunel').'</th><th>'.__('Starter','qhebunel').'</th></tr></thead><tbody>');
+		$threads = $wpdb->get_results(
+			$wpdb->prepare(
+				'select `t`.`tid`, `t`.`title`, `t`.`startdate`, `t`.`starter`, `t`.`uri`, `us`.`display_name` as `startname`, `t`.`postcount`, `t`.`lastpostid`, `p`.`uid` as `lastuid`, `p`.`postdate` as `lastdate`, `ul`.`display_name` as `lastname`, `n`.`new`, `t`.`pinned`,`t`.`closedate`
+				from `qheb_threads` as `t`
+				  left join `qheb_wp_users` as `us`
+				    on (`us`.`id`=`t`.`starter`)
+				  left join `qheb_posts` as `p`
+				    on (`p`.`pid`=`t`.`lastpostid`)
+				  left join `qheb_wp_users` as `ul`
+				    on (`ul`.`id`=`p`.`uid`)
+				  left join
+				    (
+				      select `p`.`tid`, count(*) as `new`
+				      from `qheb_posts` as `p`
+				        left join `qheb_visits` as `v`
+				          on (`v`.`tid`=`p`.`tid`)
+				      where `p`.`postdate`>`v`.`visitdate` and `v`.`uid`=%d
+				      group by `p`.`tid`
+				    ) as `n`
+				    on (`n`.`tid`=`t`.`tid`)
+				where '.implode (' and ', $conditions).'
+				order by `t`.`pinned` desc, `t`.`lastpostid` desc;',
+				@$current_user->ID
+			),
+			ARRAY_A
+		);
+		if (empty($threads)) {
+			echo('<tr><td colspan="4">'.__('There are no threads in this category.','qhebunel').'</td></tr>');
+		} else {
+			foreach ($threads as $thread) {
+				$last_post_user = ($thread['lastuid'] > 0 ? $thread['lastname'] : 'A guest');
+				$last_post_user_url = QhebunelUI::get_url_for_user($thread['lastuid']);
+				$start_user = ($thread['starter'] > 0 ? $thread['startname'] : 'A guest');
+				$start_user_url = QhebunelUI::get_url_for_user($thread['starter']);
+				$lastpost = '<span class="name"><a href="'.$last_post_user_url.'">'.$last_post_user.'</a></span> <span class="date" title="'.mysql2date('j F, Y @ G:i', $thread['lastdate']).'">'.QhebunelDate::get_list_date($thread['lastdate']).'</span>';
+				$starter = '<span class="name"><a href="'.$start_user_url.'">'.$start_user.'</a></span> <span class="date" title="'.mysql2date('j F, Y @ G:i', $thread['startdate']).'">'.QhebunelDate::get_list_date($thread['startdate']).'</span>';
+				$thread_link = QhebunelUI::get_url_for_thread($thread['tid']);
+				$new_posts = ($thread['new'] > 0 ? '<span class="new-posts">'.sprintf(_n('(%d new)', '(%d new)', $thread['new'], 'qhebunel'),$thread['new']).'</span>' : '');
+				$icon = self::get_icon_for_thread($thread);
+				echo('<tr><td>'.$icon.'<a href="'.$thread_link.'">'.QhebunelUI::format_title($thread['title']).'</a></td><td>'.$thread['postcount'].' '.$new_posts.'</td><td>'.$lastpost.'</td><td>'.$starter.'</td></tr>');
+			}
+		}
+		echo('</tbody></table>');
+	}
+	
+	/**
+	 * Returns the &lt;span&gt; tag for the thread icon.
+	 * @param array $thread A thread row from the database.
+	 * @return string HTML fragment.
+	 */
+	private static function get_icon_for_thread($thread) {
+		$icon = '<span class="thread-icon';
+		if (!empty($thread['closedate'])) {
+			$icon .= ' closed';
+		}
+		if ($thread['pinned']) {
+			$icon .= ' pinned';
+		}
+		if ($thread['new'] > 0) {
+			$icon .= ' unread';
+		}
+		$icon .= '"></span>';
+		return $icon;
 	}
 }
 ?>

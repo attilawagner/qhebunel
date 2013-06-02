@@ -50,8 +50,7 @@ foreach ($cats as $cat1) {
 				$post_count = sprintf(_n('1 Post', '%d Posts', $posts, 'qhebunel'), $posts);
 				$last_post = '';
 				if ($post_count > 0) {
-					//TODO: profile link using $cat2['uid']
-					$profile_link = '#';
+					$profile_link = QhebunelUI::get_url_for_user($cat2['uid']);
 					//TODO: thread link using $cat2['tid']
 					if ($cat2['uid'] > 0) {
 						//Normal user
