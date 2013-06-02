@@ -259,7 +259,7 @@ class QhebunelBB {
 		$tokens = array();
 		$pattern = self::get_regex(array_keys(self::$tags));
 		$offset = 0;
-		while (preg_match("/$pattern/s", $text, $regs, PREG_OFFSET_CAPTURE, $offset)) {
+		while (preg_match("/$pattern/si", $text, $regs, PREG_OFFSET_CAPTURE, $offset)) {
 			//Add text token and modify offset for the next iteration
 			$tokens[] = substr($text, $offset, $regs[0][1]-$offset);
 			$offset = $regs[0][1] + strlen($regs[0][0]);
@@ -273,7 +273,7 @@ class QhebunelBB {
 				$attributes = self::parse_attributes($regs[4][0]);
 				$tokens[] = array(
 					'text' => $regs[0][0],
-					'name' => $regs[3][0],
+					'name' => strtolower($regs[3][0]),
 					'closing' => !empty($regs[2][0]),
 					'attr' => $attributes
 				);
