@@ -72,6 +72,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 			'pm' =>				array('pm', false, __('Private messages', 'qhebunel')),
 			'badges' =>			array('badges', false, __('Badges', 'qhebunel')),
 			'search' =>			array('search', false, __('Search', 'qhebunel')),
+			'reported-posts' =>	array('reportedposts', false, __('Reported posts', 'qhebunel')),
 			
 			//Special sections
 			'attachments' =>	array('download', true),

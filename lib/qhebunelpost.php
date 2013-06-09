@@ -570,5 +570,123 @@ class QhebunelPost {
 			self::render_single_post($post, $show_actions);
 		}
 	}
+	
+	
+	/**
+	 * Runs a search query on the database and renders the results.
+	 * @param array $parameters See pages/search.php for the population of the array.
+	 */
+	public static function show_search_results($parameters) {
+		global $wpdb, $current_user;
+		$error = false;
+		
+		if ($parameters['result_type'] == 'posts') {
+			$query = "select distinct `p`.`pid` \n";
+		} else {
+			$query = "select distinct `t`.`tid` \n";
+		}
+		
+		$query .= "from `qheb_threads` as `t` \n";
+		$query .= "  left join `qheb_posts` as `p` \n";
+		$query .= "    on (`p`.`tid`=`t`.`tid`) \n";
+		$query .= "  left join `qheb_category_permissions` as `cp` \n";
+		$query .= "    on (`cp`.`catid`=`t`.`catid`) \n";
+		$query .= "  left join (select `tid`, `visitdate` from `qheb_visits` where `uid`=".($current_user->ID).") as `v` \n";
+		$query .= "    on (`v`.`tid`=`t`.`tid`) \n";
+		$query .= "where \n";
+		$conditions = array();
+		
+		if (!empty($parameters['terms'])) {
+			$terms = $parameters['terms'];
+			$wpdb->escape_by_ref($terms);
+			if ($parameters['location'] == 'post') {
+				$conditions[] = "`p`.`text` like '%${terms}%'";
+		} elseif ($parameters['location'] == 'title') {
+			$conditions[] = "`t`.`title` like '%${terms}%'";
+		} else {
+			$conditions[] = "`p`.`text` like '%${terms}%' or `t`.`title` like '%${terms}%'";
+		}
+		}
+		
+		if (!empty($parameters['user'])) {
+			$user_id = $wpdb->get_var(
+				$wpdb->prepare(
+					'select `ID` from `qheb_wp_users` where `display_name`=%s',
+					$parameters['user']
+				)
+			);
+			if ($user_id > 0) {
+				$conditions[] = "`p`.`uid`=${user_id}";
+		}
+		}
+		
+		if (!empty($parameters['date_from'])) {
+			$conditions[] = "`p`.`postdate`>='${search['date_from']}'";
+		}
+		if (!empty($parameters['date_to'])) {
+			$conditions[] = "`p`.`postdate`<='${search['date_to']}'";
+		}
+		
+		//Restrict categories to the ones the user is allowed to read.
+		$groups = QhebunelUser::get_groups();
+		$categories = array();
+		$cats = $wpdb->get_results(
+			$wpdb->prepare(
+				'select distinct `catid`
+			from `qheb_category_permissions`
+			where `gid` in ('.implode(',', $groups).')
+			and `access`>=%d;',
+				QHEBUNEL_PERMISSION_READ
+			),
+			ARRAY_N
+		);
+		if (empty($cats)) {
+			$error = true;
+		} else {
+			foreach ($cats as $cat) {
+				$categories[] = $cat[0];
+			}
+		}
+		if (!empty($parameters['categories'])) {
+			$categories = array_intersect($categories, $parameters['categories']);
+		}
+		$conditions[] = "`t`.`catid` in (".implode(',', $categories).")";
+		
+		if (!empty($parameters['flags'])) {
+			foreach ($parameters['flags'] as $flag) {
+				if ($flag == 'new') {
+					$conditions[] = "`p`.`postdate`>`v`.`visitdate`";
+				} elseif ($flag == 'edited') {
+					$conditions[] = "`p`.`editdate` is not null";
+				} elseif ($flag == 'reported') {
+					$conditions[] = "`p`.`flag`=2";
+				}
+			}
+		}
+		
+		$query .= "  (" . implode(") and \n  (", $conditions) . ") \n";
+		$limit = ($parameters['result_type'] == 'posts' ? QHEBUNEL_POSTS_PER_PAGE : QHEBUNEL_THREADS_PER_PAGE);
+		$query .= 'limit ' . ($parameters['page']*$limit) . ','.$limit.';';
+		
+		$query_result = $wpdb->get_results(
+			$query,
+			ARRAY_N
+		);
+		$matching_ids = array();
+		foreach ($query_result as $row) {
+			$matching_ids[] = $row[0];
+		}
+		
+		if (empty($matching_ids) || $error) {
+			echo('<div class="qheb-error-message">'.$parameters['no_result_message'].'</div>');
+			return;
+		}
+		
+		if ($parameters['result_type'] == 'posts') {
+			QhebunelPost::render_posts(null, 0, $matching_ids, false);
+		} else {
+			QhebunelPost::render_thread_list(null, $matching_ids);
+		}
+	}
 }
 ?>

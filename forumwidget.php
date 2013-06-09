@@ -43,6 +43,9 @@ class QhebunelForumWidget extends WP_Widget {
 		if (is_user_logged_in()) {
 			echo('<li><a href="'.site_url('forum/search').'">'.__('Search','qhebunel').'</a> </li>');
 			echo('<li><a href="'.site_url('forum/badges').'">'.__('Badges','qhebunel').'</a> </li>');
+			if (QhebunelUser::is_moderator()) {
+				echo('<li><a href="'.site_url('forum/reported-posts/').'">'.__('Reported posts','qhebunel').'</a> </li>');
+			}
 			echo('<li><a href="'.QhebunelUI::get_url_for_user($current_user->ID).'">'.__('View profile','qhebunel').'</a> </li>');
 			echo('<li><a href="'.site_url('forum/pm/').'">'.__('Private messages','qhebunel').'</a> </li>');
 		}
