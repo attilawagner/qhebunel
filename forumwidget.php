@@ -40,6 +40,7 @@ class QhebunelForumWidget extends WP_Widget {
 		
 		echo('<ul>');
 		echo('<li><a href="'.site_url('forum/').'">'.__('Categories','qhebunel').'</a> </li>');
+		echo('<li><a href="'.site_url('forum/recent-threads/').'">'.__('Recent threads','qhebunel').'</a> </li>');
 		if (is_user_logged_in()) {
 			echo('<li><a href="'.site_url('forum/search').'">'.__('Search','qhebunel').'</a> </li>');
 			echo('<li><a href="'.site_url('forum/badges').'">'.__('Badges','qhebunel').'</a> </li>');

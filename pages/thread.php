@@ -170,40 +170,6 @@ function render_move_post_form() {
 	}
 }
 
-function render_reports($post) {
-	global $wpdb;
-	
-	$reports = $wpdb->get_results(
-		$wpdb->prepare(
-			'select `r`.*, `u`.`display_name` as `username`
-			from `qheb_post_reports` as `r`
-			  left join `qheb_wp_users` as `u`
-				on (`u`.`ID`=`r`.`uid`)
-			where `pid`=%d
-			order by `reportdate`;',
-			$post['pid']
-		),
-		ARRAY_A
-	);
-	
-	if (!empty($reports)) {
-		echo('<div class="post-reports">');
-		foreach ($reports as $report) {
-			echo('<div class="post-report-message">');
-			echo('<p class="report-meta">');
-			$time = '<time class="post_date" datetime="'.QhebunelDate::get_datetime_attribute($report['reportdate']).'" title="'.QhebunelDate::get_relative_date($report['reportdate']).'">'.QhebunelDate::get_post_date($report['reportdate']).'</time>';
-			/* translators: First parameter is the username, second is the date of the report submission */
-			printf(__('Reported by %1$s on %2$s:', 'qhebunel'), $report['username'], $time);
-			echo('</p>');
-			echo('<p class="report-reason">');
-			echo(htmlspecialchars($report['reason']));
-			echo('</p>');
-			echo('</div>');
-		}
-		echo('</div>');
-	}
-}
-
 function render_report_post_form() {
 	if (QhebunelUser::has_permission_to_report()) {
 		echo('<div id="report-post">');
