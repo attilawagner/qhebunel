@@ -542,6 +542,11 @@ function initPostReportLinks() {
 	})
 }
 
+function initPMPage() {
+	var pmdiv = jQuery('.private-msg-conversation');
+	pmdiv.scrollTop(pmdiv.prop("scrollHeight")); 
+}
+
 /*
  * Page initialization
  */
@@ -556,4 +561,5 @@ jQuery(document).ready(function() {
 	initPostReplyLinks();
 	initPostMoveLinks();
 	initPostReportLinks();
+	initPMPage();
 });

@@ -176,7 +176,7 @@ function render_conversation($partner_user_id, $page_num) {
 		echo('<div class="private-msg-msg '.($is_read ? 'read' : 'unread').' '.($is_incoming ? 'inbox' : 'outbox').'">');
 		echo('<span class="private-msg-name">'.$message['name'].':</span> ');
 		echo('<time datetime="'.QhebunelDate::get_datetime_attribute($message['sentdate']).'" title="'.QhebunelDate::get_relative_date($message['sentdate']).'">'.QhebunelDate::get_post_date($message['sentdate']).'</time> ');
-		echo('<span class="private-msg-text">'.htmlentities2($message['text']).'</span>');
+		echo('<span class="private-msg-text">'.QhebunelUI::format_post($message['text']).'</span>');
 		echo('</div>');
 	}
 	if ($next_msg_count > 0) {
