@@ -320,7 +320,7 @@ Private messages
 	width: 250px;
 	border: 1px solid;
 	float: left;
-	max-height: 400px;
+	max-height: 424px;
 	overflow-y: auto;
 	overflow-x: none;
 	margin-bottom: 22px;
@@ -358,7 +358,7 @@ Private messages
 }
 .private-msg-conversation {
 	margin-left: 270px;
-	max-heigh: 400px;
+	max-height: 400px;
 	overflow-y: scroll;
 	overflow-x: none;
 
