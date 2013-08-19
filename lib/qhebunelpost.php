@@ -667,7 +667,6 @@ class QhebunelPost {
 		$query .= "  (" . implode(") and \n  (", $conditions) . ") \n";
 		$limit = ($parameters['result_type'] == 'posts' ? QHEBUNEL_POSTS_PER_PAGE : QHEBUNEL_THREADS_PER_PAGE);
 		$query .= 'limit ' . ($parameters['page']*$limit) . ','.$limit.';';
-		
 		$query_result = $wpdb->get_results(
 			$query,
 			ARRAY_N
@@ -682,11 +681,35 @@ class QhebunelPost {
 			return;
 		}
 		
+		
+		$title_tag = $parameters['page'] ? 'div' : 'h2';
+		echo('<div class="qheb-thread">');
+		echo('<'.$title_tag.' class="thread-title">'.__('Search results','qhebunel').'</'.$title_tag.'>');
+		self::render_search_page_numbers($parameters['page']);
 		if ($parameters['result_type'] == 'posts') {
 			QhebunelPost::render_posts(null, 0, $matching_ids, false);
 		} else {
 			QhebunelPost::render_thread_list(null, $matching_ids);
 		}
+		self::render_search_page_numbers($parameters['page']);
+		echo('</div>');
+	}
+	
+	private static function render_search_page_numbers($page_number) {
+		global $section_params;
+		echo('<div class="thread-actions"><nav class="thread-pagination">');
+		$link_params = preg_replace('%p:\d+/?%', '', $section_params);
+		$page_links = array();
+		$page_links[] = '<a href="'.site_url('/forum/search/'.$link_params).'">1</a>';
+		for ($i=1; $i<$page_number+2; $i++) {
+			$page_links[] = '<a href="'.site_url('/forum/search/'.$link_params.'p:'.$i).'">'.($i+1).'</a>';
+		}
+		
+		$page_links = implode(' ', $page_links);
+		//translators: The is the placeholder for the links to the pages in the thread.
+		printf(__('Jump to page: %s'), $page_links);
+		
+		echo('</nav></div>');
 	}
 	
 	/**

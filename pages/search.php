@@ -32,7 +32,7 @@ if (is_array($param_segments) && !empty($param_segments)) {
 	
 	foreach ($param_segments as $segment) {
 		if (!empty($segment)) {
-			if (preg_match('/^(l|u|df|dt|c|f|r):(.+)$/', $segment, $regs)) {
+			if (preg_match('/^(l|u|df|dt|c|f|r|p):(.+)$/', $segment, $regs)) {
 				$key = $regs[1];
 				$value = $regs[2];
 				switch ($key) {
@@ -164,7 +164,6 @@ if (!$params_are_valid) {
 	/*
 	 * Run the query and display the results.
 	 */
-	
 	QhebunelPost::show_search_results($search);
 }
 ?>
