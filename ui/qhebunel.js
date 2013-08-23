@@ -42,7 +42,7 @@ function qheb_inputSetError(field) {
  * Adds custom code handling to the SCEditor plugin.
  */
 function initSCEPlugin() {
-	jQuery.sceditorBBCodePlugin.bbcode.set(
+	jQuery.sceditor.plugins.bbcode.bbcode.set(
 		"spoiler",
 		{
 			styles: {
@@ -82,7 +82,7 @@ function initSCEPlugin() {
 			tooltip: "Spoiler"
 		}
 	);
-	jQuery.sceditorBBCodePlugin.bbcode.set(
+	jQuery.sceditor.plugins.bbcode.bbcode.set(
 		"quote",
 		{
 			styles: {
@@ -108,7 +108,7 @@ function initSCEPlugin() {
 				element = jQuery(element);
 				cite = element.children('cite');
 				post = cite.attr('post');
-				user = cite.text().match(/^(.*):\s*$/);
+				user = cite.text().match(/^\s*(.*):\s*$/);
 				if (typeof user !== "undefined" && user != null && user.length > 0){
 					user = user[1];
 				} else {
@@ -127,6 +127,7 @@ function initSCEPlugin() {
 					post = attrs.post;
 				}
 				content = '<cite post="' + post + '">' + name + '</cite>' + content;
+				console.log('<blockquote>' + content + '</blockquote>');
 				return '<blockquote>' + content + '</blockquote>';
 			}
 		}
@@ -151,10 +152,17 @@ function initSCEInstance(selector, options) {
 	}
 	var w = field.width();
 	
-	return field.sceditorBBCodePlugin(
+	return field.sceditor(
 		jQuery.extend(
-			{toolbar:toolbar,emoticonsRoot:qhebunelConfig.SCEditor.emoticonsRoot,emoticons:qhebunelConfig.SCEditor.emoticons,
-				resizeMinWidth:w, resizeMaxWidth:w, resizeMinHeight:150},
+			{
+				plugins: "bbcode",
+				toolbar: toolbar,
+				emoticonsRoot: qhebunelConfig.SCEditor.emoticonsRoot,
+				emoticons: qhebunelConfig.SCEditor.emoticons,
+				resizeMinWidth:w,
+				resizeMaxWidth:w,
+				resizeMinHeight:150
+			},
 			options || {}
 		)
 	);

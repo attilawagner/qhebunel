@@ -28,12 +28,8 @@ class Qhebunel {
 			wp_enqueue_style('sceditor');
 			wp_register_style('sceditortheme', plugins_url('qhebunel/ui/sceditor/minified/themes/default.min.css'));
 			wp_enqueue_style('sceditortheme');
-			wp_register_script('sceditor', plugins_url('qhebunel/ui/sceditor/minified/jquery.sceditor.min.js'), array('jquery'));
+			wp_register_script('sceditor', plugins_url('qhebunel/ui/sceditor/minified/jquery.sceditor.bbcode.min.js'), array('jquery'));
 			wp_enqueue_script('sceditor');
-			/*wp_register_script('sceditor', plugins_url('qhebunel/ui/sceditor/jquery.sceditor.js'), array('jquery'));
-			wp_enqueue_script('sceditor');
-			wp_register_script('sceditorbb', plugins_url('qhebunel/ui/sceditor/jquery.sceditor.bbcode.js'), array('sceditor'));
-			wp_enqueue_script('sceditorbb');*/
 			
 			//Own files
 			wp_register_style('qhebunel', plugins_url('qhebunel/ui/qhebunel.css'));
