@@ -13,6 +13,7 @@ function qheb_validateNewThreadForm() {
 	title = form.find('input[name="topic_title"]');
 	title.val(jQuery.trim(title.val()));
 	message = form.find('textarea[name="topic_message"]');
+	message.sceditor('instance').updateOriginal();
 	message.val(jQuery.trim(message.val()));
 	if (title.val() == "") {
 		qheb_inputSetError(title);
