@@ -33,11 +33,11 @@ if (empty($post)) {
 
 /*
  * Check permissions
- *  - No post can be edited in a closed thread.
+ *  - No post can be edited in a closed thread (except for moderators).
  *  - Everyone can edit only their own posts.
  *  - Moderators can edit other users' posts.
  */
-if ($post['closedate'] != null) {
+if ($post['closedate'] != null && !QhebunelUser::is_moderator()) {
 	Qhebunel::redirect_to_error_page();
 }
 if ($post['uid'] != $current_user->ID && !QhebunelUser::is_moderator()) {

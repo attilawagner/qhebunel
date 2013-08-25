@@ -32,11 +32,11 @@ if (empty($post)) {
 
 /*
  * Check permissions
- *  - No post can be edited in a closed thread.
+ *  - No post can be edited in a closed thread (except for moderators).
  *  - Everyone can edit only their own posts.
  *  - Moderators can edit other users' posts.
  */
-if ($post['closedate'] != null) {
+if ($post['closedate'] != null && !QhebunelUser::is_moderator()) {
 	echo('<div class="qheb-error-message">'.__('You cannot edit a post in a closed thread.', 'qhebunel').'</div>');
 	return; //Stop processing this file, render footer
 }
