@@ -19,6 +19,7 @@ A forum plugin that has the following capabilities:
 * Threads can be pinned and closed by moderators
 * Users can have uploaded avatars that gets used across the whole site
 * Badges can be given to users for achivements and as rank/informative symbols
+* Private messaging system
 
 == Installation ==
 
