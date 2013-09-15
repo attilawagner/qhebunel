@@ -1,0 +1,1044 @@
+# Copyright (C) 2013 Qhebunel
+# This file is distributed under the same license as the Qhebunel package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Qhebunel 1.0\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/qhebunel\n"
+"POT-Creation-Date: 2013-09-15 11:40:24+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2013-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: admin/optbadges.php:133
+msgid "Not forced"
+msgstr ""
+
+#: admin/optbadges.php:165 bootstrap.php:73 forumwidget.php:46 qhebunel.php:96
+msgid "Badges"
+msgstr ""
+
+#: admin/optbadges.php:165
+msgid "Add new group"
+msgstr ""
+
+#: admin/optbadges.php:171 admin/optbadges.php:181 admin/optbadges.php:225
+#: admin/optgroups.php:94 admin/optgroups.php:101 admin/optgroups.php:142
+#: admin/optgroups.php:175
+msgid "Group name"
+msgstr ""
+
+#: admin/optbadges.php:172 admin/optbadges.php:182
+msgid "Badges (Limit)"
+msgstr ""
+
+#: admin/optbadges.php:173 admin/optbadges.php:183 admin/optbadges.php:233
+msgid "Hidden"
+msgstr ""
+
+#: admin/optbadges.php:174 admin/optbadges.php:184 admin/optbadges.php:237
+msgid "Award only"
+msgstr ""
+
+#: admin/optbadges.php:175 admin/optbadges.php:185 admin/optbadges.php:241
+msgid "Display priority"
+msgstr ""
+
+#: admin/optbadges.php:176 admin/optbadges.php:186 admin/optbadges.php:275
+#: admin/optbadges.php:286 admin/optcats.php:267 admin/optcats.php:275
+#: admin/optgroups.php:96 admin/optgroups.php:103
+msgid "Actions"
+msgstr ""
+
+#: admin/optbadges.php:192 admin/optcats.php:452 admin/optgroups.php:109
+msgid "There are no groups in the database."
+msgstr ""
+
+#: admin/optbadges.php:197 admin/optbadges.php:198
+msgid "Yes"
+msgstr ""
+
+#: admin/optbadges.php:197 admin/optbadges.php:198
+msgid "No"
+msgstr ""
+
+#: admin/optbadges.php:200 admin/optbadges.php:301 admin/optcats.php:322
+#: admin/optgroups.php:114 lib/qhebunelpost.php:477
+msgid "Edit"
+msgstr ""
+
+#: admin/optbadges.php:200 admin/optbadges.php:208 admin/optbadges.php:301
+#: admin/optbadges.php:309 admin/optcats.php:322 admin/optcats.php:341
+#: admin/optgroups.php:114 admin/optgroups.php:126 lib/qhebunelpost.php:485
+msgid "Delete"
+msgstr ""
+
+#: admin/optbadges.php:215 admin/optgroups.php:138
+msgid "Edit group"
+msgstr ""
+
+#: admin/optbadges.php:215 admin/optcats.php:385 admin/optgroups.php:166
+msgid "Create new"
+msgstr ""
+
+#: admin/optbadges.php:221 admin/optgroups.php:171
+msgid "Create new group"
+msgstr ""
+
+#: admin/optbadges.php:228
+msgid "How many badges can be given/claimed from this group?"
+msgstr ""
+
+#: admin/optbadges.php:229
+msgid "Claim limit"
+msgstr ""
+
+#: admin/optbadges.php:232
+msgid ""
+"Check this to make the entire group hidden from users. Awarded badges will "
+"still be visible."
+msgstr ""
+
+#: admin/optbadges.php:236
+msgid "If checked, only moderators can give these badges to users."
+msgstr ""
+
+#: admin/optbadges.php:240
+msgid ""
+"If you set a display priority, badges in this group will be forced to be "
+"displayed below user avatars."
+msgstr ""
+
+#: admin/optbadges.php:248 admin/optbadges.php:347 admin/optcats.php:372
+#: admin/optcats.php:469 admin/optgroups.php:153 admin/optusers.php:210
+#: pages/postedit.php:78 pages/profileedit.php:54 pages/profileedit.php:98
+msgid "Save"
+msgstr ""
+
+#: admin/optbadges.php:248 admin/optbadges.php:347 admin/optcats.php:413
+#: admin/optgroups.php:186
+msgid "Create"
+msgstr ""
+
+#: admin/optbadges.php:269 admin/optbadges.php:280
+msgid "Normal image"
+msgstr ""
+
+#: admin/optbadges.php:270 admin/optbadges.php:281
+msgid "Small image"
+msgstr ""
+
+#: admin/optbadges.php:271 admin/optbadges.php:282 admin/optbadges.php:332
+msgid "Name"
+msgstr ""
+
+#: admin/optbadges.php:272 admin/optbadges.php:283 admin/optbadges.php:336
+#: admin/optcats.php:265 admin/optcats.php:273 admin/optcats.php:361
+#: admin/optcats.php:398
+msgid "Description"
+msgstr ""
+
+#: admin/optbadges.php:273 admin/optbadges.php:284 admin/optbadges.php:340
+msgid "Point value"
+msgstr ""
+
+#: admin/optbadges.php:274 admin/optbadges.php:285
+msgid "Number of users who have the badge."
+msgstr ""
+
+#: admin/optbadges.php:274 admin/optbadges.php:285 admin/optusers.php:171
+#: qhebunel.php:95
+msgid "Users"
+msgstr ""
+
+#: admin/optbadges.php:292
+msgid "There are no badges in this group."
+msgstr ""
+
+#: admin/optbadges.php:296
+msgid "Missing image"
+msgstr ""
+
+#: admin/optbadges.php:320
+msgid "Edit badge"
+msgstr ""
+
+#: admin/optbadges.php:320
+msgid "Add new badge"
+msgstr ""
+
+#: admin/optbadges.php:323
+msgid "The image shown on the user's profile page. Allowed formats: %s."
+msgstr ""
+
+#: admin/optbadges.php:324
+msgid "Normal icon"
+msgstr ""
+
+#: admin/optbadges.php:327
+msgid ""
+"The image shown under the avatar next to forum posts. If not provided, it "
+"will be generated from the normal image. Allowed formats: %s."
+msgstr ""
+
+#: admin/optbadges.php:328
+msgid "Small icon"
+msgstr ""
+
+#: admin/optbadges.php:331
+msgid "Name of the badge."
+msgstr ""
+
+#: admin/optbadges.php:335
+msgid "Description about the achivement the badge is awarded for."
+msgstr ""
+
+#: admin/optbadges.php:339
+msgid "Value of the badge in points."
+msgstr ""
+
+#: admin/optcats.php:242
+msgid "Top level"
+msgstr ""
+
+#: admin/optcats.php:253 forumwidget.php:42 qhebunel.php:93
+msgid "Categories"
+msgstr ""
+
+#: admin/optcats.php:264 admin/optcats.php:272 admin/optcats.php:357
+#: admin/optcats.php:394
+msgid "Category name"
+msgstr ""
+
+#: admin/optcats.php:266 admin/optcats.php:274 admin/optcats.php:406
+msgid "Position"
+msgstr ""
+
+#: admin/optcats.php:281
+msgid "The category list is empty"
+msgstr ""
+
+#: admin/optcats.php:322
+msgid "Set permissions"
+msgstr ""
+
+#: admin/optcats.php:353
+msgid "Edit category"
+msgstr ""
+
+#: admin/optcats.php:365 admin/optcats.php:402
+msgid "Parent"
+msgstr ""
+
+#: admin/optcats.php:390
+msgid "Create new category"
+msgstr ""
+
+#: admin/optcats.php:407
+msgid "Top"
+msgstr ""
+
+#: admin/optcats.php:407
+msgid "Bottom"
+msgstr ""
+
+#: admin/optcats.php:426
+msgid "Set category permissions"
+msgstr ""
+
+#: admin/optcats.php:433 admin/optcats.php:442
+msgid "Group"
+msgstr ""
+
+#: admin/optcats.php:434 admin/optcats.php:443
+msgid "None"
+msgstr ""
+
+#: admin/optcats.php:435 admin/optcats.php:444
+msgid "Read"
+msgstr ""
+
+#: admin/optcats.php:436 admin/optcats.php:445
+msgid "Write"
+msgstr ""
+
+#: admin/optcats.php:437 admin/optcats.php:446
+msgid "Start"
+msgstr ""
+
+#: admin/optgroups.php:88 admin/optusers.php:179 admin/optusers.php:185
+#: qhebunel.php:94
+msgid "Groups"
+msgstr ""
+
+#: admin/optgroups.php:95 admin/optgroups.php:102
+msgid "Members"
+msgstr ""
+
+#: admin/optgroups.php:117
+msgid "You cannot edit or delete this group."
+msgstr ""
+
+#: admin/optgroups.php:146 admin/optgroups.php:179
+msgid "Prominent"
+msgstr ""
+
+#: admin/optindex.php:15 qhebunel.php:92
+msgid "General settings"
+msgstr ""
+
+#: admin/optindex.php:29
+msgid "Save changes"
+msgstr ""
+
+#: admin/optusers.php:163
+msgid "All"
+msgstr ""
+
+#: admin/optusers.php:178 admin/optusers.php:184
+msgid "Display name (Username)"
+msgstr ""
+
+#: admin/optusers.php:201
+msgid "Bulk Actions"
+msgstr ""
+
+#: admin/optusers.php:202
+msgid "Add to group"
+msgstr ""
+
+#: admin/optusers.php:203
+msgid "Remove from group"
+msgstr ""
+
+#: admin/optusers.php:204
+msgid "Promote to moderator"
+msgstr ""
+
+#: admin/optusers.php:205
+msgid "Revoke mod rights"
+msgstr ""
+
+#: admin/optusers.php:206
+msgid "Ban"
+msgstr ""
+
+#: admin/optusers.php:207
+msgid "Unban"
+msgstr ""
+
+#: bootstrap.php:66
+msgid "Error"
+msgstr ""
+
+#: bootstrap.php:67
+msgid "Profile"
+msgstr ""
+
+#: bootstrap.php:68
+msgid "Profile settings"
+msgstr ""
+
+#: bootstrap.php:69
+msgid "Edit post"
+msgstr ""
+
+#: bootstrap.php:70 pages/thread.php:44 pages/threaddelete.php:50
+msgid "Delete thread"
+msgstr ""
+
+#: bootstrap.php:71 pages/thread.php:47 pages/threadmove.php:54
+msgid "Move thread"
+msgstr ""
+
+#: bootstrap.php:72 forumwidget.php:51 pmwidget.php:99
+msgid "Private messages"
+msgstr ""
+
+#: bootstrap.php:74 forumwidget.php:45 pages/search.php:112
+msgid "Search"
+msgstr ""
+
+#: bootstrap.php:75 forumwidget.php:48 pages/search.php:147
+msgid "Reported posts"
+msgstr ""
+
+#: bootstrap.php:76 forumwidget.php:43
+msgid "Recent threads"
+msgstr ""
+
+#: bootstrap.php:92 pages/thread.php:165
+msgid "Create new thread"
+msgstr ""
+
+#: bootstrap.php:247 forumwidget.php:86
+msgid "Forum"
+msgstr ""
+
+#: forumwidget.php:17
+msgid "Displays links to different forum functions."
+msgstr ""
+
+#: forumwidget.php:50
+msgid "View profile"
+msgstr ""
+
+#: forumwidget.php:90 pmwidget.php:108
+msgid "Title:"
+msgstr ""
+
+#: handlers/download.php:57
+msgid "Missing attachment"
+msgstr ""
+
+#: handlers/download.php:58 handlers/download.php:67
+msgid "The requested file is missing from the server."
+msgstr ""
+
+#: handlers/download.php:66
+msgid "Corrupted attachment"
+msgstr ""
+
+#: lib/qhebunelbadges.php:206
+msgid "You do not have this badge."
+msgstr ""
+
+#: lib/qhebunelbadges.php:209
+msgid "This badge was awarded to you on %s."
+msgstr ""
+
+#: lib/qhebunelbadges.php:211
+msgid "You've claimed this badge on %s."
+msgstr ""
+
+#: lib/qhebunelbadges.php:216
+msgid "User does not have this badge."
+msgstr ""
+
+#: lib/qhebunelbadges.php:219
+msgid "This badge was awarded to the user on %s."
+msgstr ""
+
+#: lib/qhebunelbadges.php:221
+msgid "The user claimed this badge on %s."
+msgstr ""
+
+#: lib/qhebunelbb.php:567
+msgid "%s wrote:"
+msgstr ""
+
+#: lib/qhebunelbb.php:690
+msgid "Show spoiler"
+msgstr ""
+
+#. translators: min=minute
+#: lib/qhebuneldate.php:68
+msgid "%s min ago"
+msgid_plural "%s mins ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/qhebuneldate.php:74
+msgid "%s hour ago"
+msgid_plural "%s hours ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/qhebuneldate.php:80
+msgid "%s day ago"
+msgid_plural "%s days ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/qhebunelpost.php:274
+msgid "Thread topic"
+msgstr ""
+
+#: lib/qhebunelpost.php:274 pages/search.php:124 pages/search.php:154
+#: pages/threaddelete.php:64 pages/threadmove.php:68
+msgid "Posts"
+msgstr ""
+
+#: lib/qhebunelpost.php:274
+msgid "Last post"
+msgstr ""
+
+#: lib/qhebunelpost.php:274 pages/threaddelete.php:59 pages/threadmove.php:63
+msgid "Starter"
+msgstr ""
+
+#: lib/qhebunelpost.php:302
+msgid "There are no threads in this category."
+msgstr ""
+
+#: lib/qhebunelpost.php:312
+msgid "(%d new)"
+msgid_plural "(%d new)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/qhebunelpost.php:352
+msgid "A guest"
+msgstr ""
+
+#: lib/qhebunelpost.php:380
+msgid "Permalink"
+msgstr ""
+
+#: lib/qhebunelpost.php:400
+msgid "Attachments:"
+msgstr ""
+
+#: lib/qhebunelpost.php:461
+msgid "Last edited by: %1$s on %2$s."
+msgstr ""
+
+#: lib/qhebunelpost.php:463
+msgid "Reason: %s"
+msgstr ""
+
+#: lib/qhebunelpost.php:472 pages/thread.php:25
+msgid "Reply"
+msgstr ""
+
+#: lib/qhebunelpost.php:473
+msgid "Quote"
+msgstr ""
+
+#: lib/qhebunelpost.php:480
+msgid "Confirm deletion"
+msgstr ""
+
+#: lib/qhebunelpost.php:482
+msgid "Cancel deletion"
+msgstr ""
+
+#: lib/qhebunelpost.php:489
+msgid "Move"
+msgstr ""
+
+#: lib/qhebunelpost.php:492
+msgid "Report"
+msgstr ""
+
+#: lib/qhebunelpost.php:496
+msgid "Clear reports"
+msgstr ""
+
+#: lib/qhebunelpost.php:687
+msgid "Search results"
+msgstr ""
+
+#. translators: The is the placeholder for the links to the pages in the
+#. thread.
+#: lib/qhebunelpost.php:710 pages/thread.php:67
+msgid "Jump to page: %s"
+msgstr ""
+
+#. translators: First parameter is the username, second is the date of the
+#. report submission
+#: lib/qhebunelpost.php:742
+msgid "Reported by %1$s on %2$s:"
+msgstr ""
+
+#: lib/qhebuneluser.php:209
+msgid "You are banned from this site."
+msgstr ""
+
+#: pages/badges.php:13
+msgid "Only logged in users can view the badges."
+msgstr ""
+
+#: pages/badges.php:94
+msgid "The badge you requested cannot be displayed."
+msgstr ""
+
+#: pages/badges.php:106
+msgctxt "badge action"
+msgid "Claim"
+msgstr ""
+
+#: pages/badges.php:109
+msgctxt "badge action"
+msgid "Remove"
+msgstr ""
+
+#: pages/badges.php:115
+msgid "Award this badge"
+msgstr ""
+
+#: pages/badges.php:120
+msgctxt "badge action"
+msgid "Award"
+msgstr ""
+
+#: pages/badges.php:121 pages/profileedit.php:70
+msgid "Nickname"
+msgstr ""
+
+#: pages/badges.php:141
+msgid "Currently nobody has this badge."
+msgstr ""
+
+#: pages/badges.php:143
+msgid "Users who have this badge"
+msgstr ""
+
+#: pages/badges.php:154
+msgctxt "badge action"
+msgid "Revoke"
+msgstr ""
+
+#: pages/catlist.php:48
+msgid "1 Thread"
+msgid_plural "%d Threads"
+msgstr[0] ""
+msgstr[1] ""
+
+#: pages/catlist.php:50
+msgid "1 Post"
+msgid_plural "%d Posts"
+msgstr[0] ""
+msgstr[1] ""
+
+#: pages/catlist.php:57
+msgid "Last post by <a href=\"%2$s\">%1$s</a>"
+msgstr ""
+
+#: pages/catlist.php:60
+msgid "Last post by a guest"
+msgstr ""
+
+#: pages/error.php:10
+msgid ""
+"There was an error processing your request. Please go back to the previous "
+"page and try again."
+msgstr ""
+
+#: pages/pm.php:14
+msgid "Only logged in users can exchange private messages."
+msgstr ""
+
+#: pages/pm.php:165
+msgid "Conversation with %s"
+msgstr ""
+
+#: pages/pm.php:171
+msgid "Load previous %1$d messages (%2$d remaining)"
+msgstr ""
+
+#: pages/pm.php:184
+msgid "Load next %1$d messages (%2$d remaining)"
+msgstr ""
+
+#: pages/pm.php:193
+msgid "Send message"
+msgstr ""
+
+#: pages/postedit.php:29
+msgid "The post does not exist in the database."
+msgstr ""
+
+#: pages/postedit.php:40
+msgid "You cannot edit a post in a closed thread."
+msgstr ""
+
+#: pages/postedit.php:44
+msgid "You can only edit your own posts."
+msgstr ""
+
+#: pages/postedit.php:64
+msgid "Deselect to delete the file."
+msgstr ""
+
+#: pages/postedit.php:83 pages/threadnew.php:47
+msgid "Message"
+msgstr ""
+
+#: pages/postedit.php:87
+msgid "Reason"
+msgstr ""
+
+#: pages/postedit.php:92 pages/thread.php:149 pages/threadnew.php:52
+msgid "Attachments"
+msgstr ""
+
+#: pages/profile.php:10
+msgid "You must log in to gain access to user profiles."
+msgstr ""
+
+#: pages/profile.php:30
+msgid "User cannot be found."
+msgstr ""
+
+#. translators: First name, last name
+#: pages/profile.php:56
+msgctxt "full name"
+msgid "%1$s %2$s"
+msgstr ""
+
+#: pages/profile.php:73
+msgid "Edit profile"
+msgstr ""
+
+#: pages/profile.php:88
+msgid "Full name:"
+msgstr ""
+
+#: pages/profile.php:92
+msgid "Member since:"
+msgstr ""
+
+#: pages/profile.php:96
+msgid "Posts:"
+msgstr ""
+
+#: pages/profile.php:100
+msgid "Points:"
+msgstr ""
+
+#: pages/profileedit.php:17
+msgid "You must log in to edit your profile."
+msgstr ""
+
+#: pages/profileedit.php:21
+msgid "You can only edit your own profile."
+msgstr ""
+
+#: pages/profileedit.php:51
+msgid "Basic information"
+msgstr ""
+
+#: pages/profileedit.php:57
+msgid "This is the name you use to log in. You cannot change it."
+msgstr ""
+
+#: pages/profileedit.php:58
+msgid "Login name"
+msgstr ""
+
+#: pages/profileedit.php:62
+msgid "First name"
+msgstr ""
+
+#: pages/profileedit.php:66
+msgid "Last name"
+msgstr ""
+
+#: pages/profileedit.php:69
+msgid "This is the name visible next to your comments and forum posts."
+msgstr ""
+
+#: pages/profileedit.php:73
+msgid ""
+"Your email address is used to send you notifications you request and it's "
+"used in case you forgot your password."
+msgstr ""
+
+#: pages/profileedit.php:74
+msgid "Email"
+msgstr ""
+
+#: pages/profileedit.php:78 pages/profileedit.php:83 pages/profileedit.php:87
+msgid ""
+"Leave the password fields blank if you don't want to change your current "
+"password."
+msgstr ""
+
+#: pages/profileedit.php:79
+msgid "Old password"
+msgstr ""
+
+#: pages/profileedit.php:84 pages/profileedit.php:88
+msgid "New password"
+msgstr ""
+
+#: pages/profileedit.php:95
+msgid "Avatar and signature"
+msgstr ""
+
+#: pages/profileedit.php:102
+msgid "Current avatar"
+msgstr ""
+
+#: pages/profileedit.php:107
+msgid "Delete avatar"
+msgstr ""
+
+#: pages/profileedit.php:109
+msgid "You don't have an avatar."
+msgstr ""
+
+#: pages/profileedit.php:115
+msgid "Upload new avatar"
+msgstr ""
+
+#: pages/profileedit.php:121
+msgid "Current signature"
+msgstr ""
+
+#: pages/profileedit.php:127
+msgid "You don't have a signature."
+msgstr ""
+
+#: pages/profileedit.php:133
+msgid "Edit signature"
+msgstr ""
+
+#: pages/recentthreads.php:10 pages/reportedposts.php:10
+msgid "You must log in to use this function."
+msgstr ""
+
+#: pages/recentthreads.php:25
+msgid "There're no unread posts in the forum."
+msgstr ""
+
+#: pages/reportedposts.php:25
+msgid "There're no reported posts in the forum."
+msgstr ""
+
+#: pages/search.php:10
+msgid "You must log in to use the search function."
+msgstr ""
+
+#: pages/search.php:30
+msgid "There's no post matching your criteria."
+msgstr ""
+
+#: pages/search.php:117
+msgid "Search term:"
+msgstr ""
+
+#: pages/search.php:121
+msgid "Search in:"
+msgstr ""
+
+#: pages/search.php:125
+msgid "Thread titles"
+msgstr ""
+
+#: pages/search.php:126
+msgid "Both"
+msgstr ""
+
+#: pages/search.php:131
+msgid "Username:"
+msgstr ""
+
+#: pages/search.php:135
+msgid "Date:"
+msgstr ""
+
+#: pages/search.php:139
+msgid "Categories:"
+msgstr ""
+
+#: pages/search.php:143
+msgid "List only:"
+msgstr ""
+
+#: pages/search.php:145
+msgid "New posts"
+msgstr ""
+
+#: pages/search.php:146
+msgid "Edited posts"
+msgstr ""
+
+#: pages/search.php:151
+msgid "Show:"
+msgstr ""
+
+#: pages/search.php:155
+msgid "Threads"
+msgstr ""
+
+#: pages/thread.php:31
+msgid "Close thread"
+msgstr ""
+
+#: pages/thread.php:33
+msgid "Reopen thread"
+msgstr ""
+
+#: pages/thread.php:38
+msgid "Unpin thread"
+msgstr ""
+
+#: pages/thread.php:40
+msgid "Pin thread"
+msgstr ""
+
+#. translators: first parameter is the category name, second is the thread name
+#: pages/thread.php:112
+msgctxt "thread-title"
+msgid "%1$s: %2$s"
+msgstr ""
+
+#: pages/thread.php:151
+msgid "Post reply"
+msgstr ""
+
+#: pages/thread.php:164
+msgid "Select category:"
+msgstr ""
+
+#: pages/thread.php:164 pages/thread.php:165
+msgid "Loading..."
+msgstr ""
+
+#: pages/thread.php:165
+msgid "Select thread:"
+msgstr ""
+
+#: pages/thread.php:166
+msgid "Title for the new thread:"
+msgstr ""
+
+#: pages/thread.php:167
+msgid "Move post"
+msgstr ""
+
+#: pages/thread.php:179
+msgid "Please describe why do you think this post should be removed:"
+msgstr ""
+
+#: pages/thread.php:180
+msgid "Submit report"
+msgstr ""
+
+#: pages/thread.php:187
+msgid "You do not have sufficient permissions to view this thread."
+msgstr ""
+
+#: pages/threaddelete.php:18
+msgid "You must be a moderator to delete a thread."
+msgstr ""
+
+#: pages/threaddelete.php:39
+msgid "The thread does not exist in the database."
+msgstr ""
+
+#: pages/threaddelete.php:55 pages/threadmove.php:59
+msgid "Title"
+msgstr ""
+
+#. translators: first parameter is username, second is the date
+#: pages/threaddelete.php:61 pages/threaddelete.php:74 pages/threadmove.php:65
+#: pages/threadmove.php:78
+msgid "%1$s on %2$s"
+msgstr ""
+
+#: pages/threaddelete.php:68 pages/threadmove.php:72
+msgid "Closer"
+msgstr ""
+
+#: pages/threaddelete.php:71 pages/threadmove.php:75
+msgid "This is an open thread."
+msgstr ""
+
+#: pages/threaddelete.php:79 pages/threadmove.php:83
+msgid "Pinned"
+msgstr ""
+
+#: pages/threaddelete.php:82 pages/threadmove.php:86
+msgid "This is a pinned thread."
+msgstr ""
+
+#: pages/threaddelete.php:84 pages/threadmove.php:88
+msgid "This thread is not pinned."
+msgstr ""
+
+#: pages/threadlist.php:24 pages/threadnew.php:34
+msgid "Start thread"
+msgstr ""
+
+#: pages/threadlist.php:33
+msgid "You do not have sufficient permissions to view this category."
+msgstr ""
+
+#: pages/threadmove.php:18
+msgid "You must be a moderator to move a thread."
+msgstr ""
+
+#: pages/threadmove.php:39
+msgid "The thread does not exists in the database."
+msgstr ""
+
+#: pages/threadmove.php:50
+msgid "Target category"
+msgstr ""
+
+#: pages/threadnew.php:24
+msgid "You do not have permissions to start a new thread in this category."
+msgstr ""
+
+#: pages/threadnew.php:39
+msgid "Category"
+msgstr ""
+
+#: pages/threadnew.php:43
+msgid "Topic title"
+msgstr ""
+
+#: pmwidget.php:17
+msgid "Displays a notification if the user has unread private messages."
+msgstr ""
+
+#: pmwidget.php:61
+msgid "No new messages"
+msgstr ""
+
+#: pmwidget.php:63
+msgid "One unread message"
+msgid_plural "%s unread messages"
+msgstr[0] ""
+msgstr[1] ""
+
+#: pmwidget.php:112
+msgid "Hide when there're no unread messages:"
+msgstr ""
+
+#: qhebunel.php:92
+msgid "General settings &lsaquo; Qhebunel"
+msgstr ""
+
+#: qhebunel.php:93
+msgid "Categories &lsaquo; Qhebunel"
+msgstr ""
+
+#: qhebunel.php:94
+msgid "Groups &lsaquo; Qhebunel"
+msgstr ""
+
+#: qhebunel.php:95
+msgid "Users &lsaquo; Qhebunel"
+msgstr ""
+
+#: qhebunel.php:96
+msgid "Badges &lsaquo; Qhebunel"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Qhebunel"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://github.com/wagnera/qhebunel"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"A forum plugin for WordPress. Provides support for access control, "
+"uploadable avatars, achivements, and more."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Attila Wagner"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://github.com/wagnera"
+msgstr ""

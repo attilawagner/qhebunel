@@ -36,9 +36,10 @@ class Qhebunel {
 		$forum_root = site_url('forum', 'relative');
 		$forum_root_len = strlen($forum_root);
 		if (strncmp($forum_root, $_SERVER['REQUEST_URI'], $forum_root_len) === 0) {
-			//Localization
-			//load_plugin_textdomain('qhebunel', 'locales');
 			self::remove_wp_magic_quotes();
+			
+			//Localization
+			load_plugin_textdomain('qhebunel', false, '/qhebunel/languages');
 			
 			//SCEditor
 			wp_register_style('sceditor', plugins_url('qhebunel/ui/sceditor/minified/jquery.sceditor.default.min.css'));
@@ -62,10 +63,13 @@ class Qhebunel {
 			//Load CSS
 			wp_register_style('qhebunel-admin', plugins_url('qhebunel/admin/optstyle.css'));
 			wp_enqueue_style('qhebunel-admin');
+			
 			//Load JS
 			wp_register_script('qhebunel-admin', plugins_url('qhebunel/admin/optscript.js'), array('jquery'));
 			wp_enqueue_script('qhebunel-admin');
 			
+			//Localization
+			load_plugin_textdomain('qhebunel', false, '/qhebunel/languages');
 			if (strpos($_SERVER['REQUEST_URI'], 'wp-admin/admin.php?page=qhebunel') !== false) {
 				self::remove_wp_magic_quotes();
 			}

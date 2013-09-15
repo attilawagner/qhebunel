@@ -1,0 +1,1064 @@
+# Copyright (C) 2013 Qhebunel
+# This file is distributed under the same license as the Qhebunel package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Qhebunel 1.0\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/qhebunel\n"
+"POT-Creation-Date: 2013-09-15 11:40:24+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2013-09-15 19:13+0100\n"
+"Last-Translator: Attila Wagner <attila.wagner.89@gmail.com>\n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.5.7\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: Hungarian\n"
+
+#: admin/optbadges.php:133
+msgid "Not forced"
+msgstr "Nem kötött"
+
+#: admin/optbadges.php:165 bootstrap.php:73 forumwidget.php:46 qhebunel.php:96
+msgid "Badges"
+msgstr "Jelvények"
+
+#: admin/optbadges.php:165
+msgid "Add new group"
+msgstr "Új csoport felvétele"
+
+#: admin/optbadges.php:171 admin/optbadges.php:181 admin/optbadges.php:225
+#: admin/optgroups.php:94 admin/optgroups.php:101 admin/optgroups.php:142
+#: admin/optgroups.php:175
+msgid "Group name"
+msgstr "Csoport neve"
+
+#: admin/optbadges.php:172 admin/optbadges.php:182
+msgid "Badges (Limit)"
+msgstr "Jelvények (korlát)"
+
+#: admin/optbadges.php:173 admin/optbadges.php:183 admin/optbadges.php:233
+msgid "Hidden"
+msgstr "Rejtett"
+
+#: admin/optbadges.php:174 admin/optbadges.php:184 admin/optbadges.php:237
+msgid "Award only"
+msgstr "Csak kitüntetés"
+
+#: admin/optbadges.php:175 admin/optbadges.php:185 admin/optbadges.php:241
+msgid "Display priority"
+msgstr "Megjelenítési sorrend"
+
+#: admin/optbadges.php:176 admin/optbadges.php:186 admin/optbadges.php:275
+#: admin/optbadges.php:286 admin/optcats.php:267 admin/optcats.php:275
+#: admin/optgroups.php:96 admin/optgroups.php:103
+msgid "Actions"
+msgstr "Műveletek"
+
+#: admin/optbadges.php:192 admin/optcats.php:452 admin/optgroups.php:109
+msgid "There are no groups in the database."
+msgstr "Nincsenek csoportok az adatbázisban."
+
+#: admin/optbadges.php:197 admin/optbadges.php:198
+msgid "Yes"
+msgstr "Igen"
+
+#: admin/optbadges.php:197 admin/optbadges.php:198
+msgid "No"
+msgstr "Nem"
+
+#: admin/optbadges.php:200 admin/optbadges.php:301 admin/optcats.php:322
+#: admin/optgroups.php:114 lib/qhebunelpost.php:477
+msgid "Edit"
+msgstr "Szerkesztés"
+
+#: admin/optbadges.php:200 admin/optbadges.php:208 admin/optbadges.php:301
+#: admin/optbadges.php:309 admin/optcats.php:322 admin/optcats.php:341
+#: admin/optgroups.php:114 admin/optgroups.php:126 lib/qhebunelpost.php:485
+msgid "Delete"
+msgstr "Törlés"
+
+#: admin/optbadges.php:215 admin/optgroups.php:138
+msgid "Edit group"
+msgstr "Csoport szerkesztése"
+
+#: admin/optbadges.php:215 admin/optcats.php:385 admin/optgroups.php:166
+msgid "Create new"
+msgstr "Új létrehozása"
+
+#: admin/optbadges.php:221 admin/optgroups.php:171
+msgid "Create new group"
+msgstr "Új csoport létrehozása"
+
+#: admin/optbadges.php:228
+msgid "How many badges can be given/claimed from this group?"
+msgstr "Hány jelvényt lehet megszerezni/kiosztani ebből a csoportból?"
+
+#: admin/optbadges.php:229
+msgid "Claim limit"
+msgstr "Megszerzési korlát"
+
+#: admin/optbadges.php:232
+msgid ""
+"Check this to make the entire group hidden from users. Awarded badges will "
+"still be visible."
+msgstr ""
+"Jelöld be, hogy az egész csoport rejtett legyen a felhasználók elől. A "
+"kiosztott jelvények ennek ellenére látszani fognak."
+
+#: admin/optbadges.php:236
+msgid "If checked, only moderators can give these badges to users."
+msgstr "Ha bejelölt, csak moderátorok tudják ezeket a jelvényeket kiosztani."
+
+#: admin/optbadges.php:240
+msgid ""
+"If you set a display priority, badges in this group will be forced to be "
+"displayed below user avatars."
+msgstr ""
+"Ha beállítasz egy megjelenítési sorrendet, a csoport jelvényei mindenképp "
+"megjelennek az avatárok alatt."
+
+#: admin/optbadges.php:248 admin/optbadges.php:347 admin/optcats.php:372
+#: admin/optcats.php:469 admin/optgroups.php:153 admin/optusers.php:210
+#: pages/postedit.php:78 pages/profileedit.php:54 pages/profileedit.php:98
+msgid "Save"
+msgstr "Mentés"
+
+#: admin/optbadges.php:248 admin/optbadges.php:347 admin/optcats.php:413
+#: admin/optgroups.php:186
+msgid "Create"
+msgstr "Létrehozás"
+
+#: admin/optbadges.php:269 admin/optbadges.php:280
+msgid "Normal image"
+msgstr "Normál kép"
+
+#: admin/optbadges.php:270 admin/optbadges.php:281
+msgid "Small image"
+msgstr "Kis kép"
+
+#: admin/optbadges.php:271 admin/optbadges.php:282 admin/optbadges.php:332
+msgid "Name"
+msgstr "Név"
+
+#: admin/optbadges.php:272 admin/optbadges.php:283 admin/optbadges.php:336
+#: admin/optcats.php:265 admin/optcats.php:273 admin/optcats.php:361
+#: admin/optcats.php:398
+msgid "Description"
+msgstr "Leírás"
+
+#: admin/optbadges.php:273 admin/optbadges.php:284 admin/optbadges.php:340
+msgid "Point value"
+msgstr "Pontérték"
+
+#: admin/optbadges.php:274 admin/optbadges.php:285
+msgid "Number of users who have the badge."
+msgstr "Felhasználók száma ilyen jelvénnyel"
+
+#: admin/optbadges.php:274 admin/optbadges.php:285 admin/optusers.php:171
+#: qhebunel.php:95
+msgid "Users"
+msgstr "Felhasználók"
+
+#: admin/optbadges.php:292
+msgid "There are no badges in this group."
+msgstr "Nincsenek jelvények ebben a csoportban."
+
+#: admin/optbadges.php:296
+msgid "Missing image"
+msgstr "Hiányzó kép"
+
+#: admin/optbadges.php:320
+msgid "Edit badge"
+msgstr "Jelvény szerkesztése"
+
+#: admin/optbadges.php:320
+msgid "Add new badge"
+msgstr "Új jelvény felvétele"
+
+#: admin/optbadges.php:323
+msgid "The image shown on the user's profile page. Allowed formats: %s."
+msgstr ""
+"A kép, ami a felhasználó profiljában látszik. Engedélyezett fájlformátumok: "
+"%s."
+
+#: admin/optbadges.php:324
+msgid "Normal icon"
+msgstr "Normál ikon"
+
+#: admin/optbadges.php:327
+msgid ""
+"The image shown under the avatar next to forum posts. If not provided, it "
+"will be generated from the normal image. Allowed formats: %s."
+msgstr ""
+"A kép, ami az avatár alatt látszik a felhasználó hozzászólásai mellett. Ha "
+"nincs megadva, a normál méretű képből generálódik. Engedélyezett "
+"fájlformátumok: %s."
+
+#: admin/optbadges.php:328
+msgid "Small icon"
+msgstr "Kis ikon"
+
+#: admin/optbadges.php:331
+msgid "Name of the badge."
+msgstr "Jelvény neve"
+
+#: admin/optbadges.php:335
+msgid "Description about the achivement the badge is awarded for."
+msgstr "Az eredmény leírása, amiért ezt a jelvényt meg lehet kapni."
+
+#: admin/optbadges.php:339
+msgid "Value of the badge in points."
+msgstr "A jelvény értéke pontokban."
+
+#: admin/optcats.php:242
+msgid "Top level"
+msgstr "Legfelső szint"
+
+#: admin/optcats.php:253 forumwidget.php:42 qhebunel.php:93
+msgid "Categories"
+msgstr "Kategóriák"
+
+#: admin/optcats.php:264 admin/optcats.php:272 admin/optcats.php:357
+#: admin/optcats.php:394
+msgid "Category name"
+msgstr "Kategória neve"
+
+#: admin/optcats.php:266 admin/optcats.php:274 admin/optcats.php:406
+msgid "Position"
+msgstr "Pozíció"
+
+#: admin/optcats.php:281
+msgid "The category list is empty"
+msgstr "A kategória lista üres"
+
+#: admin/optcats.php:322
+msgid "Set permissions"
+msgstr "Jogosultságok beállítása"
+
+#: admin/optcats.php:353
+msgid "Edit category"
+msgstr "Kategória szerkesztése"
+
+#: admin/optcats.php:365 admin/optcats.php:402
+msgid "Parent"
+msgstr "Szülő"
+
+#: admin/optcats.php:390
+msgid "Create new category"
+msgstr "Új kategória létrehozása"
+
+#: admin/optcats.php:407
+msgid "Top"
+msgstr "Fent"
+
+#: admin/optcats.php:407
+msgid "Bottom"
+msgstr "Lent"
+
+#: admin/optcats.php:426
+msgid "Set category permissions"
+msgstr "Jogosultságok beállítása"
+
+#: admin/optcats.php:433 admin/optcats.php:442
+msgid "Group"
+msgstr "Csoport"
+
+#: admin/optcats.php:434 admin/optcats.php:443
+msgid "None"
+msgstr "Nincs"
+
+#: admin/optcats.php:435 admin/optcats.php:444
+msgid "Read"
+msgstr "Olvasás"
+
+#: admin/optcats.php:436 admin/optcats.php:445
+msgid "Write"
+msgstr "Írás"
+
+#: admin/optcats.php:437 admin/optcats.php:446
+msgid "Start"
+msgstr "Indítás"
+
+#: admin/optgroups.php:88 admin/optusers.php:179 admin/optusers.php:185
+#: qhebunel.php:94
+msgid "Groups"
+msgstr "Csoportok"
+
+#: admin/optgroups.php:95 admin/optgroups.php:102
+msgid "Members"
+msgstr "Tagok"
+
+#: admin/optgroups.php:117
+msgid "You cannot edit or delete this group."
+msgstr "Nem szerkeszthető vagy törölhető csoport."
+
+#: admin/optgroups.php:146 admin/optgroups.php:179
+msgid "Prominent"
+msgstr "Kiemelt"
+
+#: admin/optindex.php:15 qhebunel.php:92
+msgid "General settings"
+msgstr "Általános beállítások"
+
+#: admin/optindex.php:29
+msgid "Save changes"
+msgstr "Változások mentése"
+
+#: admin/optusers.php:163
+msgid "All"
+msgstr "Összes"
+
+#: admin/optusers.php:178 admin/optusers.php:184
+msgid "Display name (Username)"
+msgstr "Megjelenített név (Felhasználónév)"
+
+#: admin/optusers.php:201
+msgid "Bulk Actions"
+msgstr "Csoportos műveletek"
+
+#: admin/optusers.php:202
+msgid "Add to group"
+msgstr "Csoporthoz adás"
+
+#: admin/optusers.php:203
+msgid "Remove from group"
+msgstr "Kivétel csoportból"
+
+#: admin/optusers.php:204
+msgid "Promote to moderator"
+msgstr "Kinevezés moderátornak"
+
+#: admin/optusers.php:205
+msgid "Revoke mod rights"
+msgstr "Mod jogok visszavonása"
+
+#: admin/optusers.php:206
+msgid "Ban"
+msgstr "Kitiltás"
+
+#: admin/optusers.php:207
+msgid "Unban"
+msgstr "Tiltás visszavonása"
+
+#: bootstrap.php:66
+msgid "Error"
+msgstr "Hiba"
+
+#: bootstrap.php:67
+msgid "Profile"
+msgstr "Profil"
+
+#: bootstrap.php:68
+msgid "Profile settings"
+msgstr "Profil beállítások"
+
+#: bootstrap.php:69
+msgid "Edit post"
+msgstr "Hozzászólás szerkesztése"
+
+#: bootstrap.php:70 pages/thread.php:44 pages/threaddelete.php:50
+msgid "Delete thread"
+msgstr "Téma törlése"
+
+#: bootstrap.php:71 pages/thread.php:47 pages/threadmove.php:54
+msgid "Move thread"
+msgstr "Téma mozgatása"
+
+#: bootstrap.php:72 forumwidget.php:51 pmwidget.php:99
+msgid "Private messages"
+msgstr "Privát üzenetek"
+
+#: bootstrap.php:74 forumwidget.php:45 pages/search.php:112
+msgid "Search"
+msgstr "Keresés"
+
+#: bootstrap.php:75 forumwidget.php:48 pages/search.php:147
+msgid "Reported posts"
+msgstr "Jelentett hozzászólások"
+
+#: bootstrap.php:76 forumwidget.php:43
+msgid "Recent threads"
+msgstr "Friss témák"
+
+#: bootstrap.php:92 pages/thread.php:165
+msgid "Create new thread"
+msgstr "Új téma indítása"
+
+#: bootstrap.php:247 forumwidget.php:86
+msgid "Forum"
+msgstr "Fórum"
+
+#: forumwidget.php:17
+msgid "Displays links to different forum functions."
+msgstr "Linkeket jelenít meg fórum funkciókhoz."
+
+#: forumwidget.php:50
+msgid "View profile"
+msgstr "Profil megtekintése"
+
+#: forumwidget.php:90 pmwidget.php:108
+msgid "Title:"
+msgstr "Cím:"
+
+#: handlers/download.php:57
+msgid "Missing attachment"
+msgstr "Hiányzó csatolmány"
+
+#: handlers/download.php:58 handlers/download.php:67
+msgid "The requested file is missing from the server."
+msgstr "A kért fájl hiányzik a szerverről."
+
+#: handlers/download.php:66
+msgid "Corrupted attachment"
+msgstr "Sérült csatolmány"
+
+#: lib/qhebunelbadges.php:206
+msgid "You do not have this badge."
+msgstr "Nem rendelkezel ezzel a jelvénnyel."
+
+#: lib/qhebunelbadges.php:209
+msgid "This badge was awarded to you on %s."
+msgstr "Ezt a jelvényt megkaptad: %s."
+
+#: lib/qhebunelbadges.php:211
+msgid "You've claimed this badge on %s."
+msgstr "Ezt a jelvényt megszerezted: %s."
+
+#: lib/qhebunelbadges.php:216
+msgid "User does not have this badge."
+msgstr "Nem rendelkezik ezzel jelvénnyel."
+
+#: lib/qhebunelbadges.php:219
+msgid "This badge was awarded to the user on %s."
+msgstr "A felhasználó megkapta a jelvényt: %s."
+
+#: lib/qhebunelbadges.php:221
+msgid "The user claimed this badge on %s."
+msgstr "A felhasználó megszerezte a jelvényt: %s."
+
+#: lib/qhebunelbb.php:567
+msgid "%s wrote:"
+msgstr "%s írta:"
+
+#: lib/qhebunelbb.php:690
+msgid "Show spoiler"
+msgstr "Spoiler mutatása"
+
+#. translators: min=minute
+#: lib/qhebuneldate.php:68
+msgid "%s min ago"
+msgid_plural "%s mins ago"
+msgstr[0] "%s perce"
+msgstr[1] "%s perce"
+
+#: lib/qhebuneldate.php:74
+msgid "%s hour ago"
+msgid_plural "%s hours ago"
+msgstr[0] "%s órája"
+msgstr[1] "%s órája"
+
+#: lib/qhebuneldate.php:80
+msgid "%s day ago"
+msgid_plural "%s days ago"
+msgstr[0] "%s napja"
+msgstr[1] "%s napja"
+
+#: lib/qhebunelpost.php:274
+msgid "Thread topic"
+msgstr "Téma címe"
+
+#: lib/qhebunelpost.php:274 pages/search.php:124 pages/search.php:154
+#: pages/threaddelete.php:64 pages/threadmove.php:68
+msgid "Posts"
+msgstr "Hozzászólások"
+
+#: lib/qhebunelpost.php:274
+msgid "Last post"
+msgstr "Utolsó"
+
+#: lib/qhebunelpost.php:274 pages/threaddelete.php:59 pages/threadmove.php:63
+msgid "Starter"
+msgstr "Indította"
+
+#: lib/qhebunelpost.php:302
+msgid "There are no threads in this category."
+msgstr "Nincsenek témák ebben a kategóriában."
+
+#: lib/qhebunelpost.php:312
+msgid "(%d new)"
+msgid_plural "(%d new)"
+msgstr[0] "(%d új)"
+msgstr[1] "(%d új)"
+
+#: lib/qhebunelpost.php:352
+msgid "A guest"
+msgstr "Vendég"
+
+#: lib/qhebunelpost.php:380
+msgid "Permalink"
+msgstr "Permalink"
+
+#: lib/qhebunelpost.php:400
+msgid "Attachments:"
+msgstr "Csatolmányok:"
+
+#: lib/qhebunelpost.php:461
+msgid "Last edited by: %1$s on %2$s."
+msgstr "Utoljára szerkesztette %1$s ekkor: %2$s."
+
+#: lib/qhebunelpost.php:463
+msgid "Reason: %s"
+msgstr "Indoklás: %s"
+
+#: lib/qhebunelpost.php:472 pages/thread.php:25
+msgid "Reply"
+msgstr "Válasz"
+
+#: lib/qhebunelpost.php:473
+msgid "Quote"
+msgstr "Idézés"
+
+#: lib/qhebunelpost.php:480
+msgid "Confirm deletion"
+msgstr "Törlés megerősítése"
+
+#: lib/qhebunelpost.php:482
+msgid "Cancel deletion"
+msgstr "Törlés elvetése"
+
+#: lib/qhebunelpost.php:489
+msgid "Move"
+msgstr "Mozgatás"
+
+#: lib/qhebunelpost.php:492
+msgid "Report"
+msgstr "Jelentés"
+
+#: lib/qhebunelpost.php:496
+msgid "Clear reports"
+msgstr "Jelentések törlése"
+
+#: lib/qhebunelpost.php:687
+msgid "Search results"
+msgstr "Keresési eredmények"
+
+#. translators: The is the placeholder for the links to the pages in the
+#. thread.
+#: lib/qhebunelpost.php:710 pages/thread.php:67
+msgid "Jump to page: %s"
+msgstr "Ugrás oldalra: %s"
+
+#. translators: First parameter is the username, second is the date of the
+#. report submission
+#: lib/qhebunelpost.php:742
+msgid "Reported by %1$s on %2$s:"
+msgstr "%1$s jelentette ekkor: %2$s:"
+
+#: lib/qhebuneluser.php:209
+msgid "You are banned from this site."
+msgstr "Ki vagy tiltva az oldalról."
+
+#: pages/badges.php:13
+msgid "Only logged in users can view the badges."
+msgstr "Csak belépett felhasználók láthatják a jelvényeket."
+
+#: pages/badges.php:94
+msgid "The badge you requested cannot be displayed."
+msgstr "A kért jelvény nem megjeleníthető."
+
+#: pages/badges.php:106
+msgctxt "badge action"
+msgid "Claim"
+msgstr "Megszerzés"
+
+#: pages/badges.php:109
+msgctxt "badge action"
+msgid "Remove"
+msgstr "Eltávolítás"
+
+#: pages/badges.php:115
+msgid "Award this badge"
+msgstr "Jelvény kiosztása"
+
+#: pages/badges.php:120
+msgctxt "badge action"
+msgid "Award"
+msgstr "Kioszt"
+
+#: pages/badges.php:121 pages/profileedit.php:70
+msgid "Nickname"
+msgstr "Becenév"
+
+#: pages/badges.php:141
+msgid "Currently nobody has this badge."
+msgstr "Jelenleg senkinek sincs meg ez a jelvény."
+
+#: pages/badges.php:143
+msgid "Users who have this badge"
+msgstr "Felhasználók ezzel a jelvénnyel"
+
+#: pages/badges.php:154
+msgctxt "badge action"
+msgid "Revoke"
+msgstr "Visszavétel"
+
+#: pages/catlist.php:48
+msgid "1 Thread"
+msgid_plural "%d Threads"
+msgstr[0] "1 téma"
+msgstr[1] "%d téma"
+
+#: pages/catlist.php:50
+msgid "1 Post"
+msgid_plural "%d Posts"
+msgstr[0] "1 hozzászólás"
+msgstr[1] "%d hozzászólás"
+
+#: pages/catlist.php:57
+msgid "Last post by <a href=\"%2$s\">%1$s</a>"
+msgstr "Utolsó hozzászóló: <a href=\"%2$s\">%1$s</a>"
+
+#: pages/catlist.php:60
+msgid "Last post by a guest"
+msgstr "Utoljára egy vendég írt"
+
+#: pages/error.php:10
+msgid ""
+"There was an error processing your request. Please go back to the previous "
+"page and try again."
+msgstr ""
+"A kérés feldolgozása során probléma merült fel. Kérlek menj vissza az előző "
+"oldalra, és próbáld újra!"
+
+#: pages/pm.php:14
+msgid "Only logged in users can exchange private messages."
+msgstr "Csak belépett felhasználók válthatnak privát üzeneteket."
+
+#: pages/pm.php:165
+msgid "Conversation with %s"
+msgstr "Beszélgetés vele: %s"
+
+#: pages/pm.php:171
+msgid "Load previous %1$d messages (%2$d remaining)"
+msgstr "Előző %1$d üzenet betöltése (%2$d maradt)"
+
+#: pages/pm.php:184
+msgid "Load next %1$d messages (%2$d remaining)"
+msgstr "Következő %1$d üzenet betöltése (%2$d maradt)"
+
+#: pages/pm.php:193
+msgid "Send message"
+msgstr "Üzenet küldése"
+
+#: pages/postedit.php:29
+msgid "The post does not exist in the database."
+msgstr "A hozzászólás nincs az adatbázisban."
+
+#: pages/postedit.php:40
+msgid "You cannot edit a post in a closed thread."
+msgstr "Nem szerkeszthetsz hozzászólást lezárt témában."
+
+#: pages/postedit.php:44
+msgid "You can only edit your own posts."
+msgstr "Csak a saját hozzászólásaidat szerkesztheted."
+
+#: pages/postedit.php:64
+msgid "Deselect to delete the file."
+msgstr "Töröld a kiválasztást a fájl törléséhez."
+
+#: pages/postedit.php:83 pages/threadnew.php:47
+msgid "Message"
+msgstr "Üzenet"
+
+#: pages/postedit.php:87
+msgid "Reason"
+msgstr "Indoklás"
+
+#: pages/postedit.php:92 pages/thread.php:149 pages/threadnew.php:52
+msgid "Attachments"
+msgstr "Csatolmány"
+
+#: pages/profile.php:10
+msgid "You must log in to gain access to user profiles."
+msgstr "A profilok megtekintéséhez lépj be!"
+
+#: pages/profile.php:30
+msgid "User cannot be found."
+msgstr "A felhasználó nem található."
+
+#. translators: First name, last name
+#: pages/profile.php:56
+msgctxt "full name"
+msgid "%1$s %2$s"
+msgstr "%2$s %1$s"
+
+#: pages/profile.php:73
+msgid "Edit profile"
+msgstr "Profil szerkesztése"
+
+#: pages/profile.php:88
+msgid "Full name:"
+msgstr "Teljes név:"
+
+#: pages/profile.php:92
+msgid "Member since:"
+msgstr "Regisztráció dátuma:"
+
+#: pages/profile.php:96
+msgid "Posts:"
+msgstr "Hozzászólások:"
+
+#: pages/profile.php:100
+msgid "Points:"
+msgstr "Pontok:"
+
+#: pages/profileedit.php:17
+msgid "You must log in to edit your profile."
+msgstr "Be kell lépned a profilod szerkesztéséhez."
+
+#: pages/profileedit.php:21
+msgid "You can only edit your own profile."
+msgstr "Csak a saját profilodat szerkesztheted."
+
+#: pages/profileedit.php:51
+msgid "Basic information"
+msgstr "Általános információk"
+
+#: pages/profileedit.php:57
+msgid "This is the name you use to log in. You cannot change it."
+msgstr "Ezzel a névvel jelentkezel be. Nem lehet megváltoztatni."
+
+#: pages/profileedit.php:58
+msgid "Login name"
+msgstr "Belépési név"
+
+#: pages/profileedit.php:62
+msgid "First name"
+msgstr "Keresztnév"
+
+#: pages/profileedit.php:66
+msgid "Last name"
+msgstr "Vezetéknév"
+
+#: pages/profileedit.php:69
+msgid "This is the name visible next to your comments and forum posts."
+msgstr "Ez a név látható a hozzászólásaid mellett."
+
+#: pages/profileedit.php:73
+msgid ""
+"Your email address is used to send you notifications you request and it's "
+"used in case you forgot your password."
+msgstr ""
+"Az email címedre érkeznek az értesítések, amikre feliratkoztál, és az "
+"elfelejtett jelszó esetén is ezt használja a rendszer."
+
+#: pages/profileedit.php:74
+msgid "Email"
+msgstr "Email"
+
+#: pages/profileedit.php:78 pages/profileedit.php:83 pages/profileedit.php:87
+msgid ""
+"Leave the password fields blank if you don't want to change your current "
+"password."
+msgstr "Hagyd a jelszó mezőket üresen, ha nem akarod lecserélni a jelszavadat."
+
+#: pages/profileedit.php:79
+msgid "Old password"
+msgstr "Régi jelszó"
+
+#: pages/profileedit.php:84 pages/profileedit.php:88
+msgid "New password"
+msgstr "Új jelszó"
+
+#: pages/profileedit.php:95
+msgid "Avatar and signature"
+msgstr "Avatár és aláírás"
+
+#: pages/profileedit.php:102
+msgid "Current avatar"
+msgstr "Jelenlegi avatár"
+
+#: pages/profileedit.php:107
+msgid "Delete avatar"
+msgstr "Avatár törlése"
+
+#: pages/profileedit.php:109
+msgid "You don't have an avatar."
+msgstr "Nincs avatárod."
+
+#: pages/profileedit.php:115
+msgid "Upload new avatar"
+msgstr "Új avatár feltöltése"
+
+#: pages/profileedit.php:121
+msgid "Current signature"
+msgstr "Jelenlegi aláírás"
+
+#: pages/profileedit.php:127
+msgid "You don't have a signature."
+msgstr "Nincs aláírásod."
+
+#: pages/profileedit.php:133
+msgid "Edit signature"
+msgstr "Aláírás szerkesztése"
+
+#: pages/recentthreads.php:10 pages/reportedposts.php:10
+msgid "You must log in to use this function."
+msgstr "Be kell jelentkezned, hogy ezt használhasd."
+
+#: pages/recentthreads.php:25
+msgid "There're no unread posts in the forum."
+msgstr "Nincsnek olvasatlan hozzászólások a fórumban."
+
+#: pages/reportedposts.php:25
+msgid "There're no reported posts in the forum."
+msgstr "Nincsenek jelentett hozzászólások a fórumban."
+
+#: pages/search.php:10
+msgid "You must log in to use the search function."
+msgstr "Be kell lépned, hogy elérd a keresőt."
+
+#: pages/search.php:30
+msgid "There's no post matching your criteria."
+msgstr "Nincs hozzászólás, ami megfelel a feltételeknek."
+
+#: pages/search.php:117
+msgid "Search term:"
+msgstr "Kereső kifejezés:"
+
+#: pages/search.php:121
+msgid "Search in:"
+msgstr "Keresés itt:"
+
+#: pages/search.php:125
+msgid "Thread titles"
+msgstr "Téma címek"
+
+#: pages/search.php:126
+msgid "Both"
+msgstr "Mindkettő"
+
+#: pages/search.php:131
+msgid "Username:"
+msgstr "Felhasználónév:"
+
+#: pages/search.php:135
+msgid "Date:"
+msgstr "Dárum:"
+
+#: pages/search.php:139
+msgid "Categories:"
+msgstr "Kategóriák:"
+
+#: pages/search.php:143
+msgid "List only:"
+msgstr "Csak lista:"
+
+#: pages/search.php:145
+msgid "New posts"
+msgstr "Új üzenetek"
+
+#: pages/search.php:146
+msgid "Edited posts"
+msgstr "Szerkesztett üzenetek"
+
+#: pages/search.php:151
+msgid "Show:"
+msgstr "Megjelenítés:"
+
+#: pages/search.php:155
+msgid "Threads"
+msgstr "Témák"
+
+#: pages/thread.php:31
+msgid "Close thread"
+msgstr "Téma zárolása"
+
+#: pages/thread.php:33
+msgid "Reopen thread"
+msgstr "Téma visszanyitása"
+
+#: pages/thread.php:38
+msgid "Unpin thread"
+msgstr "Kiemelés megszűntetése"
+
+#: pages/thread.php:40
+msgid "Pin thread"
+msgstr "Téma kiemelése"
+
+#. translators: first parameter is the category name, second is the thread name
+#: pages/thread.php:112
+msgctxt "thread-title"
+msgid "%1$s: %2$s"
+msgstr "%1$s: %2$s"
+
+#: pages/thread.php:151
+msgid "Post reply"
+msgstr "Hozzászólás írása"
+
+#: pages/thread.php:164
+msgid "Select category:"
+msgstr "Válassz kategóriát:"
+
+#: pages/thread.php:164 pages/thread.php:165
+msgid "Loading..."
+msgstr "Betöltés..."
+
+#: pages/thread.php:165
+msgid "Select thread:"
+msgstr "Válassz témát:"
+
+#: pages/thread.php:166
+msgid "Title for the new thread:"
+msgstr "Új téma címe:"
+
+#: pages/thread.php:167
+msgid "Move post"
+msgstr "Mozgatás"
+
+#: pages/thread.php:179
+msgid "Please describe why do you think this post should be removed:"
+msgstr "Kérlek írd le, miért kéne szerinted ezt a hozzászólást törölni:"
+
+#: pages/thread.php:180
+msgid "Submit report"
+msgstr "Jelentés küldése"
+
+#: pages/thread.php:187
+msgid "You do not have sufficient permissions to view this thread."
+msgstr "Nincs jogosultságod a téma olvasásához."
+
+#: pages/threaddelete.php:18
+msgid "You must be a moderator to delete a thread."
+msgstr "Moderátornak kell lenned a téma törléséhez."
+
+#: pages/threaddelete.php:39
+msgid "The thread does not exist in the database."
+msgstr "A téma nem létezik az adatbázisban."
+
+#: pages/threaddelete.php:55 pages/threadmove.php:59
+msgid "Title"
+msgstr "Cím"
+
+#. translators: first parameter is username, second is the date
+#: pages/threaddelete.php:61 pages/threaddelete.php:74 pages/threadmove.php:65
+#: pages/threadmove.php:78
+msgid "%1$s on %2$s"
+msgstr "%1$s ekkor: %2$s"
+
+#: pages/threaddelete.php:68 pages/threadmove.php:72
+msgid "Closer"
+msgstr "Lezárta"
+
+#: pages/threaddelete.php:71 pages/threadmove.php:75
+msgid "This is an open thread."
+msgstr "Nyitott téma."
+
+#: pages/threaddelete.php:79 pages/threadmove.php:83
+msgid "Pinned"
+msgstr "Kiemelt"
+
+#: pages/threaddelete.php:82 pages/threadmove.php:86
+msgid "This is a pinned thread."
+msgstr "Kiemelt téma."
+
+#: pages/threaddelete.php:84 pages/threadmove.php:88
+msgid "This thread is not pinned."
+msgstr "A téma nincs kiemelve."
+
+#: pages/threadlist.php:24 pages/threadnew.php:34
+msgid "Start thread"
+msgstr "Téma indítása"
+
+#: pages/threadlist.php:33
+msgid "You do not have sufficient permissions to view this category."
+msgstr "Nincs jogosultságod a kategória megnyitásához."
+
+#: pages/threadmove.php:18
+msgid "You must be a moderator to move a thread."
+msgstr "Moderátornak kell lenned a téma mozgatásához."
+
+#: pages/threadmove.php:39
+msgid "The thread does not exists in the database."
+msgstr "A téma nem létezik az adatbázisban."
+
+#: pages/threadmove.php:50
+msgid "Target category"
+msgstr "Cél kategória"
+
+#: pages/threadnew.php:24
+msgid "You do not have permissions to start a new thread in this category."
+msgstr "Nincs jogosultságod ebben a kategóriában új témát indítani."
+
+#: pages/threadnew.php:39
+msgid "Category"
+msgstr "Kategória"
+
+#: pages/threadnew.php:43
+msgid "Topic title"
+msgstr "Téma címe"
+
+#: pmwidget.php:17
+msgid "Displays a notification if the user has unread private messages."
+msgstr ""
+"Értesítést jelenít meg, ha olvasatlan privát üzenete van a felhasználónak."
+
+#: pmwidget.php:61
+msgid "No new messages"
+msgstr "Nincs új üzenet"
+
+#: pmwidget.php:63
+msgid "One unread message"
+msgid_plural "%s unread messages"
+msgstr[0] "Egy olvasatlan üzenet"
+msgstr[1] "%s olvasatlan üzenet"
+
+#: pmwidget.php:112
+msgid "Hide when there're no unread messages:"
+msgstr "Elrejtés, ha nincs olvasatlan üzenet:"
+
+#: qhebunel.php:92
+msgid "General settings &lsaquo; Qhebunel"
+msgstr "Általános beállítások &lsaquo; Qhebunel"
+
+#: qhebunel.php:93
+msgid "Categories &lsaquo; Qhebunel"
+msgstr "Kategóriák &lsaquo; Qhebunel"
+
+#: qhebunel.php:94
+msgid "Groups &lsaquo; Qhebunel"
+msgstr "Csoportok &lsaquo; Qhebunel"
+
+#: qhebunel.php:95
+msgid "Users &lsaquo; Qhebunel"
+msgstr "Felhasználók &lsaquo; Qhebunel"
+
+#: qhebunel.php:96
+msgid "Badges &lsaquo; Qhebunel"
+msgstr "Jelvények &lsaquo; Qhebunel"
+
+#. Plugin Name of the plugin/theme
+msgid "Qhebunel"
+msgstr "Qhebunel"
+
+#. Plugin URI of the plugin/theme
+msgid "https://github.com/wagnera/qhebunel"
+msgstr "https://github.com/wagnera/qhebunel"
+
+#. Description of the plugin/theme
+msgid ""
+"A forum plugin for WordPress. Provides support for access control, "
+"uploadable avatars, achivements, and more."
+msgstr ""
+"Fórum plugin WordPress-hez. Jogosultság kezeléssel, feltölthető avatárokkal, "
+"kitüntetésekkel, és egyéb szolgáltatásokkal."
+
+#. Author of the plugin/theme
+msgid "Attila Wagner"
+msgstr "Wagner Attila"
+
+#. Author URI of the plugin/theme
+msgid "https://github.com/wagnera"
+msgstr "https://github.com/wagnera"
