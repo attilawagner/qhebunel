@@ -707,7 +707,7 @@ class QhebunelPost {
 		
 		$page_links = implode(' ', $page_links);
 		//translators: The is the placeholder for the links to the pages in the thread.
-		printf(__('Jump to page: %s'), $page_links);
+		printf(__('Jump to page: %s','qhebunel'), $page_links);
 		
 		echo('</nav></div>');
 	}

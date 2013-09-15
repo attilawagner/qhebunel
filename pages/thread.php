@@ -64,7 +64,7 @@ function render_action_bar($pagenum) {
 		$page_links = implode(' ', $page_links);
 		
 		//translators: The is the placeholder for the links to the pages in the thread.
-		printf(__('Jump to page: %s'), $page_links);
+		printf(__('Jump to page: %s','qhebunel'), $page_links);
 		echo('</nav>');
 	}
 	
@@ -161,9 +161,9 @@ function render_move_post_form() {
 		echo('<form id="move-post-form" action="'.site_url('forum/').'" method="post">');
 		echo('<input type="hidden" name="action" value="postmove" />');
 		echo('<input type="hidden" name="post" id="move-post-id" value="" />');
-		echo('<label id="move-post-category-label">'.__('Select category:').' <select name="category" id="move-post-category" disabled="disabled"><option>'.__('Loading...', 'qhebunel').'</option></select></label> ');
-		echo('<label id="move-post-thread-label">'.__('Select thread:').' <select name="thread" id="move-post-thread" disabled="disabled"><option>'.__('Loading...', 'qhebunel').'</option><option value="new">'.__('Create new thread', 'qhebunel').'</option></select></label> ');
-		echo('<label id="move-post-thread-title-label">'.__('Title for the new thread:').' <input name="thread-title" id="move-post-thread-title" type="text" disabled="disabled" /></label> ');
+		echo('<label id="move-post-category-label">'.__('Select category:','qhebunel').' <select name="category" id="move-post-category" disabled="disabled"><option>'.__('Loading...', 'qhebunel').'</option></select></label> ');
+		echo('<label id="move-post-thread-label">'.__('Select thread:','qhebunel').' <select name="thread" id="move-post-thread" disabled="disabled"><option>'.__('Loading...', 'qhebunel').'</option><option value="new">'.__('Create new thread', 'qhebunel').'</option></select></label> ');
+		echo('<label id="move-post-thread-title-label">'.__('Title for the new thread:','qhebunel').' <input name="thread-title" id="move-post-thread-title" type="text" disabled="disabled" /></label> ');
 		echo('<input id="move-post-submit" type="submit" name="move" value="'.__('Move post', 'qhebunel').'" disabled="disabled" />');
 		echo('</form>');
 		echo('</div>');

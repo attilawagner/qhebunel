@@ -105,7 +105,7 @@ class QhebunelPMWidget extends WP_Widget {
 		}
 		
 		echo('<p>');
-		echo('<label for="'.$this->get_field_id('title').'">'.__('Title:').'</label> ');
+		echo('<label for="'.$this->get_field_id('title').'">'.__('Title:','qhebunel').'</label> ');
 		echo('<input class="widefat" id="'.$this->get_field_id('title').'" name="'.$this->get_field_name('title').'" type="text" value="'.esc_attr($title).'" />');
 		echo('</p>');
 		echo('<p>');

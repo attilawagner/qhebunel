@@ -239,7 +239,7 @@ $categories = $wpdb->get_results('select * from `qheb_categories` order by `pare
 function qheb_cat_parent_select($forcat = -1, $selected = -1) {
 	global $categories;
 	echo('<select name="qheb-cat-parent" id="qheb-cat-parent">');
-	echo('<option value="0">'.__('Top level').'</option>');
+	echo('<option value="0">'.__('Top level','qhebunel').'</option>');
 	foreach ($categories as $cat) {
 		if ($cat['parent'] == 0 && $cat['catid'] != $forcat) {
 			echo('<option value="'.$cat['catid'].'"'.($cat['catid'] == $selected ? ' selected="selected"' : '').'>'.$cat['name'].'</option>');
@@ -250,7 +250,7 @@ function qheb_cat_parent_select($forcat = -1, $selected = -1) {
 ?>
 <div class="wrap">
 	<div class="icon32 qhebunelicon"></div>
-	<h2><?php _e('Categories'); ?></h2>
+	<h2><?php _e('Categories','qhebunel'); ?></h2>
 	<form id="qheb-catorderform" name="qheb-catorderform" action="<?=admin_url('admin.php?page=qhebunel/admin/optcats.php');?>" method="post">
 		<?php wp_nonce_field('qheb_catorder','qhebnonce'); ?>
 		<input type="hidden" name="qheb-catlist-catid" id="qheb-catlist-catid" />
@@ -261,24 +261,24 @@ function qheb_cat_parent_select($forcat = -1, $selected = -1) {
 		<table class="widefat fixed qheb_catlist">
 			<thead>
 				<tr>
-					<th scope="col" class="qheb-catname"><?php _e('Category name'); ?></th>
-					<th scope="col" class="qheb-catdesc"><?php _e('Description'); ?></th>
-					<th scope="col" class="qheb-catpos"><?php _e('Position'); ?></th>
-					<th scope="col" class="qheb_catact"><?php _e('Actions'); ?></th>
+					<th scope="col" class="qheb-catname"><?php _e('Category name','qhebunel'); ?></th>
+					<th scope="col" class="qheb-catdesc"><?php _e('Description','qhebunel'); ?></th>
+					<th scope="col" class="qheb-catpos"><?php _e('Position','qhebunel'); ?></th>
+					<th scope="col" class="qheb_catact"><?php _e('Actions','qhebunel'); ?></th>
 				</tr>
 			</thead>
 			<tfoot>
 				<tr>
-					<th scope="col"><?php _e('Category name'); ?></th>
-					<th scope="col"><?php _e('Description'); ?></th>
-					<th scope="col"><?php _e('Position'); ?></th>
-					<th scope="col"><?php _e('Actions'); ?></th>
+					<th scope="col"><?php _e('Category name','qhebunel'); ?></th>
+					<th scope="col"><?php _e('Description','qhebunel'); ?></th>
+					<th scope="col"><?php _e('Position','qhebunel'); ?></th>
+					<th scope="col"><?php _e('Actions','qhebunel'); ?></th>
 				</tr>
 			</tfoot>
 			<tbody>
 				<?php
 				if (empty($categories)) {
-					echo('<tr><td colspan="4">'.__('The category list is empty').'</td></tr>');
+					echo('<tr><td colspan="4">'.__('The category list is empty','qhebunel').'</td></tr>');
 				} else {
 					//Count subcategories
 					$catsubcount = array();
@@ -319,7 +319,7 @@ function qheb_cat_parent_select($forcat = -1, $selected = -1) {
 						}
 						
 						echo('<td'.($cat['parent']==0 ? '' : ' class="qheb-catlist-subitempos"').'>'.$cat['orderid'].$updown.'</td>');
-						echo('<td><a href="'.admin_url('admin.php?page=qhebunel/admin/optcats.php&amp;editid='.$cat['catid']).'">'.__('Edit').'</a> <a href="'.admin_url('admin.php?page=qhebunel/admin/optcats.php&amp;setperm='.$cat['catid']).'">'.__('Set permissions').'</a> <label><input type="checkbox" class="qheb-catdelcb" name="qheb-cat-del-id[]" value="'.$cat['catid'].'" />'.__('Delete').'</label></td></tr>');
+						echo('<td><a href="'.admin_url('admin.php?page=qhebunel/admin/optcats.php&amp;editid='.$cat['catid']).'">'.__('Edit','qhebunel').'</a> <a href="'.admin_url('admin.php?page=qhebunel/admin/optcats.php&amp;setperm='.$cat['catid']).'">'.__('Set permissions','qhebunel').'</a> <label><input type="checkbox" class="qheb-catdelcb" name="qheb-cat-del-id[]" value="'.$cat['catid'].'" />'.__('Delete','qhebunel').'</label></td></tr>');
 					}
 					
 					foreach ($categories as $cat) {
@@ -338,7 +338,7 @@ function qheb_cat_parent_select($forcat = -1, $selected = -1) {
 		</table>
 		<div class="tablenav bottom">
 			<div class="alignright actions">
-				<input class="action-secondary button" type="submit" name="qheb-cat-del" value="<?php _e('Delete'); ?>"/>
+				<input class="action-secondary button" type="submit" name="qheb-cat-del" value="<?php _e('Delete','qhebunel'); ?>"/>
 			</div>
 			<br class="clear" />
 		</div>
@@ -350,26 +350,26 @@ function qheb_cat_parent_select($forcat = -1, $selected = -1) {
 			<input type="hidden" name="qheb-cat-id" value="<?=$qheb_edit_cat['catid'];?>" />
 			<div id="poststuff" class="metabox-holder qheb-metabox">
 				<div class="stuffbox">
-					<h3><span><?php _e('Edit category'); ?></span></h3>
+					<h3><span><?php _e('Edit category','qhebunel'); ?></span></h3>
 					<div class="inside">
 						<table class="editform">
 							<tr>
-								<th scope="row"><label for="qheb-cat-name"><?php _e('Category name'); ?></label></th>
+								<th scope="row"><label for="qheb-cat-name"><?php _e('Category name','qhebunel'); ?></label></th>
 								<td><input type="text" name="qheb-cat-name" id="qheb-cat-name" value="<?=$qheb_edit_cat['name'];?>" /></td>
 							</tr>
 							<tr>
-								<th scope="row"><label for="qheb-cat-desc"><?php _e('Description'); ?></label></th>
+								<th scope="row"><label for="qheb-cat-desc"><?php _e('Description','qhebunel'); ?></label></th>
 								<td><input type="text" name="qheb-cat-desc" id="qheb-cat-desc" value="<?=$qheb_edit_cat['description'];?>" /></td>
 							</tr>
 							<tr>
-								<th scope="row"><label for="qheb-cat-parent"><?php _e('Parent'); ?></label></th>
+								<th scope="row"><label for="qheb-cat-parent"><?php _e('Parent','qhebunel'); ?></label></th>
 								<td><?php qheb_cat_parent_select($qheb_edit_cat['catid'], $qheb_edit_cat['parent']); ?></td>
 							</tr>
 						</table>
 						<div id="submitlink" class="submitbox">
 							<div id="major-publishing-actions">
 								<div id="publishing-action">
-									<input type="submit" id="publish" class="button-primary" value="<?php _e('Save'); ?>" name="qheb-cat-edit" />
+									<input type="submit" id="publish" class="button-primary" value="<?php _e('Save','qhebunel'); ?>" name="qheb-cat-edit" />
 								</div>
 								<div class="clear"></div>
 							</div>
@@ -382,35 +382,35 @@ function qheb_cat_parent_select($forcat = -1, $selected = -1) {
 	<?php } ?>
 	
 	<?php if (!isset($qheb_edit_cat) && !isset($cat_perms)) { ?>
-		<h3 class="title"><?php _e('Create new'); ?></h3>
+		<h3 class="title"><?php _e('Create new','qhebunel'); ?></h3>
 		<form id="qheb_addcatform" name="qheb_addcatform" action="<?=admin_url('admin.php?page=qhebunel/admin/optcats.php');?>" method="post">
 			<?php wp_nonce_field('qheb_add_category','qhebnonce'); ?>
 			<div id="poststuff" class="metabox-holder qheb-metabox">
 				<div class="stuffbox">
-					<h3><span><?php _e('Create new category'); ?></span></h3>
+					<h3><span><?php _e('Create new category','qhebunel'); ?></span></h3>
 					<div class="inside">
 						<table class="editform">
 							<tr>
-								<th scope="row"><label for="qheb-cat-name"><?php _e('Category name'); ?></label></th>
+								<th scope="row"><label for="qheb-cat-name"><?php _e('Category name','qhebunel'); ?></label></th>
 								<td><input type="text" name="qheb-cat-name" id="qheb-cat-name" /></td>
 							</tr>
 							<tr>
-								<th scope="row"><label for="qheb-cat-desc"><?php _e('Description'); ?></label></th>
+								<th scope="row"><label for="qheb-cat-desc"><?php _e('Description','qhebunel'); ?></label></th>
 								<td><input type="text" name="qheb-cat-desc" id="qheb-cat-desc" /></td>
 							</tr>
 							<tr>
-								<th scope="row"><label for="qheb-cat-parent"><?php _e('Parent'); ?></label></th>
+								<th scope="row"><label for="qheb-cat-parent"><?php _e('Parent','qhebunel'); ?></label></th>
 								<td><?php qheb_cat_parent_select(); ?></td>
 							</tr>
 							<tr>
-								<th scope="row"><label for="qheb-cat-order"><?php _e('Position'); ?></label></th>
-								<td><select name="qheb-cat-order" id="qheb-cat-order"><option value="top"><?php _e('Top'); ?></option><option value="bottom" selected="selected"><?php _e('Bottom'); ?></option></select></td>
+								<th scope="row"><label for="qheb-cat-order"><?php _e('Position','qhebunel'); ?></label></th>
+								<td><select name="qheb-cat-order" id="qheb-cat-order"><option value="top"><?php _e('Top','qhebunel'); ?></option><option value="bottom" selected="selected"><?php _e('Bottom','qhebunel'); ?></option></select></td>
 							</tr>
 						</table>
 						<div id="submitlink" class="submitbox">
 							<div id="major-publishing-actions">
 								<div id="publishing-action">
-									<input type="submit" id="publish" class="button-primary" value="<?php _e('Create'); ?>" name="qheb-cat-new" />
+									<input type="submit" id="publish" class="button-primary" value="<?php _e('Create','qhebunel'); ?>" name="qheb-cat-new" />
 								</div>
 								<div class="clear"></div>
 							</div>
@@ -423,33 +423,33 @@ function qheb_cat_parent_select($forcat = -1, $selected = -1) {
 	<?php } ?>
 	
 	<?php if (isset($cat_perms)) {?>
-		<h3 class="title"><?php _e('Set category permissions'); ?></h3>
+		<h3 class="title"><?php _e('Set category permissions','qhebunel'); ?></h3>
 		<form id="qheb-catpermsform" name="qheb-catpermsform" action="<?=admin_url('admin.php?page=qhebunel/admin/optcats.php');?>" method="post">
 			<?php wp_nonce_field('qheb_set_perms','qhebnonce'); ?>
 			<input type="hidden" name="qheb-cat-id" value="<?=$cat_perms_catid;?>" />
 			<table class="widefat fixed qheb_catpermslist">
 				<thead>
 					<tr>
-						<th scope="col" class="qheb-cpgroup"><?php _e('Group'); ?></th>
-						<th scope="col" class="qheb-cpnone"><?php _e('None'); ?></th>
-						<th scope="col" class="qheb-cpread"><?php _e('Read'); ?></th>
-						<th scope="col" class="qheb-cpwrite"><?php _e('Write'); ?></th>
-						<th scope="col" class="qheb-cpstart"><?php _e('Start'); ?></th>
+						<th scope="col" class="qheb-cpgroup"><?php _e('Group','qhebunel'); ?></th>
+						<th scope="col" class="qheb-cpnone"><?php _e('None','qhebunel'); ?></th>
+						<th scope="col" class="qheb-cpread"><?php _e('Read','qhebunel'); ?></th>
+						<th scope="col" class="qheb-cpwrite"><?php _e('Write','qhebunel'); ?></th>
+						<th scope="col" class="qheb-cpstart"><?php _e('Start','qhebunel'); ?></th>
 					</tr>
 				</thead>
 				<tfoot>
 					<tr>
-						<th scope="col" class="qheb-cpgroup"><?php _e('Group'); ?></th>
-						<th scope="col" class="qheb-cpnone"><?php _e('None'); ?></th>
-						<th scope="col" class="qheb-cpread"><?php _e('Read'); ?></th>
-						<th scope="col" class="qheb-cpwrite"><?php _e('Write'); ?></th>
-						<th scope="col" class="qheb-cpstart"><?php _e('Start'); ?></th>
+						<th scope="col" class="qheb-cpgroup"><?php _e('Group','qhebunel'); ?></th>
+						<th scope="col" class="qheb-cpnone"><?php _e('None','qhebunel'); ?></th>
+						<th scope="col" class="qheb-cpread"><?php _e('Read','qhebunel'); ?></th>
+						<th scope="col" class="qheb-cpwrite"><?php _e('Write','qhebunel'); ?></th>
+						<th scope="col" class="qheb-cpstart"><?php _e('Start','qhebunel'); ?></th>
 					</tr>
 				</tfoot>
 				<tbody>
 					<?php
 					if (empty($cat_perms)) {
-						echo('<tr><td colspan="4">'.__('There are no groups in the database.').'</td></tr>');
+						echo('<tr><td colspan="4">'.__('There are no groups in the database.','qhebunel').'</td></tr>');
 					} else {
 						foreach ($cat_perms as $catp) {
 							echo('<tr><td'.($catp['prominent'] ? ' class="prominent"' : '').'>'.$catp['gname'].'</td>');
@@ -466,7 +466,7 @@ function qheb_cat_parent_select($forcat = -1, $selected = -1) {
 			<div id="submitlink" class="submitbox">
 				<div id="major-publishing-actions">
 					<div id="publishing-action">
-						<input type="submit" id="publish" class="button-primary" value="<?php _e('Save'); ?>" name="qheb-cat-perms" />
+						<input type="submit" id="publish" class="button-primary" value="<?php _e('Save','qhebunel'); ?>" name="qheb-cat-perms" />
 					</div>
 					<div class="clear"></div>
 				</div>

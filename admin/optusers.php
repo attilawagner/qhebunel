@@ -160,7 +160,7 @@ function qheb_ulist_top_groups() {
 		}
 	}
 	$lastgid = $pgroups[count($pgroups)-1]['gid'];
-	echo('<li><a href="'.admin_url('admin.php?page=qhebunel/admin/optusers.php').'"'.($showgroup == 0 ? ' class="current"' : '').'>'.__('All').' <span class="count">('.$group['ucount'].')</count></a> |</li>');
+	echo('<li><a href="'.admin_url('admin.php?page=qhebunel/admin/optusers.php').'"'.($showgroup == 0 ? ' class="current"' : '').'>'.__('All','qhebunel').' <span class="count">('.$group['ucount'].')</count></a> |</li>');
 	foreach ($pgroups as $group) {
 		echo('<li><a href="'.admin_url('admin.php?page=qhebunel/admin/optusers.php&amp;showgroup='.$group['gid']).'"'.($showgroup == $group['gid'] ? ' class="current"' : '').'>'.$group['name'].' <span class="count">('.$group['ucount'].')</count></a>'.($group['gid'] != $lastgid ? ' |' : '').'</li>');
 	}
@@ -168,21 +168,21 @@ function qheb_ulist_top_groups() {
 ?>
 <div class="wrap">
 	<div class="icon32 qhebunelicon"></div>
-	<h2><?php _e('Users'); ?></h2>
+	<h2><?php _e('Users','qhebunel'); ?></h2>
 	<ul class="subsubsub qhebsubsubsub"><?php qheb_ulist_top_groups(); ?></ul>
 	<form id="qheb_grouplistform" name="qheb_grouplistform" action="<?=admin_url('admin.php?page=qhebunel/admin/optusers.php');?>" method="post">
 		<?php wp_nonce_field('qheb_usermodif','qhebnonce'); ?>
 		<table class="widefat fixed qheb_catlist">
 			<thead>
 				<tr>
-					<th scope="col" class="qheb-username"><?php _e('Display name (Username)'); ?></th>
-					<th scope="col" class="qheb-usergroups"><?php _e('Groups'); ?></th>
+					<th scope="col" class="qheb-username"><?php _e('Display name (Username)','qhebunel'); ?></th>
+					<th scope="col" class="qheb-usergroups"><?php _e('Groups','qhebunel'); ?></th>
 				</tr>
 			</thead>
 			<tfoot>
 				<tr>
-					<th scope="col"><?php _e('Display name (Username)'); ?></th>
-					<th scope="col"><?php _e('Groups'); ?></th>
+					<th scope="col"><?php _e('Display name (Username)','qhebunel'); ?></th>
+					<th scope="col"><?php _e('Groups','qhebunel'); ?></th>
 				</tr>
 			</tfoot>
 			<tbody>
@@ -198,16 +198,16 @@ function qheb_ulist_top_groups() {
 		<div class="tablenav bottom">
 			<div class="alignleft actions">
 				<select name="qheb_ulist_action" id="qheb_ulist_action" onchange="qhebUlistActchange();">
-					<option value="none" selected="selected"><?php _e('Bulk Actions'); ?></option>
-					<option value="addgroup"><?php _e('Add to group'); ?></option>
-					<option value="removegroup"><?php _e('Remove from group'); ?></option>
-					<option value="addmod"><?php _e('Promote to moderator'); ?></option>
-					<option value="removemod"><?php _e('Revoke mod rights'); ?></option>
-					<option value="ban"><?php _e('Ban'); ?></option>
-					<option value="unban"><?php _e('Unban'); ?></option>
+					<option value="none" selected="selected"><?php _e('Bulk Actions','qhebunel'); ?></option>
+					<option value="addgroup"><?php _e('Add to group','qhebunel'); ?></option>
+					<option value="removegroup"><?php _e('Remove from group','qhebunel'); ?></option>
+					<option value="addmod"><?php _e('Promote to moderator','qhebunel'); ?></option>
+					<option value="removemod"><?php _e('Revoke mod rights','qhebunel'); ?></option>
+					<option value="ban"><?php _e('Ban','qhebunel'); ?></option>
+					<option value="unban"><?php _e('Unban','qhebunel'); ?></option>
 				</select>
 				<?php qheb_ulist_group_select(); ?>
-				<input class="action-secondary button" type="submit" name="qheb_ulist_modif" value="<?php _e('Save'); ?>"/>
+				<input class="action-secondary button" type="submit" name="qheb_ulist_modif" value="<?php _e('Save','qhebunel'); ?>"/>
 			</div>
 			<br class="clear" />
 		</div>
