@@ -127,7 +127,7 @@ class QhebunelFiles {
 	private static function create_dir_struct($path) {
 		//Load permissions from the wp-content directory
 		$stat = @stat(WP_CONTENT_DIR);
-		$mode = $stat['mode'] & 0000666;
+		$mode = $stat['mode'] & 0000777;
 		
 		$abs_path = WP_CONTENT_DIR.'/'.$path;
 		@mkdir($abs_path, $mode, true);
@@ -273,6 +273,9 @@ class QhebunelFiles {
 		
 		$dest_path = WP_CONTENT_DIR.'/'.self::get_attachment_path($user_id, $post_id, $attachment_id, $safe_name);
 		if (@move_uploaded_file($file_arr['tmp_name'], $dest_path)) {
+			$stat = @stat(WP_CONTENT_DIR);
+			$mode = $stat['mode'] & 0000666;
+			@chmod($dest_path, $mode);
 			return $attachment_id;
 		} else {
 			$wpdb->query(
